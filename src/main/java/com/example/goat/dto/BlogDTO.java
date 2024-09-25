@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 public class BlogDTO {
 
     private Long	blog_num;

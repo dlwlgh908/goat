@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor // 모든 parameter를 가지고 있는 생성자
-public class Blog {
+public class Blog extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

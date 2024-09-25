@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div layout:fragment="content">
+    <form action="/blog/register" method="post" th:object="${blogDTO}">
+
+        <div class="row mt-5">
+            <div class="col shadow">
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" th:field="*{title}" id="title" placeholder="조잘조잘 제목 부분">
+                </div>
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" id="content" rows="3" th:field="*{content}"></textarea>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-light">저장</button>
+                        <a type="button" class="btn btn-light">목록</a>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
