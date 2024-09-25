@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<h1>회원 가입</h1>
+<form th:action="@{/user/form}" method="post">
+  아이디 : <input type="text" name="userid" /><br>
+  비밀번호 : <input type="password" name="password" /><br>
+  비밀번호 재확인 : <input type="password" name="passwordse" /><br>
+  이름 :  <input type="text" name="username" /><br>
+  연락처 : <input type="number" name="phonenumber" /><br>
+  이메일 : <input class="custom-email" disabled id="domain-input" />
+  <select id="domain-list" required>
+    <option disabled value="" selected>선택</option>
+    <option value="naver.com">naver.com</option>
+    <option value="hanmail.net">hanmail.net</option>
+    <option value="google.com">google.com</option>
+    <option value="nate.com">nate.com</option>
+    <option value="custom">직접 입력</option>
+  </select> <br>
+  <button type="submit">가입</button>
+</form>
+
+</body>
+</html>
