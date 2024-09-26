@@ -17,6 +17,7 @@ public class Account {
     @Column(name = "account_num")
     private Long num;
 
+    @Column(unique = true, nullable = false)
     private String	email;
 
     private String	password1;
