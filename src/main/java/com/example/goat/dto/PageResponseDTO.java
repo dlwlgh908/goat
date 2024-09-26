@@ -1,9 +1,13 @@
 package com.example.goat.dto;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class PageResponseDTO<E> {
     private int page; // 현재 페이지
     private int size; // 한페이지 row 수

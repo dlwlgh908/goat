@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity // 엔티티임을 명시
@@ -36,7 +37,7 @@ public class Blog extends BaseEntity{
     @Column(nullable = false)
     private int	companion;
 
-    private LocalDateTime reg;
+    private LocalDate reg;
 
     private Long	readCount;
 

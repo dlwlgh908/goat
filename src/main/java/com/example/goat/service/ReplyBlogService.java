@@ -6,7 +6,7 @@ import com.example.goat.dto.PageResponseDTO;
 
 import java.util.List;
 
-public interface BlogService {
+public interface ReplyBlogService {
 
     public void register(BlogDTO blogDTO);
 

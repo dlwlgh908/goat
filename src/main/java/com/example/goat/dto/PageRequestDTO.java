@@ -9,11 +9,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-@Builder
-@Data
+
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class PageRequestDTO {
     @Builder.Default // 들어오면 들어온 값 안들어오면 이 값
     private int page = 1;
@@ -21,9 +23,13 @@ public class PageRequestDTO {
     private int size = 10;
 
 
-    private String type; // 검색 종류에서 select box : t, c, w tc tw twc(타이틀 컨텐츠 작성자)
+    private String type; // 검색 종류에서 select box : t, c, w, y(타이틀 컨텐츠 작성자 도시)
     // <option value = "t"> 제목 </option>
-    // <option value = "c"> 컨텐츠</option>
+    // <option value = "c"> 내용</option>
+    // <option value = "w"> 작성자 </option>
+    // <option value = "y"> 도시 </option>
+    // <option value = "tc"> 제목 내용</option>
+    // <option value = "ty"> 제목 도시</option>
 
     private String keyword;
 
