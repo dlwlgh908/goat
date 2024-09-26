@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity // 엔티티임을 명시
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor // 모든 parameter를 가지고 있는 생성자
-public class Blog {
+public class Blog extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +37,7 @@ public class Blog {
     @Column(nullable = false)
     private int	companion;
 
-    private LocalDateTime reg;
+    private LocalDate reg;
 
     private Long	readCount;
 

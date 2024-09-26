@@ -3,7 +3,6 @@ package com.example.goat.controller;
 import com.example.goat.dto.BlogDTO;
 import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
-import com.example.goat.entity.Blog;
 import com.example.goat.service.BlogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +13,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/blog")
-public class BlogController {
+@RequestMapping("/replyblog")
+public class ReplyBlogController {
 
     private final BlogService blogService;
 
