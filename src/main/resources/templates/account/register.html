@@ -8,48 +8,54 @@
 </head>
 <body>
 <div class="container">
+
+    <script th:inline="javascript">
+        let msg = [[${msg}]]
+
+        if(msg != null){
+            alert(msg)
+        }
+    </script>
+
     <div class="row">
         <div class="col-6 offset-3">
-            <form th:action="@{/account/register}" th:object="${accountDTO}" method="post">
-                <h1>회원 가입</h1> </br>
+            <form action="/account/register" th:object="${accountDTO}" method="post">
+                <h3>회원 가입</h3> </br>
 
                 <div class="mb-3">
-                    <label for="email" class="form-label">아이디/이메일 :</label>
-                    <input type="text" th:field="*{email}" class="form-control" id="email" placeholder="name@example.com">
-                    <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    <label for="email" class="form-label">아이디/이메일</label>
+                    <input type="text" th:field="*{email}" class="form-control" id="email" placeholder="name@example.com" required>
+                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError">
                 </div>
+
                 <div class="mb-3">
-                    <label for="password1" class="form-label">비밀번호 :</label>
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input type="password" th:field="*{password}" class="form-control" id="password" required>
+                    <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError"></p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password1" class="form-label">비밀번호 재확인</label>
                     <input type="password" th:field="*{password1}" class="form-control" id="password1" required>
-                    <div class="text-danger" th:if="${#fields.hasErrors('password1')}" th:errors="*{password1}"></div>
+                    <p th:if="${#fields.hasErrors('password1')}" th:errors="*{password1}" class="fieldError"></p>
                 </div>
+
                 <div class="mb-3">
-                    <label for="password2" class="form-label">비밀번호 재확인 :</label>
-                    <input type="password" th:field="*{password2}" class="form-control" id="password2" required>
-                    <div class="text-danger" th:if="${#fields.hasErrors('password2')}" th:errors="*{password2}"></div>
-                </div>
-                <div class="mb-3">
-                    <label for="name" class="form-label">이름 :</label>
+                    <label for="name" class="form-label">이름</label>
                     <input type="text" th:field="*{name}" class="form-control" id="name">
-                    <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError"></p>
                 </div>
+
                 <div class="mb-3">
-                    <label for="phone" class="form-label">연락처 :</label>
+                    <label for="phone" class="form-label">연락처</label>
                     <input type="text" th:field="*{phone}" class="form-control" id="phone">
-                    <div class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                    <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="fieldError"></p>
                 </div>
-                <div class="mb-3">
-                    <label for="emailDomain" class="form-label">이메일 도메인 :</label>
-                    <select th:field="*{emailDomain}"  class="form-select" id="emailDomain" required>
-                        <option disabled value="" selected>선택</option>
-                        <option value="naver.com">naver.com</option>
-                        <option value="hanmail.net">hanmail.net</option>
-                        <option value="gmail.com">gmail.com</option>
-                        <option value="nate.com">nate.com</option>
-                        <option value="custom">직접 입력</option>
-                    </select>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary">가입</button>
+                    <a type="button" href="/blog/list" class="btn btn-primary">목록</a>
                 </div>
-                <button type="submit" class="btn btn-primary">가입</button>
             </form>
         </div>
     </div>

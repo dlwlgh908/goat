@@ -1,27 +1,92 @@
 package com.example.goat.service;
 
+import com.example.goat.constant.Role;
 import com.example.goat.dto.AccountDTO;
-import jakarta.validation.Valid;
-import org.springframework.validation.BindingResult;
+import com.example.goat.entity.Account;
+import com.example.goat.repository.AccountRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.lang.reflect.Member;
 
-public interface AccountService {
+@Service
+@Transactional
+@RequiredArgsConstructor
+@Log4j2
+public class AccountService implements UserDetailsService {
 
-    //회원등록
-    void register(@Valid AccountDTO accountDTO, BindingResult bindingResult);
+    private  final AccountRepository accountRepository;
+    private ModelMapper mapper = new ModelMapper();
 
-    // 모든 회원 조회
-    List<AccountDTO> selectAll();
+    private final PasswordEncoder passwordEncoder;
 
-    // 회원 정보 업데이트
-    void update(AccountDTO accountDTO);
+    public AccountDTO findbyEmail(String email) {
+        Account account = accountRepository.findByEmail(email);
 
-    // 회원 삭제
-    void delete(Long accountNum);
+        //dto변환
+
+        return mapper.map(account, AccountDTO.class);
+    }
+
+    //회원가입
+    public void  register(AccountDTO accountDTO) {
+        //회원가입 시 dto로 넘겨준 값을 받는다.
+        log.info(accountDTO);
+        //회원이 있는지 확인
+        Account account = accountRepository.findByEmail(accountDTO.getEmail());
+
+        if (account !=null){
+            log.info("이미 가입된 회원");
+            throw new IllegalStateException("이미 가입된 회원입니다");
+        }
+
+        log.info("가입 된 회원이 없어서 회원가입 가능");
+
+        Account entity = mapper.map(accountDTO, Account.class);
+        entity.setPassword1(passwordEncoder.encode(accountDTO.getPassword1()));
+        entity.setRole(Role.User);
+        accountRepository.save(entity); //저장 가입
+
+    }
+
+    //로그인
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        //repository에서 이메일로 값을 검색해서 있는 없는지 확인합니다.
+        //왜 이메일은 유니크이니까 유일해야하니까 그리고 이미 가입된 회원인지를 확인해야 하니까
+
+        log.info("회원가입서비스로 들어온 :" + email);
+        Account account = accountRepository.findByEmail(email);
+
+        if(account ==null) {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다" + email);
+        }
+
+        log.info(" 현재 로그인 한 사람 권한 " + account.getRole());
+
+        String role = "";
+        if("ADMIN".equals(account.getRole().name())) {  //관리자라면
+            log.info("관리자");
+            role = Role.ADMIN.name();
+        } else { //일반유저
+            log.info("일반유저");
+            role = Role.User.name();
+        }
+
+        return User.builder()
+        .username(account.getEmail())
+        .password(account.getPassword1())
+        .roles(role)
+        .build();
+        }
 
 
-    boolean authenticate(String email, String password);
-
-    AccountDTO findEmailByName(String name, String phone);
 }
