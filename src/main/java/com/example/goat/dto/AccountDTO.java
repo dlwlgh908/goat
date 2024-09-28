@@ -6,9 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
@@ -37,4 +35,5 @@ public class AccountDTO {
 
     @NotNull(message = "권한을 선택해야 합니다")
     private Role role;
+
 }

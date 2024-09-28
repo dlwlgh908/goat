@@ -42,6 +42,11 @@ public class AccountController {
            bindingResult.rejectValue("password1", "error.password1", "비밀번호가 일치하지 않습니다.");
        }
 
+       //비밀번호 확인 필드가 비어있는지 검사
+       if (accountDTO.getPassword1() == null || accountDTO.getPassword1().isEmpty()) {
+           bindingResult.rejectValue("password1", "error.password1.empty", "비밀번호 확인은 필수 입력 사항입니다");
+       }
+
        // 다른 필드에 오류가 있는지 확인
        if (bindingResult.hasErrors()) {
            log.info("입력 오류 발생");
