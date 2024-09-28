@@ -1,5 +1,6 @@
 package com.example.goat.entity;
 
+import com.example.goat.constant.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -14,18 +15,19 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_num")
-    private Long num;
+    private Long ano;
 
+    @Column(length = 50, unique = true, nullable = false)
     private String	email;
 
-    private String	password1;
+    private String	password;
 
-    private String	password2;
+    private String	password1;
 
     private String	name;
 
     private String	Phone;
 
-    private int role;
+    @Enumerated(EnumType.STRING)
+    private Role role; //권한을 위하여
 }

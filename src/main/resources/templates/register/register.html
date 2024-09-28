@@ -7,21 +7,23 @@
 <body>
 
 <h1>회원 가입</h1>
-<form th:action="@{/user/form}" method="post">
-  아이디 : <input type="text" name="userid" /><br>
-  비밀번호 : <input type="password" name="password" /><br>
-  비밀번호 재확인 : <input type="password" name="passwordse" /><br>
-  이름 :  <input type="text" name="username" /><br>
-  연락처 : <input type="number" name="phonenumber" /><br>
-  이메일 : <input class="custom-email" disabled id="domain-input" />
-  <select id="domain-list" required>
+<form th:action="@{/account/regist}" th:object="${accountDTO}" method="post">
+  아이디/이메일 : <input type="text" th:field="${email}" />
+  비밀번호 : <input type="password" th:field="${password1}" /><br>
+  비밀번호 재확인 : <input type="password" th:field="${password2}" /><br>
+  이름 :  <input type="text" th:field="${name}" /><br>
+  연락처 : <input type="number" th:field="${phone}" /><br>
+
+  이메일 도메인 :
+  <select th:field="${emailDomain}" required>
     <option disabled value="" selected>선택</option>
     <option value="naver.com">naver.com</option>
     <option value="hanmail.net">hanmail.net</option>
     <option value="google.com">google.com</option>
     <option value="nate.com">nate.com</option>
     <option value="custom">직접 입력</option>
-  </select> <br>
+  </select>
+  <br>
   <button type="submit">가입</button>
 </form>
 
