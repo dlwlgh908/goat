@@ -3,8 +3,10 @@ package com.example.goat.controller;
 import com.example.goat.dto.BlogDTO;
 import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
+import com.example.goat.dto.ReplyBlogDTO;
 import com.example.goat.entity.Blog;
 import com.example.goat.service.BlogService;
+import com.example.goat.service.ReplyBlogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BlogController {
 
     private final BlogService blogService;
+    private final ReplyBlogService replyBlogService;
 
     @GetMapping("/register")
     public void register(BlogDTO blogDTO){
@@ -57,9 +60,14 @@ public class BlogController {
     }
 
     @GetMapping("/detale")
-    public void detale(Model model, Long num){
+    public void detale(Model model, Long num, PageRequestDTO pageRequestDTO){
+
 
         model.addAttribute("blogDTO", blogService.detale(num));
+        PageResponseDTO<ReplyBlogDTO> pageResponseDTO =  replyBlogService.list(pageRequestDTO, num);
+        log.info("값이 있는지"+pageResponseDTO);
+        model.addAttribute("replyBlogDTO",new ReplyBlogDTO());
+        model.addAttribute("pageResponseDTO",pageResponseDTO);
         log.info("get 디테일 진입 완료");
     }
 

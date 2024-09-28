@@ -3,24 +3,25 @@ package com.example.goat.service;
 import com.example.goat.dto.BlogDTO;
 import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
+import com.example.goat.dto.ReplyBlogDTO;
 
 import java.util.List;
 
 public interface ReplyBlogService {
 
-    public void register(BlogDTO blogDTO);
+    public void register(ReplyBlogDTO dto);
 
-    public List<BlogDTO> selectAll();
+    public List<ReplyBlogDTO> selectAll();
 
-    public void upadate(BlogDTO blogDTO);
+    public void upadate(ReplyBlogDTO dto);
 
     public void delete(Long num);
 
-    public BlogDTO detale(Long num);
+    public ReplyBlogDTO detale(Long num);
 
-    public PageResponseDTO<BlogDTO> list(PageRequestDTO pageRequestDTO);
+    public PageResponseDTO<ReplyBlogDTO> list(PageRequestDTO pageRequestDTO, Long blog_num);
 
-    void modify(BlogDTO blogDTO);
+    void modify(ReplyBlogDTO dto);
     //페이징 처리, 검색 처리 한 목록
 
 }
