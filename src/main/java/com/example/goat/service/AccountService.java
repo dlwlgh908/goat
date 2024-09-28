@@ -92,5 +92,8 @@ public class AccountService implements UserDetailsService {
         .build();
         }
 
+        //public AccountDTO getAccountDetails() {
+       // return new AccountDTO("user@example.com", "사용자 이름", "010-1234-5678");
+       // }
 
 }
