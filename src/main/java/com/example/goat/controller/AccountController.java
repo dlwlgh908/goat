@@ -38,29 +38,30 @@ public class AccountController {
        log.info("회원가입 get에서 포스트로 넘어온 값 : " + accountDTO);
 
        // 비밀번호와 비밀번호 확인이 일치하는지 검사
-       if (!accountDTO.getPassword().equals(accountDTO.getPassword1())) {
+       if (accountDTO.getPassword() == null || !accountDTO.getPassword().equals(accountDTO.getPassword1())) {
            bindingResult.rejectValue("password1", "error.password1", "비밀번호가 일치하지 않습니다.");
        }
 
-
+       // 다른 필드에 오류가 있는지 확인
        if (bindingResult.hasErrors()) {
-           log.info("뭔가 잘못함");
-           log.info(bindingResult.getAllErrors()); // 에러 확인
-
-           return "account/register";
+           log.info("입력 오류 발생");
+           log.info(bindingResult.getAllErrors()); // 에러 로그 출력
+           return "account/register"; // 오류가 있을 시 다시 회원가입 페이지로 이동
        }
 
        try {
+           //회원가입 처리
            accountService.register(accountDTO);
-       }catch (IllegalStateException e){
-
+       } catch (IllegalStateException e) {
            log.info(e.getMessage());
            model.addAttribute("msg", e.getMessage());
            return "account/register";
        }
-       // 저장을 합니다
+
+       // 회원가입 성공 시 로그인 페이지로 리다이렉트
        return "redirect:/account/login";
    }
+
    //로그인
    @GetMapping("/login")
    public String login() {

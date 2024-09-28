@@ -30,6 +30,10 @@ public class AccountService implements UserDetailsService {
 
     public AccountDTO findbyEmail(String email) {
         Account account = accountRepository.findByEmail(email);
+        if(account == null) {
+            log.warn("이메일로 찾은 계정이 없습니다:" + email);
+            return null;
+        }
 
         //dto변환
 
@@ -44,15 +48,22 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findByEmail(accountDTO.getEmail());
 
         if (account !=null){
-            log.info("이미 가입된 회원");
-            throw new IllegalStateException("이미 가입된 회원입니다");
+            log.info("이미 가입된 회원 : " + accountDTO.getEmail());
+            throw new IllegalStateException("이메일이 이미 사용 중입니다");
         }
 
         log.info("가입 된 회원이 없어서 회원가입 가능");
 
+        //새로운 회원 정보 저장
         Account entity = mapper.map(accountDTO, Account.class);
-        entity.setPassword1(passwordEncoder.encode(accountDTO.getPassword1()));
-        entity.setRole(Role.User);
+        entity.setPassword(passwordEncoder.encode(accountDTO.getPassword())); //비밀번호를 password 필드에 저장
+
+        //사용자 선택에 따른 권한 설정
+        if (accountDTO.getRole() == Role.ADMIN) {
+            entity.setRole(Role.ADMIN);
+        } else {
+            entity.setRole(Role.USER);
+        }
         accountRepository.save(entity); //저장 가입
 
     }
@@ -72,18 +83,11 @@ public class AccountService implements UserDetailsService {
 
         log.info(" 현재 로그인 한 사람 권한 " + account.getRole());
 
-        String role = "";
-        if("ADMIN".equals(account.getRole().name())) {  //관리자라면
-            log.info("관리자");
-            role = Role.ADMIN.name();
-        } else { //일반유저
-            log.info("일반유저");
-            role = Role.User.name();
-        }
+        String role = account.getRole() != null ? account.getRole().name() : Role.USER.name();
 
         return User.builder()
         .username(account.getEmail())
-        .password(account.getPassword1())
+        .password(account.getPassword())
         .roles(role)
         .build();
         }

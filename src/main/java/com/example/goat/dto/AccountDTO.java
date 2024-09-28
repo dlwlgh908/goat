@@ -1,6 +1,7 @@
 package com.example.goat.dto;
 
 
+import com.example.goat.constant.Role;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,7 +23,7 @@ public class AccountDTO {
     private String email;
 
     @NotEmpty(message = "비밀번호는 필수 입력 사항입니다.")
-    @Size(min = 1, max = 20, message = "비밀번호는 1자 이상 20자 이하이어야 합니다.")
+    @Size(min = 2, max = 20, message = "비밀번호는 2자 이상 20자 이하이어야 합니다.")
     private String password;
 
     @NotEmpty(message = "비밀번호 확인은 필수 입력 사항입니다.")
@@ -34,5 +35,6 @@ public class AccountDTO {
     @NotEmpty(message = "연락처는 필수 입력 사항입니다.")
     private String phone;
 
-    private int role; // 권한을 위하여
+    @NotNull(message = "권한을 선택해야 합니다")
+    private Role role;
 }
