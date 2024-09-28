@@ -3,8 +3,11 @@ package com.example.goat.service;
 import com.example.goat.dto.BlogDTO;
 import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
+import com.example.goat.dto.ReplyBlogDTO;
 import com.example.goat.entity.Blog;
+import com.example.goat.entity.ReplyBlog;
 import com.example.goat.repository.BlogRepository;
+import com.example.goat.repository.ReplyBlogRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,71 +27,146 @@ import java.util.stream.Collectors;
 @Transactional
 public class ReplyBlogServiceImpl implements ReplyBlogService {
 
+    private final ReplyBlogRepository repository;
     private final BlogRepository blogRepository;
     private ModelMapper mapper = new ModelMapper();
 
     @Override
-    public void register(BlogDTO blogDTO) {
-        //등록 맵퍼로 맵핑해서 블로그 레파지토리에 세이브함
+    public void register(ReplyBlogDTO dto) {
 
-        Blog blog = mapper.map(blogDTO, Blog.class);
-        blogRepository.save(blog);
+        Blog blog = blogRepository.findById(dto.getBlog_num()).get();
+
+
+        ReplyBlog replyBlog = mapper.map(dto, ReplyBlog.class);
+
+        replyBlog.setBlog(blog);
+        repository.save(replyBlog);
+
     }
 
     @Override
-    public List<BlogDTO> selectAll() {
-        List<Blog> boardList = blogRepository.findAll();
-        boardList.stream().map(abc -> mapper.map(abc, BlogDTO.class)).collect(Collectors.toList());
+    public List<ReplyBlogDTO> selectAll() {
+        List<ReplyBlog> replyBlogList = repository.findAll();
+        replyBlogList.stream().map(abc -> mapper.map(abc, ReplyBlogDTO.class)).collect(Collectors.toList());
         return null;
     }
 
     @Override
-    public void upadate(BlogDTO blogDTO) {
-        Blog blog = blogRepository.findById(blogDTO.getNum()).orElseThrow(EntityNotFoundException::new);
-        blog.setContent(blogDTO.getContent());
+    public void upadate(ReplyBlogDTO dto) {
+
     }
+
 
     @Override
     public void delete(Long num) {
-        blogRepository.deleteById(num);
+        log.info(num);
+        repository.deleteById(num);
+    }
+
+
+
+
+    @Override
+    public ReplyBlogDTO detale(Long num) {
+        return null;
     }
 
     @Override
-    public BlogDTO detale(Long num) {
-        Blog blog = blogRepository.findById(num).get();
-        BlogDTO blogDTO = mapper.map(blog , BlogDTO.class);
-        return blogDTO;
-    }
-
-    @Override
-    public PageResponseDTO<BlogDTO> list(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<ReplyBlogDTO> list(PageRequestDTO pageRequestDTO, Long blog_num) {
         String[] types = pageRequestDTO.getTypes();
-        log.info("서비스에서 변환된 : "+ Arrays.toString(types));
+        log.info("서비스에서 변환된 : " + Arrays.toString(types));
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable("num");
-        Page<Blog> blogPage = blogRepository.searchAll(types, keyword, pageable);
+        Page<ReplyBlog> replyBlogPage = repository.searchAllRe(types, keyword, pageable, blog_num);
 
         //보드 타입의 리스트가 >> 보드 DTO 타입의 리스트로 변환
-        List<BlogDTO> blogDTOList =
-                blogPage.getContent().stream().map(
-                        blog -> mapper.map(blog,BlogDTO.class)).collect(Collectors.toList());
+        List<ReplyBlogDTO> DTOList =
+                replyBlogPage.getContent().stream().map(
+                        replyBlog -> mapper.map(replyBlog, ReplyBlogDTO.class)).collect(Collectors.toList());
 
 //        blogDTOList.forEach(blogDTO -> log.info(blogDTO));
 
-        return PageResponseDTO.<BlogDTO>withAll()
+        return PageResponseDTO.<ReplyBlogDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
-                .dtoList(blogDTOList)
-                .total((int) blogPage.getTotalElements())
+                .dtoList(DTOList)
+                .total((int) replyBlogPage.getTotalElements())
                 .build();
     }
 
     @Override
-    public void modify(BlogDTO blogDTO) {
-
-        Blog blog = blogRepository.findById(blogDTO.getNum()).orElseThrow(EntityNotFoundException::new);
-        blog.setContent(blogDTO.getContent());
-        blog.setTitle(blogDTO.getTitle());
-        blog.setCompanion(blogDTO.getCompanion());
-        blog.setSchedule(blogDTO.getSchedule());
+    public void modify(ReplyBlogDTO dto) {
+        log.info(dto + "서비스");
+        ReplyBlog replyBlog = repository.findById(dto.getNum()).orElseThrow(EntityNotFoundException::new);
+        replyBlog.setContent(dto.getContent());
     }
+
+
+//
+//    private final ReplyBlogRepository repository;
+//    private ModelMapper mapper = new ModelMapper();
+//
+//    @Override
+//    public void register(ReplyBlogDTO dto) {
+//        //등록 맵퍼로 맵핑해서 블로그 레파지토리에 세이브함
+//
+//        Blog blog = mapper.map(dto, Blog.class);
+//        repository.save(blog);
+//    }
+//
+//    @Override
+//    public List<ReplyBlogDTO> selectAll() {
+//        List<Blog> boardList = repository.findAll();
+//        boardList.stream().map(abc -> mapper.map(abc, BlogDTO.class)).collect(Collectors.toList());
+//        return null;
+//    }
+//
+//    @Override
+//    public void upadate(ReplyBlogDTO dto) {
+//        Blog blog = repository.findById(blogDTO.getNum()).orElseThrow(EntityNotFoundException::new);
+//        blog.setContent(blogDTO.getContent());
+//    }
+//
+//    @Override
+//    public void delete(Long num) {
+//        repository.deleteById(num);
+//    }
+//
+//    @Override
+//    public ReplyBlogDTO detale(Long num) {
+//        Blog blog = repository.findById(num).get();
+//        BlogDTO blogDTO = mapper.map(blog , BlogDTO.class);
+//        return blogDTO;
+//    }
+//
+//    @Override
+//    public PageResponseDTO<ReplyBlogDTO> list(PageRequestDTO pageRequestDTO) {
+//        String[] types = pageRequestDTO.getTypes();
+//        log.info("서비스에서 변환된 : "+ Arrays.toString(types));
+//        String keyword = pageRequestDTO.getKeyword();
+//        Pageable pageable = pageRequestDTO.getPageable("num");
+//        Page<Blog> blogPage = repository.searchAll(types, keyword, pageable);
+//
+//        //보드 타입의 리스트가 >> 보드 DTO 타입의 리스트로 변환
+//        List<BlogDTO> blogDTOList =
+//                blogPage.getContent().stream().map(
+//                        blog -> mapper.map(blog,BlogDTO.class)).collect(Collectors.toList());
+//
+////        blogDTOList.forEach(blogDTO -> log.info(blogDTO));
+//
+//        return PageResponseDTO.<BlogDTO>withAll()
+//                .pageRequestDTO(pageRequestDTO)
+//                .dtoList(blogDTOList)
+//                .total((int) blogPage.getTotalElements())
+//                .build();
+//    }
+//
+//    @Override
+//    public void modify(ReplyBlogDTO blogDTO) {
+//
+//        Blog blog = repository.findById(blogDTO.getNum()).orElseThrow(EntityNotFoundException::new);
+//        blog.setContent(blogDTO.getContent());
+//        blog.setTitle(blogDTO.getTitle());
+//        blog.setCompanion(blogDTO.getCompanion());
+//        blog.setSchedule(blogDTO.getSchedule());
+//    }
 }

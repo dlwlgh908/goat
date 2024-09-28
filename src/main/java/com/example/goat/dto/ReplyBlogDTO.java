@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 public class ReplyBlogDTO {
 
-    private Long	replyBlog_num;
+    private Long	num;
 
     private String	writer;
 

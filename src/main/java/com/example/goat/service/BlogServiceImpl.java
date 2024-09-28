@@ -5,6 +5,7 @@ import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
 import com.example.goat.entity.Blog;
 import com.example.goat.repository.BlogRepository;
+import com.example.goat.repository.ReplyBlogRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class BlogServiceImpl implements BlogService {
 
     private final BlogRepository blogRepository;
+    private final ReplyBlogRepository replyBlogRepository;
     private ModelMapper mapper = new ModelMapper();
 
     @Override
@@ -51,13 +53,17 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void delete(Long num) {
+        Long blog_num = num;
+        replyBlogRepository.deleteByBlogNum(blog_num);
         blogRepository.deleteById(num);
     }
 
     @Override
     public BlogDTO detale(Long num) {
+        log.info(num);
         Blog blog = blogRepository.findById(num).get();
         BlogDTO blogDTO = mapper.map(blog , BlogDTO.class);
+
         return blogDTO;
     }
 

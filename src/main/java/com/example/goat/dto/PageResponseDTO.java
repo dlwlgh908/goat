@@ -19,8 +19,8 @@ public class PageResponseDTO<E> {
     private boolean prev; // 이전 페이지 존재 여부
     private boolean next; // 다음 페이지 존재 여부
     private List<E> dtoList; // 목록에 대한 결과값, select * from table
-    // 다른 곳에서도 사용이 가능하도록 컬렉션 사용
-    // List<Board> List<Member> List<Notice>
+    // 다른 곳에서도 사용이 가능하도록 컬렉션 사용<Notice>
+    // List<Board> List<Member> List
 
 
     @Builder(builderMethodName = "withAll")
