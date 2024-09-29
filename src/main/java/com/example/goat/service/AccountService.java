@@ -52,7 +52,13 @@ public class AccountService implements UserDetailsService {
             throw new IllegalStateException("이메일이 이미 사용 중입니다");
         }
 
-        log.info("가입 된 회원이 없어서 회원가입 가능");
+        log.info("가입 가능한 회원입니다");
+
+        // 비밀번호 확인 로직 추가
+        if (!accountDTO.isPasswordMatching()) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
 
         //새로운 회원 정보 저장
         Account entity = mapper.map(accountDTO, Account.class);
@@ -77,7 +83,7 @@ public class AccountService implements UserDetailsService {
         log.info("회원가입서비스로 들어온 :" + email);
         Account account = accountRepository.findByEmail(email);
 
-        if(account ==null) {
+        if (account == null) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다" + email);
         }
 
@@ -86,14 +92,65 @@ public class AccountService implements UserDetailsService {
         String role = account.getRole() != null ? account.getRole().name() : Role.USER.name();
 
         return User.builder()
-        .username(account.getEmail())
-        .password(account.getPassword())
-        .roles(role)
-        .build();
+                .username(account.getEmail())
+                .password(account.getPassword())
+                .roles(role)
+                .build();
+    }
+
+    //사용자 정보 가져오기
+    public AccountDTO getAccountDetails(String username) {
+        log.info("사용자 정보를 가져오는 중: " + username);
+
+        Account account = accountRepository.findByEmail(username);
+        if (account == null) {
+            log.warn("사용자를 찾을 수 없습니다: " + username);
+            throw new UsernameNotFoundException(("사용자를 찾을 수 없습니다 : " + username));
         }
 
-        //public AccountDTO getAccountDetails() {
-       // return new AccountDTO("user@example.com", "사용자 이름", "010-1234-5678");
-       // }
+        log.info("사용자 정보 찾음:" + account.getEmail());
+        return mapToDTO(account);
+    }
+
+    //사용자 정보 업데이트 및 비밀번호 변경
+
+    public void updateAccount(AccountDTO accountDTO) {
+        log.info("사용자 정보를 업데이트 중 : " + accountDTO.getEmail());
+
+        Account account = accountRepository.findByEmail(accountDTO.getEmail());
+        if (account == null) {
+            log.warn("사용자를 찾을 수 없습니다 : " + accountDTO.getEmail());
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + accountDTO.getEmail());
+        }
+
+        //사용자 정보 업데이트
+        account.setName(accountDTO.getName());
+        account.setPhone(accountDTO.getPhone());
+
+        // 비밀번호 변경 로직
+        if (accountDTO.getCurrentPassword() != null && accountDTO.getNewPassword() != null) {
+            // 현재 비밀번호 확인
+            if (!passwordEncoder.matches(accountDTO.getCurrentPassword(), account.getPassword())) {
+                throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+            }
+            // 새 비밀번호 설정
+            account.setPassword(passwordEncoder.encode(accountDTO.getNewPassword()));
+        }
+
+        log.info("DB에 사용자 정보 저장 중: " + account.getEmail());
+        accountRepository.save(account);
+
+
+    }
+    private AccountDTO mapToDTO(Account account) {
+        AccountDTO dto = new AccountDTO();
+        dto.setAccountNum(account.getAno());
+        dto.setEmail(account.getEmail());
+        dto.setName(account.getName());
+        dto.setPhone(account.getPhone());
+        dto.setRole(account.getRole());
+        return dto;
+    }
+
 
 }

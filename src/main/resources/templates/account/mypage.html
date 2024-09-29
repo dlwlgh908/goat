@@ -11,6 +11,11 @@
     <div class = "row mt-5">
         <div class="col-6 offset-3">
             <h2 class="center">My Page</h2> </br>
+
+            <th:block th:if="${message}">
+                <div class="alert alert-success" th:text="${message}"></div>
+            </th:block>
+
             <label for="email" class="form-label">이메일</label>
             <input type="text" id="email" th:value="${accountDTO.email}" class="form-control" readonly>
 
