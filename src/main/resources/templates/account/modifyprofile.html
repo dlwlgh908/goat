@@ -10,12 +10,7 @@
     <div class="container">
         <div class="col-6 offset-3">
             <h2 class="text-center"> 정보 수정 </h2> </br>
-            <form th:action="@{/account/update}" method="post">
-                <div class="mb-3">
-                    <label for="email" class="form-label">이메일</label>
-                    <input type="email" id="email" th:value="${accountDTO.email}" class="form-control" name="email" required>
-                </div>
-
+            <form th:object="${accountDTO}" action="/account/update" method="post">
                 <div class="mb-3">
                     <label for="name" class="form-label">이름</label>
                     <input type="text" id="name" th:value="${accountDTO.name}" class="form-control" name="name" required>
@@ -26,16 +21,26 @@
                     <input type="text" id="phone" th:value="${accountDTO.phone}" class="form-control" name="phone" required>
                 </div>
 
-
-               <!--비밀번호 변경 기능... 고민
+                <!-- 비밀번호 변경 기능 추가 -->
                 <div class="mb-3">
-                    <label for="password" class="form-label">현재 비밀번호</label>
-                    <input type="password" id="password" th:value="${accountDTO.name}" class="form-control" name="name" required>
-                </div> -->
+                    <label for="currentPassword" class="form-label">현재 비밀번호</label>
+                    <input type="password" id="currentPassword" class="form-control" name="currentPassword" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">새 비밀번호</label>
+                    <input type="password" id="newPassword" class="form-control" name="newPassword" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
+                    <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required>
+                </div>
+
 
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success">저장</button>
-                    <a href="/account" class="btn btn-secondary">취소</a>
+                    <a href="/mypage" class="btn btn-secondary">취소</a>
                 </div>
             </form>
         </div>
