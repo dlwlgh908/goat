@@ -3,6 +3,7 @@ package com.example.goat.service;
 import com.example.goat.dto.BlogDTO;
 import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
+import com.example.goat.entity.Blog;
 
 import java.util.List;
 
@@ -22,5 +23,7 @@ public interface BlogService {
 
     void modify(BlogDTO blogDTO);
     //페이징 처리, 검색 처리 한 목록
+
+    public Blog countappend(Long num);
 
 }

@@ -99,6 +99,10 @@ public class ReplyBlogServiceImpl implements ReplyBlogService {
         ReplyBlog replyBlog = repository.findById(dto.getNum()).orElseThrow(EntityNotFoundException::new);
         replyBlog.setContent(dto.getContent());
     }
+    //    @Override
+//    public void delete(Long num) {
+//        repository.deleteById(num);
+//    }
 
 
 //
