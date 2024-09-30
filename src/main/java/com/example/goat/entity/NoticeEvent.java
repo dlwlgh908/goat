@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor
 // 모든 parameter를 가지고 있는 생성자
-public class NoticeEvent {
+public class NoticeEvent extends BaseEntity {
 
 //@lob 은 일반적인 최대 길이 255를 넘어서 문자를 저장하고 싶을 때 컬럼 데피니션으로 정의
     @Id
@@ -33,7 +33,6 @@ public class NoticeEvent {
     @Column(nullable = false)
     private String	content;
 
-    private LocalDateTime reg;
 
     private Long	readCount;
 

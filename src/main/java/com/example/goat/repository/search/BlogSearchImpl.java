@@ -1,9 +1,6 @@
 package com.example.goat.repository.search;
 
-import com.example.goat.entity.Blog;
-import com.example.goat.entity.QBlog;
-import com.example.goat.entity.QReplyBlog;
-import com.example.goat.entity.ReplyBlog;
+import com.example.goat.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.log4j.Log4j2;
@@ -125,5 +122,56 @@ public class BlogSearchImpl extends QuerydslRepositorySupport implements BlogSea
 
 
         return new PageImpl<>(replyBlogList, pageable, count);
+    }
+
+
+    @Override
+    public Page<NoticeEvent> searchAllNo(String[] types, String keyword, Pageable pageable) {
+        QNoticeEvent noticeEvent = QNoticeEvent.noticeEvent; // q 도메인 객체, select * from blog
+        JPQLQuery<NoticeEvent> query = from(noticeEvent);
+        log.info("searchAll입력된 값" + Arrays.toString(types));
+        log.info("searchAll입력된 값" + keyword);
+
+        System.out.println(query);
+        //and 혹은 or 등을 사용하는 객체
+        //select * from board // 제목을 입력
+        // %ddd% select * from board where title = %안녕%
+        //String[] types 만들어서 올꺼임 t c w title content writer
+        // tc title = %keyword% or content = %keyword%
+
+        //select * from board where a = s or
+        if (types != null && types.length > 0 && keyword != null) {
+            BooleanBuilder booleanBuilder = new BooleanBuilder();
+            for (String str : types) {
+
+                switch (str) {
+
+                    case "c":
+                        booleanBuilder.or(noticeEvent.content.contains(keyword));
+                        break;
+
+                    case "t":
+                        booleanBuilder.or(noticeEvent.title.contains(keyword));
+                        break;
+                }
+            }
+            query.where(booleanBuilder);
+
+        }
+
+
+        query.where(noticeEvent.num.gt(0L));
+        System.out.println("where 문 추가" + query);
+        //select * from board where title = %keyword% or content = %keyword% and bno > 0
+
+        this.getQuerydsl().applyPagination(pageable, query);//리미트 알려주
+
+        List<NoticeEvent> noticeEventList = query.fetch();
+        log.info("서치 임플에 찍혔는지 확인");
+
+        long count = query.fetchCount(); // row수
+
+
+        return new PageImpl<>(noticeEventList, pageable, count);
     }
 }

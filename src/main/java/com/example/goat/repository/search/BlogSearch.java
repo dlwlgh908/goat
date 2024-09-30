@@ -1,6 +1,7 @@
 package com.example.goat.repository.search;
 
 import com.example.goat.entity.Blog;
+import com.example.goat.entity.NoticeEvent;
 import com.example.goat.entity.ReplyBlog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,5 +12,7 @@ public interface BlogSearch {
 
     Page<Blog> searchAll(String[] types, String keyword, Pageable pageable);
     Page<ReplyBlog> searchAllRe(String[] types, String keyword, Pageable pageable, Long blog_num);
+
+    Page<NoticeEvent> searchAllNo(String[] types, String keyword, Pageable pageable);
 
 }

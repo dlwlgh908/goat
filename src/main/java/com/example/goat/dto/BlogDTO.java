@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -30,7 +31,7 @@ public class BlogDTO {
     @Builder.Default
     private int	companion = 1 ;
 
-    private LocalDateTime reg;
+    private LocalDate reg;
 
     private Long	readCount;
 

@@ -34,7 +34,9 @@ public class BlogServiceImpl implements BlogService {
     public void register(BlogDTO blogDTO) {
         //등록 맵퍼로 맵핑해서 블로그 레파지토리에 세이브함
 
+        log.info(blogDTO);
         Blog blog = mapper.map(blogDTO, Blog.class);
+
         blogRepository.save(blog);
     }
 
@@ -63,7 +65,9 @@ public class BlogServiceImpl implements BlogService {
         log.info(num);
         Blog blog = blogRepository.findById(num).get();
         BlogDTO blogDTO = mapper.map(blog , BlogDTO.class);
-
+        Long countSet = blog.getReadCount()+1;
+        blog.setReadCount(countSet);
+        blogRepository.save(blog);
         return blogDTO;
     }
 
