@@ -36,9 +36,7 @@ public class Blog extends BaseEntity{
 
     @Column(nullable = false)
     private int	companion;
-
-    private LocalDate reg;
-
+    
     private Long	readCount;
 
     private Long	recommendCount;

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div layout:fragment="content">
+    <div class="row mt-5">
+        <div class="col shadow">
+
+            <nav class="navbar bg-body-tertiary">
+                <div class="container-fluid">
+                    <form class="d-flex formObj" role="search" action="/blog/list" method="get"
+                          th:object="${pageRequestDTO}">
+
+                        <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
+
+                            <option value="t" selected>제목</option>
+                            <option value="c">내용</option>
+                            <option value="w">작성자</option>
+                            <option value="y">도시</option>
+                            <option value="tc">제목 + 내용</option>
+                            <option value="ty">제목 + 도시</option>
+                        </select>
+                        <input class="form-control me-2" name="keyword" type="search" placeholder="Search"
+                               aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+
+                    <a href="/blog/register" type="button" class="btn btn-dark">등록</a>
+                </div>
+
+            </nav>
+
+            <th:block th:if="${#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
+                <h1>너님 글이 없음</h1>
+            </th:block>
+
+            <th:block th:unless="${#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">글번호</th>
+                        <th scope="col">제목</th>
+                        <th scope="col">내용</th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
+                        <tr>
+                            <td>
+                                <div>
+                                    [[${list.num}]]
+                                </div>
+
+                            </td>
+                            <td>
+                                <a th:href="@{/blog/detale(num=${list.num})}">
+                                    [[${list.title}]]
+                                </a>
+
+                            </td>
+                            <td>
+                                <div>
+                                    [[${list.content}]]
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    </th:block>
+
+                    </tbody>
+                </table>
+
+
+            </th:block>
+
+            <div class="row text-center">
+                <!--페이징-->
+                <div class="col">
+                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                        <ul class="pagination justify-content-center">
+                            <li th:if="${blogDTOPageResponseDTO.prev}" class="paginate_button previous "
+                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
+                                <a class="page-link" th:data-num="${blogDTOPageResponseDTO.start -1}">Previous</a>
+                            </li>
+
+                            <!--thymleaf에는 순서를 표기하는 #numbers.sequence가 있다.-->
+                            <th:block
+                                    th:each="i: ${#numbers.sequence(blogDTOPageResponseDTO.start,blogDTOPageResponseDTO.end)}">
+                                <li th:class="${blogDTOPageResponseDTO.page == i} ? 'paginate_button active':''"
+                                    aria-controls="dataTables-example" tabindex="0">
+                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                </li>
+                            </th:block>
+
+                            <li th:if="${blogDTOPageResponseDTO.next}" class="paginate_button next"
+                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
+                                <a class="page-link" th:data-num="${blogDTOPageResponseDTO.end +1}">Next</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div> <!--페이징 처리-->
+
+
+            </div> <!--col -->
+
+
+
+
+        </div>
+
+
+        <script th:inline="javascript">
+
+
+            $(document).ready(function () {
+                document.querySelector(".pagination").addEventListener("click", function (e) {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let target = e.target;
+
+
+                    if (target.tagName !== 'A') {
+                        return;
+                    }
+
+                    let num = target.getAttribute("data-num");
+                    // console.log(num);
+
+                    let formObj = document.querySelector(".formObj");
+
+                    formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
+
+
+                    formObj.submit();
+
+                })
+
+            });
+
+
+        </script>
+
+
+    </div>
+
+
+</body>
+</html>
