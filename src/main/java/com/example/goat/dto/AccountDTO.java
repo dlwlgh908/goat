@@ -47,7 +47,7 @@ public class AccountDTO {
     @NotEmpty(message = "새 비밀번호 확인은 필수 입력 사항입니다.")
     private String confirmPassword;
 
-    // 비밀번호 일치 확인
+    // 비밀번호 일치 확인 (비밀번호 변경 시에만 체크)
     @AssertTrue(message = "비밀번호와 비밀번호 확인이 일치해야 합니다.")
     public boolean isPasswordMatching() {
         return password != null && password.equals(password1);
@@ -58,4 +58,10 @@ public class AccountDTO {
     public boolean isNewPasswordMatching() {
         return newPassword != null && newPassword.equals(confirmPassword);
     }
+
+    // 새 비밀번호 확인을 위한 getter 메서드 추가
+    public String getNewPasswordConfirm() {
+        return confirmPassword;
+    }
+
 }
