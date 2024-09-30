@@ -24,8 +24,8 @@
         <div th:text="${noticeEventDTO.content}">
         </div>
 
-        <a th:href="@{/templates/notice/delete(num=${noticeEventDTO.noticeEvent_num})}">삭제</a>
-        <a th:href="@{/templates/notice/modify(num=${noticeEventDTO.noticeEvent_num})}">수정</a>
+        <a th:href="@{/notice/delete(num=${noticeEventDTO.num})}">삭제</a>
+        <a th:href="@{/notice/modify(num=${noticeEventDTO.num})}">수정</a>
     </div>
 
 

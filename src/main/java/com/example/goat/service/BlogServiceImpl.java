@@ -65,8 +65,8 @@ public class BlogServiceImpl implements BlogService {
         log.info(num);
         Blog blog = blogRepository.findById(num).get();
         BlogDTO blogDTO = mapper.map(blog , BlogDTO.class);
-        Long countSet = blog.getReadCount()+1;
-        blog.setReadCount(countSet);
+//        Long countSet = blog.getReadCount()+1;
+//        blog.setReadCount(countSet);
         blogRepository.save(blog);
         return blogDTO;
     }
@@ -101,5 +101,17 @@ public class BlogServiceImpl implements BlogService {
         blog.setTitle(blogDTO.getTitle());
         blog.setCompanion(blogDTO.getCompanion());
         blog.setSchedule(blogDTO.getSchedule());
+    }
+
+
+    @Override
+    public Blog countappend(Long num) {
+        //읽을 본문을 읽어와서 엔티티매니저가 관리할수 있도록 한다.
+        Blog blog =  blogRepository.findById(num).orElseThrow(EntityNotFoundException::new);
+
+
+        blog.setReadCount(blog.getReadCount()+1);
+
+        return blog;
     }
 }

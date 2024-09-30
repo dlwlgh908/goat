@@ -13,49 +13,28 @@
 <body>
 <div class="row mt-5">
     <div class="col shadow">
-        <form action="/blog/modify" method="post" th:object="${blogDTO}">
-            <input type="hidden" name="num" th:value="${blogDTO.num}">
+        <form action="/notice/modify" method="post" th:object="${noticeEventDTO}">
+            <input type="hidden" name="num" th:value="${noticeEventDTO.num}">
 
 
             <div>제목
             </div>
-            <textarea th:field="*{title}" name="title">[[${blogDTO.title}]]
+            <textarea th:field="*{title}" name="title">[[${noticeEventDTO.title}]]
         </textarea>
 
             <div>내용
             </div>
-            <textarea th:field="*{content}" name="content">[[${blogDTO.content}]]
+            <textarea th:field="*{content}" name="content">[[${noticeEventDTO.content}]]
         </textarea>
             <div>작성자
             </div>
             <div>
 
             </div>
-            <div>
-                <span> 여행 계획</span>
-                <input type="radio" class="btn-check" name="schedule" id="option1" autocomplete="off" value="1" checked>
-                <label class="btn" for="option1">당일치기</label>
-
-                <input type="radio" class="btn-check" name="schedule" id="option2" value="2" autocomplete="off">
-                <label class="btn" for="option2">1박 2일</label>
-
-                <input type="radio" class="btn-check" name="schedule" id="option3" value="3" autocomplete="off">
-                <label class="btn" for="option3">2박 3일</label>
-                <span>일행</span>
-                <input type="radio" class="btn-check" name="companion" id="option4" value="1" autocomplete="off" checked>
-                <label class="btn" for="option4">혼자 여행</label>
-
-                <input type="radio" class="btn-check" name="companion" id="option5" value="2"  autocomplete="off">
-                <label class="btn" for="option5">커플 여행</label>
-
-                <input type="radio" class="btn-check" name="companion" id="option6" value="3" autocomplete="off">
-                <label class="btn" for="option6">가족 여행</label>
-            </div>
-            <a th:href="@{/blog/list}">목록으로 돌아가기</a>
+            <a th:href="@{/notice/list}">목록으로 돌아가기</a>
             <button type="submit">수정</button>
-    </div>
     </form>
 </div>
-
+</div>
 </body>
 </html>

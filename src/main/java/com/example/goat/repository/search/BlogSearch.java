@@ -13,6 +13,5 @@ public interface BlogSearch {
     Page<Blog> searchAll(String[] types, String keyword, Pageable pageable);
     Page<ReplyBlog> searchAllRe(String[] types, String keyword, Pageable pageable, Long blog_num);
 
-    Page<NoticeEvent> searchAllNo(String[] types, String keyword, Pageable pageable);
 
 }

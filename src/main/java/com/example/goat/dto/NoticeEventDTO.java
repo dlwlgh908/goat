@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @ToString
 public class NoticeEventDTO {
 
-    private Long	noticeEvent_num;
+    private Long	num;
 
     private int	type;
 

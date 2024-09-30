@@ -7,15 +7,19 @@ import com.example.goat.dto.ReplyBlogDTO;
 import com.example.goat.entity.Blog;
 import com.example.goat.service.BlogService;
 import com.example.goat.service.ReplyBlogService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -91,4 +95,30 @@ public class BlogController {
         blogService.modify(blogDTO);
         return "redirect:/blog/list";
     }
+
+    @ResponseBody
+    @GetMapping("/countappend")
+    public   ResponseEntity<String> countappend(Long num){
+
+
+        //병렬로 연결되서 증가되는 함수
+
+        try {
+            blogService.countappend(num);   //증가시킬 본문번호 를 사용 메소드 호출
+        } catch (EntityNotFoundException e) {
+
+            return new ResponseEntity<String>("fail", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<String>("success", HttpStatus.OK);
+
+
+
+
+
+
+    }
+
+
+
 }

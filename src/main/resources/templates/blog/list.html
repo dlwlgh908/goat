@@ -64,7 +64,7 @@
 
                             </td>
                             <td>
-                                <a th:href="@{/blog/detale(num=${list.num})}">
+                                <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}"   class="countappend">
                                     [[${list.title}]]
                                 </a>
 
@@ -123,6 +123,7 @@
 
         <script th:inline="javascript">
 
+            let num =
 
             $(document).ready(function () {
                 document.querySelector(".pagination").addEventListener("click", function (e) {
@@ -146,6 +147,46 @@
 
 
                     formObj.submit();
+
+                })
+
+
+
+
+
+                $(".countappend").on("click", function (e) {
+
+
+                    e.preventDefault()
+                    //조회수를 증가시킨다. // 일반적인 컨트롤러에서는 증가시키던걸 빼고
+                    // 병렬 그러니까 따로 증가시킨다.
+
+                    //증가시키는 컨트롤러로 접속한다.
+
+                    let num = $(this).data("num")
+                    console.log($(this).data("num"))
+
+                    $.ajax({
+                        url : "/blog/countappend?num=" + num,
+                        type : "get",
+                        dataType : "text",
+                        success: function (data) {
+                            console.log("성공")
+                            console.log(data)
+                            if (data == "success") {
+                                location.href = "/blog/detale?num=" + num
+                            }
+
+                        },
+                        error : function (data) {
+                            console.log("fail")
+                            console.log(data.responseText)
+                        }
+
+                    })
+
+
+
 
                 })
 
