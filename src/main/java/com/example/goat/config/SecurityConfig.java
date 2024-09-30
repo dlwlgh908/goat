@@ -38,6 +38,7 @@ public class SecurityConfig {
 
                                 .requestMatchers("/account/login/**","/account/signup","/css/**", "/js/**", "/img/**").permitAll()
                                 .requestMatchers("/blog/list").authenticated()
+                                .requestMatchers("/account/edit").authenticated()
 //                                .requestMatchers("/user/list").hasRole("ADMIN")
 
                                 .requestMatchers("/blog/list").hasAnyRole("ADMIN")

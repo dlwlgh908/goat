@@ -59,9 +59,5 @@ public class AccountDTO {
         return newPassword != null && newPassword.equals(confirmPassword);
     }
 
-    // 새 비밀번호 확인을 위한 getter 메서드 추가
-    public String getNewPasswordConfirm() {
-        return confirmPassword;
-    }
 
 }
