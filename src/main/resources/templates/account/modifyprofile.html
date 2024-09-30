@@ -21,23 +21,6 @@
                     <input type="text" id="phone" th:value="${accountDTO.phone}" class="form-control" name="phone" required>
                 </div>
 
-                <!-- 비밀번호 변경 기능 추가 -->
-                <div class="mb-3">
-                    <label for="currentPassword" class="form-label">현재 비밀번호</label>
-                    <input type="password" id="currentPassword" class="form-control" name="currentPassword" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="newPassword" class="form-label">새 비밀번호</label>
-                    <input type="password" id="newPassword" class="form-control" name="newPassword" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
-                    <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required>
-                </div>
-
-
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success">저장</button>
                     <a href="/mypage" class="btn btn-secondary">취소</a>

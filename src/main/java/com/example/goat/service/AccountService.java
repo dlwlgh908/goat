@@ -25,18 +25,15 @@ public class AccountService implements UserDetailsService {
 
     private  final AccountRepository accountRepository;
     private ModelMapper mapper = new ModelMapper();
-
     private final PasswordEncoder passwordEncoder;
 
+    //이메일로 사용자 찾기
     public AccountDTO findbyEmail(String email) {
         Account account = accountRepository.findByEmail(email);
         if(account == null) {
             log.warn("이메일로 찾은 계정이 없습니다:" + email);
             return null;
         }
-
-        //dto변환
-
         return mapper.map(account, AccountDTO.class);
     }
 
@@ -59,7 +56,6 @@ public class AccountService implements UserDetailsService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-
         //새로운 회원 정보 저장
         Account entity = mapper.map(accountDTO, Account.class);
         entity.setPassword(passwordEncoder.encode(accountDTO.getPassword())); //비밀번호를 password 필드에 저장
@@ -80,7 +76,7 @@ public class AccountService implements UserDetailsService {
         //repository에서 이메일로 값을 검색해서 있는 없는지 확인합니다.
         //왜 이메일은 유니크이니까 유일해야하니까 그리고 이미 가입된 회원인지를 확인해야 하니까
 
-        log.info("회원가입서비스로 들어온 :" + email);
+        log.info("로그인 요청 :" + email);
         Account account = accountRepository.findByEmail(email);
 
         if (account == null) {
@@ -101,7 +97,6 @@ public class AccountService implements UserDetailsService {
     //사용자 정보 가져오기
     public AccountDTO getAccountDetails(String username) {
         log.info("사용자 정보를 가져오는 중: " + username);
-
         Account account = accountRepository.findByEmail(username);
         if (account == null) {
             log.warn("사용자를 찾을 수 없습니다: " + username);
@@ -112,36 +107,54 @@ public class AccountService implements UserDetailsService {
         return mapToDTO(account);
     }
 
-    //사용자 정보 업데이트 및 비밀번호 변경
+    //사용자 정보 업데이트
 
     public void updateAccount(AccountDTO accountDTO) {
         log.info("사용자 정보를 업데이트 중 : " + accountDTO.getEmail());
-
         Account account = accountRepository.findByEmail(accountDTO.getEmail());
+
         if (account == null) {
             log.warn("사용자를 찾을 수 없습니다 : " + accountDTO.getEmail());
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + accountDTO.getEmail());
         }
 
-        //사용자 정보 업데이트
+        // 비밀번호 변경 요청이 있는지 확인
+        if (accountDTO.getCurrentPassword() != null && accountDTO.getNewPassword() != null) {
+            changePassword(accountDTO.getEmail(), accountDTO.getCurrentPassword(),
+                    accountDTO.getNewPassword(), accountDTO.getNewPasswordConfirm());
+        }
+
+        //사용자 정보 업데이트 (비밀번호 제외)
         account.setName(accountDTO.getName());
         account.setPhone(accountDTO.getPhone());
 
-        // 비밀번호 변경 로직
-        if (accountDTO.getCurrentPassword() != null && accountDTO.getNewPassword() != null) {
-            // 현재 비밀번호 확인
-            if (!passwordEncoder.matches(accountDTO.getCurrentPassword(), account.getPassword())) {
-                throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
-            }
-            // 새 비밀번호 설정
-            account.setPassword(passwordEncoder.encode(accountDTO.getNewPassword()));
-        }
-
         log.info("DB에 사용자 정보 저장 중: " + account.getEmail());
         accountRepository.save(account);
-
-
     }
+
+        //비밀번호 변경 메서드
+        public void changePassword(String email, String currentPassword, String newPassword, String newPasswordConfirm) {
+            Account account = accountRepository.findByEmail(email);
+            if (account == null) {
+                throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email);
+            }
+
+            // 현재 비밀번호 확인
+            if (!passwordEncoder.matches(currentPassword, account.getPassword())) {
+                throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+            }
+
+            // 비밀번호 확인 로직 추가
+            if (!newPassword.equals(newPasswordConfirm)) {
+                throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
+            }
+
+            // 비밀번호 변경
+            account.setPassword(passwordEncoder.encode(newPassword));
+            accountRepository.save(account);
+            log.info("비밀번호가 성공적으로 변경되었습니다: " + email );
+        }
+
     private AccountDTO mapToDTO(Account account) {
         AccountDTO dto = new AccountDTO();
         dto.setAccountNum(account.getAno());

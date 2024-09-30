@@ -22,47 +22,58 @@ public class ModifyProfileController {
 
     private final AccountService accountService;
 
-   @GetMapping("/modifyprofile")
+   @GetMapping("/modifyprofile") //개인정보 수정 페이지
     public String modifyProfile(Model model, @AuthenticationPrincipal User user) {
         AccountDTO accountDTO = accountService.getAccountDetails(user.getUsername()); //사용자 정보 가져오기
         model.addAttribute("accountDTO", accountDTO);
-       return "account/modifyprofile"; //modifyprofile.html 파일의 경로
+       return "account/modifyprofile"; //개인정보 수정 페이지
     }
 
-    @PostMapping("/update") //정보 수정된 페이지?
+    // 비밀번호 변경 페이지
+    @GetMapping("/edit")
+    public String editPassword(Model model, @AuthenticationPrincipal User user) {
+        AccountDTO accountDTO = accountService.getAccountDetails(user.getUsername());
+        model.addAttribute("accountDTO", accountDTO);
+        return "account/edit"; // 비밀번호 변경 페이지 (edit.html)
+    }
+
+    @PostMapping("/update")
     public String updateProfile(@ModelAttribute AccountDTO accountDTO,
                                 @AuthenticationPrincipal User user,
                                 RedirectAttributes redirectAttributes) {
        log.info("업데이트 요청 : " + accountDTO);
        accountDTO.setEmail(user.getUsername());
 
-        // 비밀번호 변경 로직 추가
-        if (accountDTO.getCurrentPassword() != null && accountDTO.getNewPassword() != null) {
-            // 현재 비밀번호가 비어있지 않은지 확인
-            if (accountDTO.getCurrentPassword().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "현재 비밀번호를 입력하세요.");
-                return "redirect:/account/modifyprofile"; // 실패 시 수정 페이지로 돌아감
-            }
+        // 비밀번호 변경
 
-            // 비밀번호 변경 로직을 updateAccount 메서드로 통합했으므로, 여기서는 호출하지 않음
-            try {
-                accountService.updateAccount(accountDTO);
-            } catch (IllegalArgumentException e) {
-                redirectAttributes.addFlashAttribute("error", e.getMessage());
-                return "redirect:/account/modifyprofile"; // 실패 시 수정 페이지로 돌아감
-            }
+        boolean isPasswordChangeRequested =
+                accountDTO.getCurrentPassword() != null && !accountDTO.getCurrentPassword().isEmpty() &&
+                        accountDTO.getNewPassword() != null && !accountDTO.getNewPassword().isEmpty() &&
+                        accountDTO.getNewPasswordConfirm() != null && !accountDTO.getNewPasswordConfirm().isEmpty();;
+
+        if (isPasswordChangeRequested) {
+            return handlePasswordChange(accountDTO, redirectAttributes);
         } else {
-            // 비밀번호 변경이 없는 경우 사용자 정보만 업데이트
             accountService.updateAccount(accountDTO);
+            redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
         }
-
-       accountService.updateAccount(accountDTO);
-
-        //  성공 메시지 추가
-        redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
-       return "redirect:/mypage";
+        return "redirect:/mypage";
     }
 
-    //
+    private String handlePasswordChange(AccountDTO accountDTO, RedirectAttributes redirectAttributes) {
+
+            // 비밀번호 변경 로직 호출
+            try {
+                accountService.changePassword(accountDTO.getEmail(), accountDTO.getCurrentPassword(),
+                        accountDTO.getNewPassword(), accountDTO.getNewPasswordConfirm());
+                redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
+            } catch (IllegalArgumentException e) {
+                redirectAttributes.addFlashAttribute("error", e.getMessage());
+                return "redirect:/account/modifyprofile"; // 비밀번호 변경 실패 시 수정 페이지로 돌아감
+            }
+
+            accountService.updateAccount(accountDTO); // 사용자 정보 업데이트
+            return "redirect:/mypage";
+        }
 
 }
