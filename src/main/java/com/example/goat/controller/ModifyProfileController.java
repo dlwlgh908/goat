@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
+
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -39,41 +41,44 @@ public class ModifyProfileController {
 
     @PostMapping("/update")
     public String updateProfile(@ModelAttribute AccountDTO accountDTO,
-                                @AuthenticationPrincipal User user,
+                                @AuthenticationPrincipal User user, Principal principal,
                                 RedirectAttributes redirectAttributes) {
-       log.info("업데이트 요청 : " + accountDTO);
+       log.info("회원 정보 수정 요청 : " + accountDTO);
        accountDTO.setEmail(user.getUsername());
 
-        // 비밀번호 변경
+       // 사용자 정보 업데이트
+        accountService.updateAccount(accountDTO);
+        redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
 
-        boolean isPasswordChangeRequested =
-                accountDTO.getCurrentPassword() != null && !accountDTO.getCurrentPassword().isEmpty() &&
-                        accountDTO.getNewPassword() != null && !accountDTO.getNewPassword().isEmpty() &&
-                        accountDTO.getNewPasswordConfirm() != null && !accountDTO.getNewPasswordConfirm().isEmpty();;
-
-        if (isPasswordChangeRequested) {
-            return handlePasswordChange(accountDTO, redirectAttributes);
-        } else {
-            accountService.updateAccount(accountDTO);
-            redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
-        }
         return "redirect:/mypage";
     }
 
-    private String handlePasswordChange(AccountDTO accountDTO, RedirectAttributes redirectAttributes) {
+    @PostMapping ("/change-password")
+    public String handlePasswordChange(@ModelAttribute AccountDTO accountDTO, @AuthenticationPrincipal User user,
+                                       Principal principal, RedirectAttributes redirectAttributes) {
 
-            // 비밀번호 변경 로직 호출
-            try {
-                accountService.changePassword(accountDTO.getEmail(), accountDTO.getCurrentPassword(),
-                        accountDTO.getNewPassword(), accountDTO.getNewPasswordConfirm());
-                redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
+       log.info("비밀번호 변경 요청 : " + accountDTO);
+       // 현재 로그인한 사용자의 이메일을 설정
+        String email = user.getUsername();
+        accountDTO.setEmail(email);
+
+                // 비밀번호 변경
+                try {
+                    accountService.changePassword(accountDTO.getEmail(), accountDTO.getCurrentPassword(),
+                            accountDTO.getNewPassword(), accountDTO.getConfirmPassword());
+
+                    // 비밀번호 변경 후 사용자 정보를 다시 가져와서 업데이트
+                    AccountDTO updatedAccountDTO = accountService.getAccountDetails(email);
+                    accountDTO.setName(updatedAccountDTO.getName());
+                    accountDTO.setPhone(updatedAccountDTO.getPhone());
+
+                    redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
             } catch (IllegalArgumentException e) {
                 redirectAttributes.addFlashAttribute("error", e.getMessage());
-                return "redirect:/account/modifyprofile"; // 비밀번호 변경 실패 시 수정 페이지로 돌아감
+                return "redirect:/account/edit"; // 비밀번호 변경 실패 시 수정 페이지로 돌아감
             }
 
-            accountService.updateAccount(accountDTO); // 사용자 정보 업데이트
-            return "redirect:/mypage";
+            return "redirect:/mypage"; //비밀번호 변경 후 마이페이지로 리다이렉트
         }
 
 }

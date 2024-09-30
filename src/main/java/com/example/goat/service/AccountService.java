@@ -113,17 +113,6 @@ public class AccountService implements UserDetailsService {
         log.info("사용자 정보를 업데이트 중 : " + accountDTO.getEmail());
         Account account = accountRepository.findByEmail(accountDTO.getEmail());
 
-        if (account == null) {
-            log.warn("사용자를 찾을 수 없습니다 : " + accountDTO.getEmail());
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + accountDTO.getEmail());
-        }
-
-        // 비밀번호 변경 요청이 있는지 확인
-        if (accountDTO.getCurrentPassword() != null && accountDTO.getNewPassword() != null) {
-            changePassword(accountDTO.getEmail(), accountDTO.getCurrentPassword(),
-                    accountDTO.getNewPassword(), accountDTO.getNewPasswordConfirm());
-        }
-
         //사용자 정보 업데이트 (비밀번호 제외)
         account.setName(accountDTO.getName());
         account.setPhone(accountDTO.getPhone());
@@ -151,7 +140,7 @@ public class AccountService implements UserDetailsService {
 
             // 비밀번호 변경
             account.setPassword(passwordEncoder.encode(newPassword));
-            accountRepository.save(account);
+
             log.info("비밀번호가 성공적으로 변경되었습니다: " + email );
         }
 
