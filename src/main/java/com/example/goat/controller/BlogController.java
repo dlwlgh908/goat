@@ -1,10 +1,8 @@
 package com.example.goat.controller;
 
-import com.example.goat.dto.BlogDTO;
-import com.example.goat.dto.PageRequestDTO;
-import com.example.goat.dto.PageResponseDTO;
-import com.example.goat.dto.ReplyBlogDTO;
+import com.example.goat.dto.*;
 import com.example.goat.entity.Blog;
+import com.example.goat.entity.Vote;
 import com.example.goat.service.BlogService;
 import com.example.goat.service.ReplyBlogService;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
 
 @Controller
 @Log4j2
@@ -64,14 +66,14 @@ public class BlogController {
     }
 
     @GetMapping("/detale")
-    public void detale(Model model, Long num, PageRequestDTO pageRequestDTO){
+    public void detale(Model model, Long num, RPageRequestDTO rPageRequestDTO){
 
 
         model.addAttribute("blogDTO", blogService.detale(num));
-        PageResponseDTO<ReplyBlogDTO> pageResponseDTO =  replyBlogService.list(pageRequestDTO, num);
-        log.info("값이 있는지"+pageResponseDTO);
+        RPageResponseDTO<ReplyBlogDTO> rPageResponseDTO =  replyBlogService.list(rPageRequestDTO, num);
+        log.info("값이 있는지"+rPageResponseDTO);
         model.addAttribute("replyBlogDTO",new ReplyBlogDTO());
-        model.addAttribute("pageResponseDTO",pageResponseDTO);
+        model.addAttribute("rPageResponseDTO",rPageResponseDTO);
         log.info("get 디테일 진입 완료");
     }
 
@@ -94,6 +96,13 @@ public class BlogController {
         }
         blogService.modify(blogDTO);
         return "redirect:/blog/list";
+    }
+
+    @GetMapping("/vote")
+    public void vote(Long num, @AuthenticationPrincipal UserDetails user, VoteDTO voteDTO){
+        log.info("넘버"+num);
+        log.info("유저"+user);
+        blogService.vote(num, user, voteDTO);
     }
 
     @ResponseBody

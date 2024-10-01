@@ -1,9 +1,6 @@
 package com.example.goat.service;
 
-import com.example.goat.dto.BlogDTO;
-import com.example.goat.dto.PageRequestDTO;
-import com.example.goat.dto.PageResponseDTO;
-import com.example.goat.dto.ReplyBlogDTO;
+import com.example.goat.dto.*;
 import com.example.goat.entity.Blog;
 import com.example.goat.entity.ReplyBlog;
 import com.example.goat.repository.BlogRepository;
@@ -72,11 +69,11 @@ public class ReplyBlogServiceImpl implements ReplyBlogService {
     }
 
     @Override
-    public PageResponseDTO<ReplyBlogDTO> list(PageRequestDTO pageRequestDTO, Long blog_num) {
-        String[] types = pageRequestDTO.getTypes();
+    public RPageResponseDTO<ReplyBlogDTO> list(RPageRequestDTO rPageRequestDTO, Long blog_num) {
+        String[] types = rPageRequestDTO.getTypes();
         log.info("서비스에서 변환된 : " + Arrays.toString(types));
-        String keyword = pageRequestDTO.getKeyword();
-        Pageable pageable = pageRequestDTO.getPageable("num");
+        String keyword = rPageRequestDTO.getKeyword();
+        Pageable pageable = rPageRequestDTO.getPageable("num");
         Page<ReplyBlog> replyBlogPage = repository.searchAllRe(types, keyword, pageable, blog_num);
 
         //보드 타입의 리스트가 >> 보드 DTO 타입의 리스트로 변환
@@ -86,8 +83,8 @@ public class ReplyBlogServiceImpl implements ReplyBlogService {
 
 //        blogDTOList.forEach(blogDTO -> log.info(blogDTO));
 
-        return PageResponseDTO.<ReplyBlogDTO>withAll()
-                .pageRequestDTO(pageRequestDTO)
+        return RPageResponseDTO.<ReplyBlogDTO>withAll()
+                .rPageRequestDTO(rPageRequestDTO)
                 .dtoList(DTOList)
                 .total((int) replyBlogPage.getTotalElements())
                 .build();

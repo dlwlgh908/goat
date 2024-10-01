@@ -18,7 +18,7 @@
 
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
-                    <form class="d-flex formObj" role="search" action="/blog/list" method="get"
+                    <form class="d-flex formObj " role="search" action="/blog/list" method="get"
                           th:object="${pageRequestDTO}">
 
                         <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
@@ -53,31 +53,31 @@
                         <th scope="col">내용</th>
 
                     </tr>
-                    </thead>
-                    <tbody>
-                    <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
-                        <tr>
-                            <td>
-                                <div>
-                                    [[${list.num}]]
-                                </div>
+                    </thead>1
+                    <tbody th:with="link = ${pageRequestDTO.getLink()}">
+                        <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
+                            <tr>
+                                <td>
+                                    <div>
+                                        [[${list.num}]]
+                                    </div>
 
-                            </td>
-                            <td>
-                                <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}"   class="countappend">
-                                    [[${list.title}]]
-                                </a>
+                                </td>
+                                <td>
+                                    <a th:href="|@{/blog/detale(num=${list.num})}&${link}|" th:data-num="${list.num}"   class="countappend">
+                                        [[${list.title}]]
+                                    </a>
 
-                            </td>
-                            <td>
-                                <div>
-                                    [[${list.content}]]
-                                </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        [[${list.content}]]
+                                    </div>
 
-                            </td>
+                                </td>
 
-                        </tr>
-                    </th:block>
+                            </tr>
+                        </th:block>
 
                     </tbody>
                 </table>
@@ -123,7 +123,7 @@
 
         <script th:inline="javascript">
 
-            let num =
+
 
             $(document).ready(function () {
                 document.querySelector(".pagination").addEventListener("click", function (e) {
@@ -164,6 +164,7 @@
                     //증가시키는 컨트롤러로 접속한다.
 
                     let num = $(this).data("num")
+                    let url = $(this).prop('href')
                     console.log($(this).data("num"))
 
                     $.ajax({
@@ -174,7 +175,7 @@
                             console.log("성공")
                             console.log(data)
                             if (data == "success") {
-                                location.href = "/blog/detale?num=" + num
+                                location.href = url
                             }
 
                         },

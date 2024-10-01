@@ -28,9 +28,6 @@ public class BlogDTO {
     @Builder.Default
     private int	schedule = 1;
 
-    @Builder.Default
-    private int	companion = 1 ;
-
     private LocalDate reg;
 
     private Long	readCount;
@@ -39,5 +36,5 @@ public class BlogDTO {
 
     private Long	account_num;
 
-    private int	city_num;
+    private String city;
 }

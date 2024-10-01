@@ -27,10 +27,7 @@
         <div th:text="${blogDTO.readCount}"></div>
         <div>작성자
         </div>
-        <div>
-            <span th:if="${blogDTO.companion}==1" th:text="'혼자 여행'"></span>
-            <span th:if="${blogDTO.companion}==2" th:text="'커플 여행'"></span>
-            <span th:if="${blogDTO.companion}==3" th:text="'가족 여행'"></span>
+
         </div>
         <div>
             <span th:if="${blogDTO.schedule}==1" th:text="'당일 치기'"></span>
@@ -39,7 +36,9 @@
         </div>
         <a th:href="@{/blog/delete(num=${blogDTO.num})}">삭제</a>
         <a th:href="@{/blog/modify(num=${blogDTO.num})}">수정</a>
-    </div>
+    <a th:href="@{/blog/vote(num=${blogDTO.num})}">추천</a>
+
+</div>
 
 
     <div class="row mt-5">
@@ -52,11 +51,11 @@
                 <a href="/blog/list" type="button" class="btn btn-dark">목록으로 돌아가기</a>
             </form>
 
-            <th:block th:if="${#lists.isEmpty(pageResponseDTO.dtoList)}">
+            <th:block th:if="${#lists.isEmpty(rPageResponseDTO.dtoList)}">
                 <h1>너님 글이 없음</h1>
             </th:block>
 
-            <th:block th:unless="${#lists.isEmpty(pageResponseDTO.dtoList)}">
+            <th:block th:unless="${#lists.isEmpty(rPageResponseDTO.dtoList)}">
 
                 <table class="table table-hover">
                     <thead>
@@ -67,7 +66,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <th:block th:each="list: ${pageResponseDTO.dtoList}">
+                    <th:block th:each="list: ${rPageResponseDTO.dtoList}">
                         <tr>
                             <td>
                                 <div>
@@ -112,23 +111,23 @@
                 <div class="col">
                     <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
                         <ul class="pagination justify-content-center">
-                            <li th:if="${pageResponseDTO.prev}" class="paginate_button previous "
+                            <li th:if="${rPageResponseDTO.prev}" class="paginate_button previous "
                                 aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-                                <a class="page-link" th:data-num="${pageResponseDTO.start -1}">Previous</a>
+                                <a class="page-link" th:data-num="${rPageResponseDTO.start -1}">Previous</a>
                             </li>
 
                             <!--thymleaf에는 순서를 표기하는 #numbers.sequence가 있다.-->
                             <th:block
-                                    th:each="i: ${#numbers.sequence(pageResponseDTO.start,pageResponseDTO.end)}">
-                                <li th:class="${pageResponseDTO.page == i} ? 'paginate_button active':''"
+                                    th:each="i: ${#numbers.sequence(rPageResponseDTO.start,rPageResponseDTO.end)}">
+                                <li th:class="${rPageResponseDTO.page == i} ? 'paginate_button active':''"
                                     aria-controls="dataTables-example" tabindex="0">
                                     <a class="page-link" th:data-num="${i}">[[${i}]]</a>
                                 </li>
                             </th:block>
 
-                            <li th:if="${pageResponseDTO.next}" class="paginate_button next"
+                            <li th:if="${rPageResponseDTO.next}" class="paginate_button next"
                                 aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-                                <a class="page-link" th:data-num="${pageResponseDTO.end +1}">Next</a>
+                                <a class="page-link" th:data-num="${rPageResponseDTO.end +1}">Next</a>
                             </li>
                         </ul>
                     </div>
@@ -182,7 +181,7 @@
 
             $(document).ready(function () {
 
-                let replyDTO = [[${pageResponseDTO.dtoList}]]
+                let replyDTO = [[${rPageResponseDTO.dtoList}]]
 
                 console.log(replyDTO)
                 document.querySelector(".pagination").addEventListener("click", function (e) {
