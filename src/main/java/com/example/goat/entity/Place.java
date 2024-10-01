@@ -1,5 +1,6 @@
 package com.example.goat.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,17 +9,23 @@ import lombok.*;
 @Setter
 @ToString
 @NoArgsConstructor // 기본 생성자
-@AllArgsConstructor // 모든 parameter를 가지고 있는 생성자
-public class Restraunt {
+@AllArgsConstructor
+public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "restraunt_num")
+    @Column(name = "place_num")
     private Long num;
 
-    private Long restraunt_key;
+    private String place_name;
+
+    private Long api_id;
+
+    private String category_name;
 
 
-    private Long recommendCount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="blog_num")
+    private Blog blog;
 
 }

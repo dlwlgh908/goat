@@ -19,31 +19,48 @@ public class Blog extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blog_num")
     private Long num;
+//PK ID 값
+
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="account_num")
     private Account account;
 
+    //Acc랑 조인
+
+
     @Size(min = 2, max = 50)
     @Column(nullable = false)
     private String	title;
+    //제목
+
+
 
     @Size(min = 2, max = 200)
     private String	content;
+    //내용
+
 
     @Column(nullable = false)
     private int	schedule;
+    //당일치기 ~ 2박 3일
+    // 1== 당일치기 2== 1박 2일 3== 2박 3일
 
-    @Column(nullable = false)
-    private int	companion;
-    
+
+
+
     private Long	readCount;
+    // 조회수
 
     private Long	recommendCount;
+    //추천수
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="city_num")
-    private City city;
+
+    private String city;
+    // 도시
+
+
 
 
 

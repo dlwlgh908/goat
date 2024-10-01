@@ -1,9 +1,6 @@
 package com.example.goat.controller;
 
-import com.example.goat.dto.BlogDTO;
-import com.example.goat.dto.PageRequestDTO;
-import com.example.goat.dto.PageResponseDTO;
-import com.example.goat.dto.ReplyBlogDTO;
+import com.example.goat.dto.*;
 import com.example.goat.service.BlogService;
 import com.example.goat.service.ReplyBlogService;
 import jakarta.validation.Valid;
@@ -27,14 +24,14 @@ public class ReplyBlogController {
 
     @PostMapping("/register")
     public String registerPost(@Valid ReplyBlogDTO replyBlogDTO, BindingResult bindingResult,
-                               PageRequestDTO pageRequestDTO,Model model){
+                               RPageRequestDTO rPageRequestDTO, Model model){
         log.info(replyBlogDTO);
 
         if(bindingResult.hasErrors()){
             BlogDTO blogDTO =  blogService.detale(replyBlogDTO.getBlog_num());
             model.addAttribute("blogDTO",blogDTO);
 
-            PageResponseDTO<ReplyBlogDTO> pageRequestDTOPageResponseDTO = replyBlogService.list(pageRequestDTO, replyBlogDTO.getBlog_num());
+            RPageResponseDTO<ReplyBlogDTO> pageRequestDTOPageResponseDTO = replyBlogService.list(rPageRequestDTO, replyBlogDTO.getBlog_num());
             model.addAttribute("pageRequestDTOPageResponseDTO",pageRequestDTOPageResponseDTO);
             return "blog/detale";
         }
@@ -46,7 +43,7 @@ public class ReplyBlogController {
 
     @PostMapping("/modify")
     public String modifyPost(@Valid ReplyBlogDTO replyBlogDTO, BindingResult bindingResult,
-                             PageRequestDTO pageRequestDTO,Model model){
+                             RPageRequestDTO rPageRequestDTO,Model model){
         log.info(replyBlogDTO+"체크포인트 09271630");
         replyBlogService.modify(replyBlogDTO);
         return "redirect:/blog/detale?num="+replyBlogDTO.getBlog_num();

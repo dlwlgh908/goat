@@ -1,6 +1,5 @@
 package com.example.goat.dto;
 
-import com.example.goat.entity.Account;
 import com.example.goat.entity.Blog;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -15,11 +14,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor      //이거 빠졌ㄸ$ㅏ
 @Builder
-public class VoteDTO {
+public class PlaceDTO {
 
-    private Long vno;
+    private Long num;
 
-    private String email;
+    private String place_name;
+
+    private Long api_id;
+
+    private String category_name;
 
     private Long blog_num;
 }

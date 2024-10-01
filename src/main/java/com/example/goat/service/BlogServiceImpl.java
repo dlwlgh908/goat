@@ -3,9 +3,12 @@ package com.example.goat.service;
 import com.example.goat.dto.BlogDTO;
 import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
+import com.example.goat.dto.VoteDTO;
 import com.example.goat.entity.Blog;
+import com.example.goat.entity.Vote;
 import com.example.goat.repository.BlogRepository;
 import com.example.goat.repository.ReplyBlogRepository;
+import com.example.goat.repository.VoteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -28,6 +32,7 @@ public class BlogServiceImpl implements BlogService {
 
     private final BlogRepository blogRepository;
     private final ReplyBlogRepository replyBlogRepository;
+    private final VoteRepository voteRepository;
     private ModelMapper mapper = new ModelMapper();
 
     @Override
@@ -99,7 +104,6 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = blogRepository.findById(blogDTO.getNum()).orElseThrow(EntityNotFoundException::new);
         blog.setContent(blogDTO.getContent());
         blog.setTitle(blogDTO.getTitle());
-        blog.setCompanion(blogDTO.getCompanion());
         blog.setSchedule(blogDTO.getSchedule());
     }
 
@@ -113,5 +117,23 @@ public class BlogServiceImpl implements BlogService {
         blog.setReadCount(blog.getReadCount()+1);
 
         return blog;
+    }
+
+    @Override
+    public void vote(Long num, UserDetails user, VoteDTO voteDTO) {
+
+        Vote vote = mapper.map(voteDTO, Vote.class);
+
+        vote.setAccount();
+        vote.setBlog(num);
+
+        log.info(voteDTO.getEmail());
+        log.info(voteDTO.getBlog_num());
+
+        //Vote vote = mapper.map(voteDTO, Vote.class);
+
+
+        voteRepository.save(vote);
+
     }
 }

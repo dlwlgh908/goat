@@ -16,7 +16,7 @@ public class Vote {
     private Long vno;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="account_num")
+    @JoinColumn(name="email")
     private Account	account;
 
     @ManyToOne(fetch = FetchType.LAZY)
