@@ -3,6 +3,7 @@ package com.example.goat.controller;
 import com.example.goat.dto.*;
 import com.example.goat.entity.Blog;
 import com.example.goat.entity.Vote;
+import com.example.goat.repository.VoteRepository;
 import com.example.goat.service.BlogService;
 import com.example.goat.service.ReplyBlogService;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,6 +33,7 @@ public class BlogController {
 
     private final BlogService blogService;
     private final ReplyBlogService replyBlogService;
+    private final VoteRepository voteRepository;
 
     @GetMapping("/register")
     public void register(BlogDTO blogDTO){
@@ -39,13 +41,13 @@ public class BlogController {
     }
 
     @PostMapping("/register")
-    public String registerPost(@Valid BlogDTO blogDTO, BindingResult bindingResult, Model model){
+    public String registerPost(@Valid BlogDTO blogDTO, BindingResult bindingResult, Model model, @AuthenticationPrincipal UserDetails user){
 
 
         if(bindingResult.hasErrors()){
             return "blog/register";
         }
-        blogService.register(blogDTO);
+        blogService.register(blogDTO, user);
         return "redirect:/blog/list";
     }
 
@@ -66,7 +68,7 @@ public class BlogController {
     }
 
     @GetMapping("/detale")
-    public void detale(Model model, Long num, RPageRequestDTO rPageRequestDTO){
+    public void detale(@AuthenticationPrincipal UserDetails user, Model model, Long num, RPageRequestDTO rPageRequestDTO){
 
 
         model.addAttribute("blogDTO", blogService.detale(num));
@@ -75,6 +77,15 @@ public class BlogController {
         model.addAttribute("replyBlogDTO",new ReplyBlogDTO());
         model.addAttribute("rPageResponseDTO",rPageResponseDTO);
         log.info("get 디테일 진입 완료");
+        if(voteRepository.voteCheck(user.getUsername(),num)==null){
+            log.info("1번으로 체크됨");
+            model.addAttribute("voteCheck", "1");
+        }
+
+        else model.addAttribute("voteCheck","2");
+        log.info("2번으로 체크됨");
+
+
     }
 
     @GetMapping("/delete")
@@ -98,11 +109,14 @@ public class BlogController {
         return "redirect:/blog/list";
     }
 
+
     @GetMapping("/vote")
-    public void vote(Long num, @AuthenticationPrincipal UserDetails user, VoteDTO voteDTO){
+    public String vote(Long num, @AuthenticationPrincipal UserDetails user, VoteDTO voteDTO){
         log.info("넘버"+num);
         log.info("유저"+user);
         blogService.vote(num, user, voteDTO);
+
+        return "redirect:/blog/detale?num="+num;
     }
 
     @ResponseBody

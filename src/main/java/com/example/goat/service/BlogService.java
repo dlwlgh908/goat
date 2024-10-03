@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BlogService {
 
-    public void register(BlogDTO blogDTO);
+    public void register(BlogDTO blogDTO, UserDetails user);
 
     public List<BlogDTO> selectAll();
 

@@ -36,7 +36,8 @@
         </div>
         <a th:href="@{/blog/delete(num=${blogDTO.num})}">삭제</a>
         <a th:href="@{/blog/modify(num=${blogDTO.num})}">수정</a>
-    <a th:href="@{/blog/vote(num=${blogDTO.num})}">추천</a>
+    <a class="recommend_button" th:href="@{/blog/vote(num=${blogDTO.num})}">추천</a>
+    <span class="recommend_text">추천한 글 입니다.</span>
 
 </div>
 
@@ -180,6 +181,20 @@
 
 
             $(document).ready(function () {
+                let votecheck = [[${voteCheck}]]
+                console.log(votecheck)
+                if(votecheck == "1"){
+                    $('.recommend_text').hide()
+                    $('.recommend_button').show()
+                }
+                else
+                {
+                    $('.recommend_text').show()
+                    $('.recommend_button').hide()
+                }
+
+
+
 
                 let replyDTO = [[${rPageResponseDTO.dtoList}]]
 

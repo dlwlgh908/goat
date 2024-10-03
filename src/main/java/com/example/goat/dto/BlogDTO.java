@@ -34,7 +34,8 @@ public class BlogDTO {
 
     private Long	recommendCount;
 
-    private Long	account_num;
+    private String	email;
+    private AccountDTO accountDTO;
 
     private String city;
 }
