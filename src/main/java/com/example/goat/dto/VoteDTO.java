@@ -19,7 +19,8 @@ public class VoteDTO {
 
     private Long vno;
 
-    private String email;
+    private AccountDTO accountDTO;
 
     private Long blog_num;
+    private BlogDTO blogDTO;
 }

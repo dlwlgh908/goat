@@ -4,8 +4,10 @@ import com.example.goat.dto.BlogDTO;
 import com.example.goat.dto.PageRequestDTO;
 import com.example.goat.dto.PageResponseDTO;
 import com.example.goat.dto.VoteDTO;
+import com.example.goat.entity.Account;
 import com.example.goat.entity.Blog;
 import com.example.goat.entity.Vote;
+import com.example.goat.repository.AccountRepository;
 import com.example.goat.repository.BlogRepository;
 import com.example.goat.repository.ReplyBlogRepository;
 import com.example.goat.repository.VoteRepository;
@@ -13,12 +15,15 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.mapper.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.Mapping;
 
+import javax.xml.transform.Source;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,13 +40,20 @@ public class BlogServiceImpl implements BlogService {
     private final VoteRepository voteRepository;
     private ModelMapper mapper = new ModelMapper();
 
-    @Override
-    public void register(BlogDTO blogDTO) {
-        //등록 맵퍼로 맵핑해서 블로그 레파지토리에 세이브함
+    private final AccountRepository accountRepository;
 
+
+    @Override
+    public void register(BlogDTO blogDTO, UserDetails user) {
+        //등록 맵퍼로 맵핑해서 블로그 레파지토리에 세이브함
+        log.info("유저 찍히는지"+user);
+        Account account = accountRepository.findByEmail(user.getUsername());
+
+//        blogDTO.setEmail(user.getUsername()); XXXX
         log.info(blogDTO);
         Blog blog = mapper.map(blogDTO, Blog.class);
 
+        blog.setAccount(account);
         blogRepository.save(blog);
     }
 
@@ -98,6 +110,8 @@ public class BlogServiceImpl implements BlogService {
                 .build();
     }
 
+    
+
     @Override
     public void modify(BlogDTO blogDTO) {
 
@@ -122,15 +136,16 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void vote(Long num, UserDetails user, VoteDTO voteDTO) {
 
-        Vote vote = mapper.map(voteDTO, Vote.class);
+        Account account = accountRepository.findByEmail(user.getUsername());
+        Blog blog = blogRepository.findById(num).get();
 
-        vote.setAccount();
-        vote.setBlog(num);
+//        voteDTO.setEmail(user.getUsername());
+//        voteDTO.setBlog_num(num);
 
-        log.info(voteDTO.getEmail());
-        log.info(voteDTO.getBlog_num());
 
-        //Vote vote = mapper.map(voteDTO, Vote.class);
+        Vote vote = new Vote();
+        vote.setBlog(blog);
+        vote.setAccount(account);
 
 
         voteRepository.save(vote);

@@ -3,9 +3,9 @@ package com.example.goat.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.bind.annotation.Mapping;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity // 엔티티임을 명시
 @Getter
@@ -26,6 +26,7 @@ public class Blog extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="account_num")
     private Account account;
+
 
     //Acc랑 조인
 
@@ -56,8 +57,9 @@ public class Blog extends BaseEntity{
     private Long	recommendCount;
     //추천수
 
-
-    private String city;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="city")
+    private City city;
     // 도시
 
 

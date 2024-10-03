@@ -52,7 +52,7 @@ public class BlogSearchImpl extends QuerydslRepositorySupport implements BlogSea
                         booleanBuilder.or(blog.account.name.contains(keyword));
                         break;
                     case "y":
-                        booleanBuilder.or(blog.city.contains(keyword));
+                        booleanBuilder.or(blog.city.cname.contains(keyword));
                         break;
                 }
             }
