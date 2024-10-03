@@ -10,11 +10,10 @@
 <div class="container">
     <div class = "row mt-5">
         <div class="col-6 offset-3">
-            <h2 class="center">My Page</h2> </br>
+            <h2 class="text-center">My Page</h2> </br>
 
-            <th:block th:if="${message}">
-                <div class="alert alert-success" th:text="${message}"></div>
-            </th:block>
+            <!-- 메시지 표시 영역 -->
+            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 
             <label for="email" class="form-label">이메일</label>
             <input type="text" id="email" th:value="${accountDTO.email}" class="form-control" readonly>
@@ -25,12 +24,10 @@
             <label for="phone" class="form-label">연락처</label>
             <input type="text" id="phone" th:value="${accountDTO.phone}" class="form-control" readonly>
 
-            <label for="role" class="form-label">권한</label>
-            <input type="text" id="role" th:value="${accountDTO.role}" class="form-control" readonly>
-
             <div class="text-center mt-4">
                 <a href="/account/modifyprofile" class="btn btn-primary"> 정보 수정 </a>
-                <a href="/account/edit" class="btn btn-primary"> 비밀번호 변경</a>
+                <a href="/account/edit" class="btn btn-secondary"> 비밀번호 변경</a>
+               <!-- <a href="/account/delete" class="btn btn-danger"> 회원 탈퇴</a> -->
             </div>
         </div>
     </div>

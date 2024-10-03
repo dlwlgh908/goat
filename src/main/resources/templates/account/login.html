@@ -12,7 +12,7 @@
 
     <div class="row mt-5">
         <div class="col-6 offset-3">
-                <h1 class="center">로그인</h1>
+                <h2 class="text-center">로그인</h2>
                 <form action="/account/login" method="post">
                 <div th:if="${param.error}">
                     <div class="alert alert-danger mt-4">
@@ -32,7 +32,7 @@
 
                 <div class="text-center mt-3">
                     <button class="btn btn-success">로그인</button>
-                    <a type="button" href="/blog/list" class = "btn btn-success"> 목록 </a>
+                    <a type="button" href="/account/list" class = "btn btn-secondary"> 회원목록 </a>
                 </div>
                 </form>
         </div>

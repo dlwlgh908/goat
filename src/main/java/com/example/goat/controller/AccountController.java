@@ -2,9 +2,14 @@ package com.example.goat.controller;
 
 import com.example.goat.dto.AccountDTO;
 import com.example.goat.service.AccountService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
+import java.util.List;
 
 @Controller
 @Log4j2
@@ -73,11 +81,92 @@ public class AccountController {
        return "account/login";
    }
 
+    // 이메일 찾기 페이지
+    @GetMapping("/find-email")
+    public String findEmail() {
+        return "account/find-email"; // 이메일 찾기 페이지를 보여줍니다.
+    }
+
+    // 이메일 찾기 처리
+    @PostMapping("/find-email")
+    public ResponseEntity<String> findEmailByNameAndPhone(@RequestParam String name, @RequestParam String phone) {
+        try {
+            String email = accountService.findEmailByNameAndPhone(name, phone);
+            return ResponseEntity.ok(email);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    //회원 목록 보기(관리자 전용)
+    @GetMapping("/list")
+    public String getAllusers(Model model) {
+       log.info("회원 목록 요청 처리 시작");
+       List<AccountDTO> users = accountService.getAllUsers(); // 회원 목록 가져오기
+       log.info("회원 목록 가져오기 완료, 총 회원 수 : {}", users.size()); //회원 수 로그
+       model.addAttribute("users", users);
+       return "account/list";
+    }
+
+    // 회원 탈퇴 처리
+    @PostMapping("/delete")
+    public String deleteAccount(@RequestParam("email") String email, Principal principal) {
+        log.info("회원 탈퇴 요청 : 이메일 = {}", email); //탈퇴 요청 로그
+
+        //혹시나 로그인이 안되어 있다면 그에 따라 체크
+        if(principal == null){
+            return "redirect:/account/login";
+        }
+
+        try {
+            accountService.deleteAccount(email); //회원 탈퇴 처리 로직 호출
+            log.info("회원 탈퇴 완료: 이메일 = {}", email); // 탈퇴 완료 로그
+        } catch (Exception e) {
+            log.error("회원 탈퇴 중 오류 발생: 이메일 = {}, 오류 = {}", email, e.getMessage()); // 에러 발생 시 로그 출력
+            return "redirect:/error"; // 에러 발생 시 에러 페이지로 리디렉션
+        }
+
+
+        //추가사항 로그아웃 여부
+        if(principal.getName().equals(email)){
+            log.info("현재 로그인한 유저입니다.. 로그아웃합니다.");
+            return "redirect:/account/logout";
+        }else {
+            log.info("현재 로그인한 유저가 아닙니다.");
+            return "redirect:/account/list";
+        }
+
+
+
+    }
 
 
 
 
-    //회원목록 관리자만 볼거임
 
+
+
+
+
+
+
+
+
+
+
+
+
+//    //회원 탈퇴 페이지 보여줌
+//    @GetMapping("/delete")
+//    public String delete() {
+//       return "account/delete";
+//    }
+
+//    // 회원 탈퇴 성공 페이지 보여줌
+//    @GetMapping("/account/deleteSuccess")
+//    public String deleteSuccess() {
+//       return "account/deleteSuccess";
+//    }
   }
 

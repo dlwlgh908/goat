@@ -8,24 +8,26 @@
 </head>
 <body>
     <div class="container">
-        <div class="col-6 offset-3">
-            <h2 class="text-center"> 정보 수정 </h2> </br>
-            <form th:object="${accountDTO}" action="/account/update" method="post">
-                <div class="mb-3">
-                    <label for="name" class="form-label">이름</label>
-                    <input type="text" id="name" th:value="${accountDTO.name}" class="form-control" name="name" required>
-                </div>
+        <div class="row mt-5">
+            <div class="col-6 offset-3">
+                <h2 class="text-center"> 정보 수정 </h2> </br>
+                    <form th:object="${accountDTO}" action="/account/update" method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">이름</label>
+                            <input type="text" id="name" th:value="${accountDTO.name}" class="form-control" name="name" required>
+                        </div>
 
-                <div class="mb-3">
-                    <label for="phone" class="form-label">연락처</label>
-                    <input type="text" id="phone" th:value="${accountDTO.phone}" class="form-control" name="phone" required>
-                </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">연락처</label>
+                            <input type="text" id="phone" th:value="${accountDTO.phone}" class="form-control" name="phone" required>
+                        </div>
 
-                <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success">저장</button>
-                    <a href="/mypage" class="btn btn-secondary">취소</a>
-                </div>
-            </form>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success">저장</button>
+                            <a href="/mypage" class="btn btn-secondary">취소</a>
+                        </div>
+                    </form>
+            </div>
         </div>
     </div>
 </body>

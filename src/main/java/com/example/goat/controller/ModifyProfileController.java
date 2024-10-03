@@ -1,5 +1,6 @@
 package com.example.goat.controller;
 
+import com.example.goat.dto.PwdChangeDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.ui.Model;
 import com.example.goat.dto.AccountDTO;
@@ -54,26 +55,22 @@ public class ModifyProfileController {
     }
 
     @PostMapping ("/change-password")
-    public String handlePasswordChange(@ModelAttribute AccountDTO accountDTO, @AuthenticationPrincipal User user,
+    public String handlePasswordChange(@ModelAttribute PwdChangeDTO pwdChangeDTO, @AuthenticationPrincipal User user,
                                        Principal principal, RedirectAttributes redirectAttributes) {
 
-       log.info("비밀번호 변경 요청 : " + accountDTO);
+       log.info("비밀번호 변경 요청 : " + pwdChangeDTO);
        // 현재 로그인한 사용자의 이메일을 설정
         String email = user.getUsername();
-        accountDTO.setEmail(email);
 
                 // 비밀번호 변경
                 try {
-                    accountService.changePassword(accountDTO.getEmail(), accountDTO.getCurrentPassword(),
-                            accountDTO.getNewPassword(), accountDTO.getConfirmPassword());
+                    accountService.changePassword(email, pwdChangeDTO.getCurrentPassword(),
+                            pwdChangeDTO.getNewPassword(), pwdChangeDTO.getConfirmPassword());
 
-                    // 비밀번호 변경 후 사용자 정보를 다시 가져와서 업데이트
-                    AccountDTO updatedAccountDTO = accountService.getAccountDetails(email);
-                    accountDTO.setName(updatedAccountDTO.getName());
-                    accountDTO.setPhone(updatedAccountDTO.getPhone());
-
+                    // 성공 메시지 설정
                     redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
-            } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException e) {
+                    //실패 시 에러 메시지 설정
                 redirectAttributes.addFlashAttribute("error", e.getMessage());
                 return "redirect:/account/edit"; // 비밀번호 변경 실패 시 수정 페이지로 돌아감
             }
