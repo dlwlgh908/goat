@@ -30,4 +30,5 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     private Role role; //권한을 위하여
+
 }

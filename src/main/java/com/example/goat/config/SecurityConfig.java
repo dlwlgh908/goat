@@ -1,4 +1,5 @@
 package com.example.goat.config;
+import com.example.goat.constant.Role;
 import jakarta.servlet.annotation.WebListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,13 +37,15 @@ public class SecurityConfig {
 //                                .requestMatchers("/replies/modify/**").authenticated()
 //                                .requestMatchers("/replies/remove/**").authenticated()
 
-                                .requestMatchers("/account/login/**","/account/signup","/css/**", "/js/**", "/img/**").permitAll()
+                                .requestMatchers("/account/login","/account/signup","/css/**", "/js/**", "/img/**").permitAll()
                                 .requestMatchers("/blog/list").authenticated()
-//                                .requestMatchers("/user/list").hasRole("ADMIN")
+                                .requestMatchers("/account/edit").authenticated()
+                                .requestMatchers("/account/delete").authenticated()
+                                .requestMatchers(new AntPathRequestMatcher("/account/list")).hasRole(Role.ADMIN.name())
 
                                 .requestMatchers("/blog/list").hasAnyRole("ADMIN")
-                                .anyRequest().permitAll()
 
+                                .anyRequest().permitAll()
 
 //                                .requestMatchers("/order/**").authenticated()      //주문페이지는 로그인을 해야 볼수 있음
 //                                .requestMatchers("/orders/**").authenticated()      //주문페이지는 로그인을 해야 볼수 있음

@@ -6,9 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
@@ -37,4 +35,12 @@ public class AccountDTO {
 
     @NotNull(message = "권한을 선택해야 합니다")
     private Role role;
+
+    // 비밀번호 일치 확인 (비밀번호 변경 시에만 체크)
+    @AssertTrue(message = "비밀번호와 비밀번호 확인이 일치해야 합니다.")
+    public boolean isPasswordMatching() {
+        return password != null && password.equals(password1);
+    }
+
+
 }
