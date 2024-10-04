@@ -43,8 +43,6 @@ public class SecurityConfig {
                                 .requestMatchers("/account/delete").authenticated()
                                 .requestMatchers(new AntPathRequestMatcher("/account/list")).hasRole(Role.ADMIN.name())
 
-                                .requestMatchers("/blog/list").hasAnyRole("ADMIN")
-
                                 .anyRequest().permitAll()
 
 //                                .requestMatchers("/order/**").authenticated()      //주문페이지는 로그인을 해야 볼수 있음

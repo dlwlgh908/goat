@@ -10,7 +10,7 @@
 <div class="container">
     <div class="row mt-5">
         <div class="col-6 offset-3">
-            <h2 class="text-center"> 개인정보 수정 </h2> </br>
+            <h2 class="text-center"> 비밀번호 변경 </h2> </br>
 
             <!-- 메시지 표시 영역 추가 -->
             <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
@@ -34,7 +34,7 @@
 
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success">변경</button>
-                    <a href="/mypage" class="btn btn-secondary">취소</a>
+                    <a href="/account/mypage" class="btn btn-secondary">취소</a>
                 </div>
             </form>
         </div>

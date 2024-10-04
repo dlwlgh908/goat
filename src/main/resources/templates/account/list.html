@@ -41,31 +41,20 @@
                         <td th:text="${user.phone}"></td>
                         <td th:text="${user.role}"></td>
                         <td>
-                            <form th:action="@{/account/delete}" method="post" onsubmit="return confirm('정말로 이 회원을 탈퇴시키겠습니까?');">
-                                <input type="hidden" name="email" th:value="${user.email}"/>
-                                <button type="submit" class="btn btn-danger">탈퇴</button>
-                            </form>
-
-                            <button type="button" class="deldel btn btn-info" th:value="${user.email}">탈퇴</button>
-
-
+                            <button type="button" class="deldel btn btn-danger" th:value="${user.email}">탈퇴</button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <form class="formObjj" method="post" action="/account/delete">
-
-        </form>
+        <form class="formObjj" method="post" action="/account/delete"></form>
         
         <script> 
             $(".deldel").on("click", function () {
                 if(confirm('정말로 이 회원을 탈퇴시키겠습니까?')){
                     console.log("홍길동")
                     console.log($(this).val())
-                    create
                     let str = `<input type="hidden" name="email" value="${$(this).val()}"/>`
                     $(".formObjj").append(str)
                     $(".formObjj").submit()
@@ -76,7 +65,6 @@
                 }
 
             })
-        
         </script>
     </div>
 

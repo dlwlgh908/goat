@@ -25,11 +25,25 @@ public class ModifyProfileController {
 
     private final AccountService accountService;
 
-   @GetMapping("/modifyprofile") //개인정보 수정 페이지
+   @GetMapping("/modifyprofile") //정보 수정 페이지
     public String modifyProfile(Model model, @AuthenticationPrincipal User user) {
         AccountDTO accountDTO = accountService.getAccountDetails(user.getUsername()); //사용자 정보 가져오기
         model.addAttribute("accountDTO", accountDTO);
        return "account/modifyprofile"; //개인정보 수정 페이지
+    }
+
+    @PostMapping("/update")
+    public String updateProfile(@ModelAttribute AccountDTO accountDTO,
+                                @AuthenticationPrincipal User user, Principal principal,
+                                RedirectAttributes redirectAttributes) {
+        log.info("회원 정보 수정 요청 : " + accountDTO);
+        accountDTO.setEmail(user.getUsername());
+
+        // 사용자 정보 업데이트
+        accountService.updateAccount(accountDTO);
+        redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
+
+        return "redirect:/account/mypage";
     }
 
     // 비밀번호 변경 페이지
@@ -40,19 +54,6 @@ public class ModifyProfileController {
         return "account/edit"; // 비밀번호 변경 페이지 (edit.html)
     }
 
-    @PostMapping("/update")
-    public String updateProfile(@ModelAttribute AccountDTO accountDTO,
-                                @AuthenticationPrincipal User user, Principal principal,
-                                RedirectAttributes redirectAttributes) {
-       log.info("회원 정보 수정 요청 : " + accountDTO);
-       accountDTO.setEmail(user.getUsername());
-
-       // 사용자 정보 업데이트
-        accountService.updateAccount(accountDTO);
-        redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
-
-        return "redirect:/mypage";
-    }
 
     @PostMapping ("/change-password")
     public String handlePasswordChange(@ModelAttribute PwdChangeDTO pwdChangeDTO, @AuthenticationPrincipal User user,
@@ -75,7 +76,7 @@ public class ModifyProfileController {
                 return "redirect:/account/edit"; // 비밀번호 변경 실패 시 수정 페이지로 돌아감
             }
 
-            return "redirect:/mypage"; //비밀번호 변경 후 마이페이지로 리다이렉트
+            return "redirect:/account/mypage"; //비밀번호 변경 후 마이페이지로 리다이렉트
         }
 
 }
