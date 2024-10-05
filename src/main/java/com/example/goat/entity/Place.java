@@ -19,10 +19,13 @@ public class Place {
 
     private String place_name;
 
-    private Long api_id;
+    private Long API_id;
 
     private String category_name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="cno")
+    private City city;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="blog_num")

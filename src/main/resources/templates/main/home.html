@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html
+
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:if="${#lists.isEmpty(mainRankDTO)}">
+    <h1>Place DB가 없습니다.</h1>
+</th:block>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">순위</th>
+        <th scope="col">장소</th>
+        <th scope="col">도시</th>
+        <th scope="col">추천수</th>
+
+
+    </tr>
+    </thead>
+
+    <th:block th:each="blog,userStat  : ${mainRankBlogDTO}">
+        <tr>
+            <td>
+                <div th:text="${userStat.count}">
+                </div>
+            </td>
+            <td>
+                <a th:href="|@{/blog/detale(num=${blog.num})}|">
+                    [[${blog.title}]]
+                </a>
+
+            </td>
+            <td>
+                <th:block th:each="ab  : ${blog.placeDTOList}">
+                    <div th:text="${ab.cityDTO.cname}">
+
+                    </div>
+
+                </th:block>
+
+
+            </td>
+            <td>
+                <div>
+                    [[${blog.recommendCount}]]
+                </div>
+
+            </td>
+
+        </tr>
+    </th:block>
+
+    </tbody>
+</table>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">순위</th>
+        <th scope="col">장소</th>
+        <th scope="col">도시</th>
+        <th scope="col">등록수</th>
+
+
+    </tr>
+    </thead>
+
+    <th:block th:each="place,userStat  : ${mainRankDTO}">
+        <tr>
+            <td>
+                <div th:text="${userStat.count}">
+                </div>
+            </td>
+            <td>
+                <div>
+                    [[${place.place_name}]]
+                </div>
+
+            </td>
+            <td>
+                <div>
+                    [[${place.cname}]]
+                </div>
+
+            </td>
+            <td>
+                <div>
+                    [[${place.total}]]
+                </div>
+
+            </td>
+
+        </tr>
+    </th:block>
+
+    </th:block>
+</table>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">순위</th>
+        <th scope="col">장소</th>
+        <th scope="col">도시</th>
+        <th scope="col">등록수</th>
+
+
+    </tr>
+    </thead>
+
+    <th:block th:each="restaurant,userStat  : ${mainRankRestaurantDTO}">
+        <tr>
+            <td>
+                <div th:text="${userStat.count}">
+                </div>
+            </td>
+            <td>
+                <div>
+                    [[${restaurant.place_name}]]
+                </div>
+
+            </td>
+            <td>
+                <div>
+                    [[${restaurant.cname}]]
+                </div>
+
+            </td>
+            <td>
+                <div>
+                    [[${restaurant.total}]]
+                </div>
+
+            </td>
+
+        </tr>
+    </th:block>
+
+    </tbody>
+</table>
+
+
+<script th:inline="javascript">
+</script>
+
+
+</body>
+</html>

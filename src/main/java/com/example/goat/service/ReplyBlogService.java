@@ -2,15 +2,15 @@ package com.example.goat.service;
 
 import com.example.goat.dto.*;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface ReplyBlogService {
 
-    public void register(ReplyBlogDTO dto);
+    public void register(ReplyBlogDTO dto, Principal principal);
 
     public List<ReplyBlogDTO> selectAll();
 
-    public void upadate(ReplyBlogDTO dto);
 
     public void delete(Long num);
 

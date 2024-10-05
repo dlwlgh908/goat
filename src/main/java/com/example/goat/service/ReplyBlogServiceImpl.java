@@ -1,8 +1,10 @@
 package com.example.goat.service;
 
 import com.example.goat.dto.*;
+import com.example.goat.entity.Account;
 import com.example.goat.entity.Blog;
 import com.example.goat.entity.ReplyBlog;
+import com.example.goat.repository.AccountRepository;
 import com.example.goat.repository.BlogRepository;
 import com.example.goat.repository.ReplyBlogRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,16 +29,22 @@ public class ReplyBlogServiceImpl implements ReplyBlogService {
 
     private final ReplyBlogRepository repository;
     private final BlogRepository blogRepository;
+    private final AccountRepository accountRepository;
     private ModelMapper mapper = new ModelMapper();
 
     @Override
-    public void register(ReplyBlogDTO dto) {
+    public void register(ReplyBlogDTO dto, Principal principal) {
+        Account account = accountRepository.findByEmail(principal.getName());
+
+
+
 
         Blog blog = blogRepository.findById(dto.getBlog_num()).get();
 
 
         ReplyBlog replyBlog = mapper.map(dto, ReplyBlog.class);
 
+        replyBlog.setAccount(account);
         replyBlog.setBlog(blog);
         repository.save(replyBlog);
 
@@ -48,10 +57,6 @@ public class ReplyBlogServiceImpl implements ReplyBlogService {
         return null;
     }
 
-    @Override
-    public void upadate(ReplyBlogDTO dto) {
-
-    }
 
 
     @Override
@@ -79,7 +84,7 @@ public class ReplyBlogServiceImpl implements ReplyBlogService {
         //보드 타입의 리스트가 >> 보드 DTO 타입의 리스트로 변환
         List<ReplyBlogDTO> DTOList =
                 replyBlogPage.getContent().stream().map(
-                        replyBlog -> mapper.map(replyBlog, ReplyBlogDTO.class)).collect(Collectors.toList());
+                        replyBlog -> mapper.map(replyBlog, ReplyBlogDTO.class).setAccountDTO( mapper.map( replyBlog.getAccount()  , AccountDTO.class )  )   ).collect(Collectors.toList());
 
 //        blogDTOList.forEach(blogDTO -> log.info(blogDTO));
 

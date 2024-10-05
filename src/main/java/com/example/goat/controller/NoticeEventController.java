@@ -79,7 +79,7 @@ log.info(num);
     }
 
     @GetMapping("/detale")
-    public void detale(Model model, Long num, PageRequestDTO pageRequestDTO){
+    public void detale(Model model, Long num){
 
 
         model.addAttribute("noticeEventDTO", noticeEventService.detale(num));

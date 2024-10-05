@@ -6,6 +6,8 @@ import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,6 +17,10 @@ import java.time.LocalDateTime;
 @Builder
 public class BlogDTO {
 
+    private String cname;
+    
+    private Long cnum;
+    // 엘리야스
     private Long	num;
 
     @NotBlank(message = "제목은 필수 입력 사항입니다.")
@@ -37,5 +43,12 @@ public class BlogDTO {
     private String	email;
     private AccountDTO accountDTO;
 
+    public BlogDTO setAccountDTO(AccountDTO accountDTO) {
+        this.accountDTO = accountDTO;
+        return this;
+    }
+
     private String city;
+
+    private List<PlaceDTO> placeDTOList = new ArrayList<>();
 }
