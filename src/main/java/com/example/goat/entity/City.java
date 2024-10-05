@@ -15,6 +15,7 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cno;
 
+    @Column(unique = true)
     private String cname;
 
 

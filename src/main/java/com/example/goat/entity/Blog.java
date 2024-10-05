@@ -14,6 +14,9 @@ import java.util.List;
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor // 모든 parameter를 가지고 있는 생성자
 public class Blog extends BaseEntity{
+    
+    private String cname;
+    //쿼리문 내 엘리아스 이름 통일을 위해 더미 변수
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +41,7 @@ public class Blog extends BaseEntity{
 
 
 
-    @Size(min = 2, max = 200)
+    @Size(min = 2, max = 400)
     private String	content;
     //내용
 

@@ -1,17 +1,15 @@
 package com.example.goat.service;
 
-import com.example.goat.dto.BlogDTO;
-import com.example.goat.dto.PageRequestDTO;
-import com.example.goat.dto.PageResponseDTO;
-import com.example.goat.dto.VoteDTO;
+import com.example.goat.dto.*;
 import com.example.goat.entity.Blog;
+import com.example.goat.entity.Place;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
 public interface BlogService {
 
-    public void register(BlogDTO blogDTO, UserDetails user);
+    public Long register(BlogDTO blogDTO, UserDetails user);
 
     public List<BlogDTO> selectAll();
 
@@ -29,5 +27,5 @@ public interface BlogService {
     public Blog countappend(Long num);
 
     public void vote(Long num, UserDetails user, VoteDTO voteDTO);
-
+    public List<BlogDTO> mainRankBlog(BlogDTO blogDTO);
 }

@@ -29,7 +29,7 @@ public class NoticeEvent extends BaseEntity {
     @Column(nullable = false)
     private String	title;
 
-    @Size(min = 2, max = 200)
+    @Size(min = 2, max = 400)
     @Column(nullable = false)
     private String	content;
 

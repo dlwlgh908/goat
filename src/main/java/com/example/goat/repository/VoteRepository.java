@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 
+    void deleteByBlogNum (Long num);
 
     @Query("select a from Vote a where a.account.email=:email and a.blog.num=:num")
     Vote voteCheck(String email, Long num);

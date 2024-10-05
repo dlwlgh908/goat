@@ -27,4 +27,12 @@ public class ReplyBlogDTO {
 
     private long blog_num;
 
+    private AccountDTO accountDTO;
+
+    public ReplyBlogDTO setAccountDTO(AccountDTO accountDTO) {
+        this.accountDTO = accountDTO;
+        return this;
+    }
+
+
 }

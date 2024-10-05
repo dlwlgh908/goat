@@ -21,8 +21,6 @@ public class ReplyBlog {
     @Column(name = "replyblog_num")
     private Long	num;
 
-    private String	writer;
-
     @Size(min = 2, max = 200)
     @Column(nullable = false)
     private String	content;

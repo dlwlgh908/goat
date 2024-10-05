@@ -34,11 +34,28 @@
             <span th:if="${blogDTO.schedule}==2" th:text="'1박 2일'"></span>
             <span th:if="${blogDTO.schedule}==3" th:text="'2박 3일'"></span>
         </div>
-        <a th:href="@{/blog/delete(num=${blogDTO.num})}">삭제</a>
-        <a th:href="@{/blog/modify(num=${blogDTO.num})}">수정</a>
-    <a class="recommend_button" th:href="@{/blog/vote(num=${blogDTO.num})}">추천</a>
-    <span class="recommend_text">추천한 글 입니다.</span>
 
+
+
+        <th:block sec:authorize="authenticated">
+            <th:block th:if="${#authentication.principal.username == blogDTO.accountDTO.email }">
+                <a th:href="@{/blog/modify(num=${blogDTO.num})}">수정</a>
+                <a th:href="@{/blog/delete(num=${blogDTO.num})}">삭제</a>
+            </th:block>
+
+        </th:block>
+
+        <th:block sec:authorize="authenticated">
+
+
+                <a th:if="${voteCheck == '1'}" class="ad" th:href="@{/blog/vote(num=${blogDTO.num})}">추천</a>
+
+                <span th:if="${voteCheck == '2'}" class="ad">추천한 글 입니다.</span>
+
+        </th:block>
+        <th:block sec:authorize="isAnonymous()">
+                <h1>이거 a태그인데 추천이다? 근데 누르면 너 로그인으로 간다</h1>
+        </th:block>
 </div>
 
 
@@ -83,17 +100,20 @@
 
                             </td>
                             <td>
-                                <button id="replyModify" type="button" class="btn btn-dark replyModify"
-                                        data-bs-toggle="modal" data-bs-target="#exampleModal" th:value="${list.num}">
-                                    수정
-                                </button>
 
-                                <form action="/replyblog/delete" method="get">
-                                    <input name="num" type="hidden" th:value="${list.num}">
-                                    <input name="blognum" type="hidden" th:value="${blogDTO.num}">
-                                    <button class="btn btn-dark">삭제</button>
+                                <th:block sec:authorize="authenticated">
+                                    <th:block th:if="${#authentication.principal.username == list.accountDTO.email}">
+                                        <button id="replyModify" type="button" class="btn btn-dark replyModify"
+                                                data-bs-toggle="modal" data-bs-target="#exampleModal" th:value="${list.num}">
+                                            수정
+                                        </button>
 
-                                </form>
+
+
+                                        <button type="button" class="btn btn-dark aaa" th:value="${list.num}">삭제</button>
+                                    </th:block>
+
+                                </th:block>
                                 <!-- Button trigger modal -->
 
                             </td>
@@ -106,6 +126,29 @@
 
             </th:block>
 
+
+            <form action="/replyblog/delete" method="get" class="fff">
+
+            </form>
+
+
+            <script th:inline="javascript">
+                let bno = [[${blogDTO.num}]]
+                console.log(bno)
+                console.log(bno)
+                console.log(bno)
+
+                $( document ).ready(function() {
+                    $(".aaa").on("click", function () {
+                        console.log(bno)
+                        console.log($(this).val())
+                        let str = `<input name="num" type="hidden" value="${$(this).val()}">
+                                                <input name="blognum" type="hidden" value="${bno}">`
+                        $(".fff").append(str)
+                        $(".fff").submit()
+                    })
+                });
+            </script>
 
             <div class="row text-center">
                 <!--페이징-->
