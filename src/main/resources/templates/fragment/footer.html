@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
 </head>
 <body>
 
+<!-- 네비 메뉴-->
+
+<div th:fragment="footer" style="text-align: center;">
+    <div class="row mt-5">
+        <div class="col">Footer</div>
+        <div class="col">Footer2</div>
+        <div class="col">Footer3</div>
+        <div class="col">Footer4</div>
+        <div class="col">Footer5</div>
+
+    </div>
+</div>
+
 </body>
 </html>
+

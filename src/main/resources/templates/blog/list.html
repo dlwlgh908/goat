@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      layout:decorate="~{layout/layout.html}">
 <head>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-wEa0XMblchDf4erTZQ7k2GR0r6bEM2GfFkzFgqLZ8rSbc5Gv5NOr5O5M3zRv5zFt" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dc0e764f9cafeb8b6ce32ae719767467&libraries=services"></script>
+
     <meta charset="UTF-8">
     <title>Title</title>
+
 </head>
 <body>
 
-
-<div layout:fragment="content">
-    <div class="row mt-5">
+<div layout:fragment="content" class="mt-2 border rounded bg-light shadow-sm">
+    <div class="row g-0">
         <div class="col shadow">
-
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
-                    <form class="d-flex formObj " role="search" action="/blog/list" method="get"
+                    <form class="d-flex formObj" role="search" action="/blog/list" method="get"
                           th:object="${pageRequestDTO}">
-
                         <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
-
                             <option value="t" selected>제목</option>
                             <option value="c">내용</option>
                             <option value="w">작성자</option>
@@ -30,139 +30,282 @@
                             <option value="tc">제목 + 내용</option>
                             <option value="ty">제목 + 도시</option>
                         </select>
-                        <input class="form-control me-2" name="keyword" type="search" placeholder="Search"
-                               aria-label="Search">
+
+                        <input class="form-control me-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
-
-                    <a href="/blog/register" type="button" class="btn btn-dark">등록</a>
+                    <a href="/blog/register" class="btn btn-dark">등록</a>
                 </div>
-
             </nav>
 
             <th:block th:if="${#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
                 <h1>너님 글이 없음</h1>
             </th:block>
 
-            <th:block th:unless="${#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">글번호</th>
-                        <th scope="col">제목</th>
-                        <th scope="col">내용</th>
-
-                    </tr>
-                    </thead>1
-                    <tbody th:with="link = ${pageRequestDTO.getLink()}">
-                        <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
-                            <tr>
-                                <td>
-                                    <div>
-                                        [[${list.num}]]
-                                    </div>
-
-                                </td>
-                                <td>
-                                    <a th:href="|@{/blog/detale(num=${list.num})}&${link}|" th:data-num="${list.num}"   class="countappend">
-                                        [[${list.title}]]
-                                    </a>
-
-                                </td>
-                                <td>
-                                    <div>
-                                        [[${list.content}]]
-                                    </div>
-
-                                </td>
-
-                            </tr>
-                        </th:block>
-
-                    </tbody>
-                </table>
+            <div th:if="${!#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
+                <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
+                    <div class="row row-cols-1 row-cols-md-1 mx-1">
+                        <div class="col">
+                            <div class="card mb-3">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex">
+                                        <div class="ms-4">
+                                            <div class="mb-2">
+                                                <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend fs-4 text-decoration-none text-reset">
+                                                    [[${list.title}]]
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend text-decoration-none text-reset">
+                                                    [[${list.content}]]
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
 
 
-            </th:block>
 
             <div class="row text-center">
-                <!--페이징-->
                 <div class="col">
                     <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
                         <ul class="pagination justify-content-center">
-                            <li th:if="${blogDTOPageResponseDTO.prev}" class="paginate_button previous "
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-                                <a class="page-link" th:data-num="${blogDTOPageResponseDTO.start -1}">Previous</a>
+                            <li th:if="${blogDTOPageResponseDTO.prev}" class="paginate_button previous">
+                                <a class="page-link btn" th:data-num="${blogDTOPageResponseDTO.start - 1}">Previous</a>
                             </li>
-
-                            <!--thymleaf에는 순서를 표기하는 #numbers.sequence가 있다.-->
-                            <th:block
-                                    th:each="i: ${#numbers.sequence(blogDTOPageResponseDTO.start,blogDTOPageResponseDTO.end)}">
-                                <li th:class="${blogDTOPageResponseDTO.page == i} ? 'paginate_button active':''"
-                                    aria-controls="dataTables-example" tabindex="0">
-                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                            <th:block th:each="i: ${#numbers.sequence(blogDTOPageResponseDTO.start,blogDTOPageResponseDTO.end)}">
+                                <li th:class="${blogDTOPageResponseDTO.page == i} ? 'paginate_button active' : ''">
+                                    <a class="page-link btn" th:data-num="${i}">[[${i}]]</a>
                                 </li>
                             </th:block>
-
-                            <li th:if="${blogDTOPageResponseDTO.next}" class="paginate_button next"
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-                                <a class="page-link" th:data-num="${blogDTOPageResponseDTO.end +1}">Next</a>
+                            <li th:if="${blogDTOPageResponseDTO.next}" class="paginate_button next">
+                                <a class="page-link btn" th:data-num="${blogDTOPageResponseDTO.end + 1}">Next</a>
                             </li>
                         </ul>
                     </div>
-                </div> <!--페이징 처리-->
+                </div>
+            </div>
+        </div>
 
+        <div class="col-md-5 mt-2 border rounded bg-light shadow-sm">
 
-            </div> <!--col -->
+            <div class="row">
+                <form class="d-flex" role="search" action="/board/list" method="get" style="float: right">
+                    <select class="form-select form-select-lg mb-3" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">
+                        <option selected>지역을 선택하셈</option>
+                        <option value="city1">서울특별시</option>
+                        <option value="city2">부산광역시</option>
+                        <option value="city3">대구광역시</option>
+                        <option value="city4">인천광역시</option>
+                        <option value="city5">광주광역시</option>
+                        <option value="city6">대전광역시</option>
+                        <option value="city7">울산광역시</option>
+                        <option value="city8">세종특별자치시</option>
+                        <option value="city9">경기도 (수원)</option>
+                        <option value="city10">강원특별자치도</option>
+                        <option value="city11">충청북도 (청주)</option>
+                        <option value="city12">충청남도 (홍성)</option>
+                        <option value="city13">전북특별자치도 (전주)</option>
+                        <option value="city14">전라남도 (목포)</option>
+                        <option value="city15">경상북도 (안동)</option>
+                        <option value="city16">경상남도 (창원)</option>
+                        <option value="city17">제주특별자치도</option>
+                    </select>
 
+                </form>
+            </div>
 
+            <!-- 검색창 및 버튼 그룹 -->
+            <form onsubmit="searchPlaces(); return false;" class="d-flex justify-content-start ms-1">
+                <input type="text" id="keyword" placeholder="검색할 장소를 입력하세요" class="form-control form-control-sm me-2" style="width: 200px;">
+                <button class="btn btn-primary btn-sm">검색</button>
+            </form>
 
+            <div id="map" class="h-50 mt-3" style="position: relative;z-index:1">
+                <div id="menu_wrap" style="display: none; z-index: 5;">
+                    <ul id="placesList"></ul>
+                    <div id="pagination"></div>
+                </div>
 
+                <style>
+                    .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
+                    #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 0px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;'돋움',sans-serif;font-size:10px}
+                    .bg_white {background:#fff;}
+                    #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
+                    #menu_wrap .option{text-align: center; margin:0 1px}
+                    #menu_wrap .option p {margin:10px 0;}
+                    #menu_wrap .option button {margin-left:0px;}
+                    #placesList {margin:0; padding: 0}
+                    #placesList li {list-style: none; margin:0}
+                    #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px; }
+                    #placesList .item span {display: block;margin-top:4px;}
+                    #placesList .item h5 {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:16px; margin-left: 18px}
+                    #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:12px; margin-left: 18px}
+                    #placesList .item .info{padding:10px 0 10px 0px;}
+                    #placesList .info .gray {color:#8a8a8a;}
+                    #placesList .info .jibun {padding-left:0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
+                    #placesList .info .tel {color:#009900;}
+                    #placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:1px 0 0 0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}
+                    #placesList .item .marker_1 {background-position: 0 -10px;}
+                    #placesList .item .marker_2 {background-position: 0 -56px;}
+                    #placesList .item .marker_3 {background-position: 0 -102px}
+                    #placesList .item .marker_4 {background-position: 0 -148px;}
+                    #placesList .item .marker_5 {background-position: 0 -194px;}
+                    #placesList .item .marker_6 {background-position: 0 -240px;}
+                    #placesList .item .marker_7 {background-position: 0 -286px;}
+                    #placesList .item .marker_8 {background-position: 0 -332px;}
+                    #placesList .item .marker_9 {background-position: 0 -378px;}
+                    #placesList .item .marker_10 {background-position: 0 -423px;}
+                    #placesList .item .marker_11 {background-position: 0 -470px;}
+                    #placesList .item .marker_12 {background-position: 0 -516px;}
+                    #placesList .item .marker_13 {background-position: 0 -562px;}
+                    #placesList .item .marker_14 {background-position: 0 -608px;}
+                    #placesList .item .marker_15 {background-position: 0 -654px;}
+                    #pagination {margin:10px auto;text-align: center;}
+                    #pagination a {display:inline-block;margin-right:10px;}
+                    #pagination .on {font-weight: bold; cursor: default;color:#777;}
+                </style>
+
+            </div>
+
+            <!-- 날씨 정보 표시 부분 -->
+            <div class="restaurantBoardWeather card mt-3">
+                <div class=" justify-content-between row">
+                    <!-- 오늘의 날씨 카드 -->
+
+                    <div class="col">
+
+                        <div id="skyIconToday" class="card weather-card text-center " style="border-radius: 12px; width: 100%; height: 150px; z-index: 10">
+                            <div class="card-body p-1">
+                                <img id="ptyIconToday" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
+                                <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">오늘의 날씨</h6>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">현재기온: <span id="todayTMP"></span>°C</p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span id="todayTMX"></span>°C</p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span id="todayTMN"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <!-- 내일의 날씨 카드 -->
+                        <div id="skyIconTomorrow" class="card weather-card text-center col" style="border-radius: 12px; width: 100%; height: 150px;">
+                            <div class="card-body p-1">
+                                <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
+                                <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">내일의 날씨</h6>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span id="tomorrowTMX"></span>°C</p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span id="tomorrowTMN"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 추가 날씨 카드 5장 -->
+            <div class="d-flex justify-content-between gap-1 mt-3">
+                <!-- 3~7일 날씨 카드 -->
+                <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">3일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day3Am">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day3Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day3Pm">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day3Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">4일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day4Am">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day4Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day4Pm">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day4Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">5일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day5Am">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day5Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day5Pm">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day5Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">6일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day6Am">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day6Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day6Pm">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day6Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">7일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day7m">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day7Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;"><span id="day7Pm">IMG</span></p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day7Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
         <script th:inline="javascript">
-
-
-
             $(document).ready(function () {
                 document.querySelector(".pagination").addEventListener("click", function (e) {
-
                     e.preventDefault();
                     e.stopPropagation();
-
                     let target = e.target;
-
-
                     if (target.tagName !== 'A') {
                         return;
                     }
-
                     let num = target.getAttribute("data-num");
                     // console.log(num);
-
                     let formObj = document.querySelector(".formObj");
-
                     formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
-
-
                     formObj.submit();
-
                 })
-
-
-
-
-
                 $(".countappend").on("click", function (e) {
-
-
                     e.preventDefault()
                     //조회수를 증가시킨다. // 일반적인 컨트롤러에서는 증가시키던걸 빼고
                     // 병렬 그러니까 따로 증가시킨다.
-
                     //증가시키는 컨트롤러로 접속한다.
-
                     let num = $(this).data("num")
                     let url = $(this).prop('href')
                     console.log($(this).data("num"))
@@ -177,27 +320,560 @@
                             if (data == "success") {
                                 location.href = url
                             }
-
                         },
                         error : function (data) {
                             console.log("fail")
                             console.log(data.responseText)
                         }
-
                     })
-
-
-
-
                 })
+            });
+        </script>
 
+        <script>
+
+            // 마커를 담을 배열입니다
+            var markers = [];
+            var selectedMarker = null; // 선택된 마커를 저장할 변수
+
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                    center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
+
+            // 지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+
+            // 장소 검색 객체를 생성합니다
+            var ps = new kakao.maps.services.Places();
+
+            // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+            var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+
+            // 키워드 검색을 요청하는 함수입니다
+            function searchPlaces() {
+
+                var keyword = document.getElementById('keyword').value;
+
+                if (!keyword.replace(/^\s+|\s+$/g, '')) {
+                    alert('키워드를 입력해주세요!');
+                    return false;
+                }
+
+                // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+                ps.keywordSearch( keyword, placesSearchCB);
+            }
+
+            // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
+            function placesSearchCB(data, status, pagination) {
+                if (status === kakao.maps.services.Status.OK) {
+                    // 검색결과가 있으면 검색결과 창을 보이게 설정
+                    document.getElementById('menu_wrap').style.display = 'block';
+
+                    // 검색 결과 목록과 마커를 표출합니다
+                    displayPlaces(data);
+
+                    // 페이지 번호를 표출합니다
+                    displayPagination(pagination);
+
+                } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+                    alert('검색 결과가 존재하지 않습니다.');
+                    return;
+                } else if (status === kakao.maps.services.Status.ERROR) {
+                    alert('검색 도중 오류가 발생했습니다.');
+                    return;
+                }
+            }
+
+            // 검색 결과 목록과 마커를 표출하는 함수입니다
+            function displayPlaces(places) {
+
+                var listEl = document.getElementById('placesList'),
+                    menuEl = document.getElementById('menu_wrap'),
+                    fragment = document.createDocumentFragment(),
+                    bounds = new kakao.maps.LatLngBounds(),
+                    listStr = '';
+
+                // 검색 결과 목록에 추가된 항목들을 제거합니다
+                removeAllChildNods(listEl);
+                removeMarker();
+
+                for ( var i=0; i<places.length; i++ ) {
+
+                    // 마커를 생성하고 지도에 표시합니다
+                    var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
+                        marker = addMarker(placePosition, i),
+                        itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+
+                    // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+                    // LatLngBounds 객체에 좌표를 추가합니다
+                    bounds.extend(placePosition);
+
+                    // 마커와 검색결과 항목에 mouseover 했을때
+                    // 해당 장소에 인포윈도우에 장소명을 표시합니다
+                    // mouseout 했을 때는 인포윈도우를 닫습니다
+                    (function(marker, title) {
+                        kakao.maps.event.addListener(marker, 'mouseover', function() {
+                            displayInfowindow(marker, title);
+                        });
+
+                        kakao.maps.event.addListener(marker, 'mouseout', function() {
+                            infowindow.close();
+                        });
+
+                        itemEl.onmouseover =  function () {
+                            displayInfowindow(marker, title);
+                        };
+
+                        itemEl.onmouseout =  function () {
+                            infowindow.close();
+                        };
+
+
+                    })(marker, places[i].place_name);
+
+                    fragment.appendChild(itemEl);
+
+                    (function (marker, place) {
+                        kakao.maps.event.addListener(marker, 'click', function () {
+                            moveToPlace(marker);   // 마커 클릭 시 해당 좌표로 이동
+                            closeSearchResults();  // 검색 결과 창을 닫음
+                            displayPlaceInfo(place); // 장소 정보를 모달에 표시
+                        });
+
+                        itemEl.onclick = function () { // 검색 결과 항목 클릭 시
+                            moveToPlace(marker);   // 클릭한 가게로 이동
+                            closeSearchResults();  // 검색 결과 창을 닫음
+                        };
+                    })(marker, places[i]);
+                }
+
+                // 검색결과 항목들을 검색결과 목록 Element에 추가합니다
+                listEl.appendChild(fragment);
+                menuEl.scrollTop = 0;
+
+                // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+                map.setBounds(bounds);
+            }
+
+            // 클릭한 장소로 이동 + 확대 레벨 설정
+            function moveToPlace(marker) {
+                map.setLevel(2); // 지도 확대 레벨을 2로 설정
+                map.setCenter(marker.getPosition()); // 해당 장소로 지도 중심 이동
+                selectedMarker = marker; // 선택한 마커를 저장
+                removeMarker(selectedMarker); // 선택된 마커를 제외하고 나머지 마커를 제거
+            }
+
+            // 검색결과 항목을 Element로 반환하는 함수입니다
+            function getListItem(index, places) {
+
+                var el = document.createElement('li'),
+                    itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                        '<div class="info">' +
+                        '   <h5>' + places.place_name + '</h5>';
+
+                if (places.road_address_name) {
+                    itemStr += '    <span>' + places.road_address_name + '</span>' +
+                        '   <span class="jibun gray">' +  places.address_name  + '</span>';
+                } else {
+                    itemStr += '    <span>' +  places.address_name  + '</span>';
+                }
+
+                itemStr += '  <span class="tel">' + places.phone  + '</span>' +
+                    '</div>';
+
+                el.innerHTML = itemStr;
+                el.className = 'item';
+
+                return el;
+            }
+
+            // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+            function addMarker(position, idx, title) {
+                var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+                    imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+                    imgOptions =  {
+                        spriteSize : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                        spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+                        offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+                    },
+                    markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+                    marker = new kakao.maps.Marker({
+                        position: position, // 마커의 위치
+                        image: markerImage
+                    });
+
+                marker.setMap(map); // 지도 위에 마커를 표출합니다
+                markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+                return marker;
+            }
+
+            function removeMarker(exceptMarker) {
+                // exceptMarker를 제외한 나머지 마커를 지도에서 제거
+                markers.forEach(function(marker) {
+                    if (marker !== exceptMarker) {
+                        marker.setMap(null);  // 선택되지 않은 마커들을 제거
+                    }
+                });
+            }
+
+            // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+            function displayPagination(pagination) {
+                var paginationEl = document.getElementById('pagination'),
+                    fragment = document.createDocumentFragment(),
+                    i;
+
+                // 기존에 추가된 페이지번호를 삭제합니다
+                while (paginationEl.hasChildNodes()) {
+                    paginationEl.removeChild (paginationEl.lastChild);
+                }
+
+                for (i=1; i<=pagination.last; i++) {
+                    var el = document.createElement('a');
+                    el.href = "#";
+                    el.innerHTML = i;
+
+                    if (i===pagination.current) {
+                        el.className = 'on';
+                    } else {
+                        el.onclick = (function(i) {
+                            return function() {
+                                pagination.gotoPage(i);
+                            }
+                        })(i);
+                    }
+
+                    fragment.appendChild(el);
+                }
+                paginationEl.appendChild(fragment);
+            }
+
+            // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+            // 인포윈도우에 장소명을 표시합니다
+            function displayInfowindow(marker, title) {
+                var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+
+                infowindow.setContent(content);
+                infowindow.open(map, marker);
+            }
+
+            // 검색결과 목록의 자식 Element를 제거하는 함수입니다
+            function removeAllChildNods(el) {
+                while (el.hasChildNodes()) {
+                    el.removeChild (el.lastChild);
+                }
+            }
+
+            function selectMap(selectMap) {
+                let moveLatLon;
+
+                switch (selectMap) {
+                    case 'city1': moveLatLon = new kakao.maps.LatLng(37.5665, 126.9780); break;
+                    case 'city2': moveLatLon = new kakao.maps.LatLng(35.1796, 129.0756); break;
+                    case 'city3': moveLatLon = new kakao.maps.LatLng(35.8722, 128.6017); break;
+                    case 'city4': moveLatLon = new kakao.maps.LatLng(37.4563, 126.7052); break;
+                    case 'city5': moveLatLon = new kakao.maps.LatLng(35.1595, 126.8526); break;
+                    case 'city6': moveLatLon = new kakao.maps.LatLng(36.3504, 127.3845); break;
+                    case 'city7': moveLatLon = new kakao.maps.LatLng(35.5384, 129.3114); break;
+                    case 'city8': moveLatLon = new kakao.maps.LatLng(36.4800, 127.2890); break;
+                    case 'city9': moveLatLon = new kakao.maps.LatLng(37.8813, 127.7298); break;
+                    case 'city10': moveLatLon = new kakao.maps.LatLng(37.7519, 128.8761); break;
+                    case 'city11': moveLatLon = new kakao.maps.LatLng(36.6424, 127.4890); break;
+                    case 'city12': moveLatLon = new kakao.maps.LatLng(36.6013, 126.6608); break;
+                    case 'city13': moveLatLon = new kakao.maps.LatLng(35.8242, 127.1479); break;
+                    case 'city14': moveLatLon = new kakao.maps.LatLng(34.8118, 126.3922); break;
+                    case 'city15': moveLatLon = new kakao.maps.LatLng(36.5684, 128.7294); break;
+                    case 'city16': moveLatLon = new kakao.maps.LatLng(35.2276, 128.6811); break;
+                    case 'city17': moveLatLon = new kakao.maps.LatLng(33.4996, 126.5312); break;
+                    default: moveLatLon = new kakao.maps.LatLng(37.566826, 126.9786567); break;
+                }
+                map.setCenter(moveLatLon); // 좌표로 지도 중심 이동
+            }
+
+            // 클릭한 마커에 대한 장소 상세 정보를 모달로 표시하는 함수
+            // 모달 내용
+            function displayPlaceInfo(place) {
+                var content = `
+            <h5 class="text-center mb-0">${place.place_name}</h5><br>
+            <p class="text-sm fw-light text-center mt-0"><${place.category_name || place.category_name}</p><br>
+            <p><Strong>주소:</Strong>${place.road_address_name || place.address_name}</p>
+            <p class="text-sm fw-light">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ${place.address_name || place.address_name}</p>
+            <p><strong>전화번호:</strong> ${place.phone || place.phone}</p>
+
+
+            <p>ID (개발때만 사용):</strong> ${place.id || place.id}</p>
+            <a class="text-center" href="${place.place_url}" target="_blank">자세히 보기</a>
+        `;
+
+                // 모달 내용 설정
+                document.getElementById('modalContent').innerHTML = content;
+
+                // 모달 열기
+                var myModal = new bootstrap.Modal(document.getElementById('placeModal'));
+                myModal.show();
+            }
+
+            // 지도 바깥을 클릭하면 검색결과 창을 닫는 함수
+            kakao.maps.event.addListener(map, 'click', function () {
+                closeSearchResults();
             });
 
+            function closeSearchResults() {
+                var menuWrap = document.getElementById('menu_wrap');
+                if (menuWrap) {
+                    menuWrap.style.display = 'none';  // 검색 결과 창을 닫음
+                }
+            }
 
         </script>
 
+        <!-- 모달 구조 -->
+        <div class="modal fade" id="placeModal" tabindex="-1" aria-labelledby="placeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="placeModalLabel">장소 정보</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalContent">
+                            <!-- 여기에 내용이 동적으로 추가됩니다 -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
+
+    <!-- 도시 선택시 위치값 반영-->
+    <script>
+        let temperatureData = []; // 전역 변수로 선언
+
+        let regID = '11B00000', regIDT = '11B10101', nx = 60, ny = 127;
+
+        function selectReg(selectCity) {
+            if (selectCity === "") {
+                return;
+            }
+            temperatureData.length = 0;
+            $('.weathershortins').html('');
+            $('.weatherins').html('');
+            switch (selectCity) {
+                case 'city1': regID = '11B00000'; regIDT = '11B10101'; nx = 60; ny = 127; break;
+                case 'city2': regID = '11H20000'; regIDT = '11H20101'; nx = 98; ny = 76; break;
+                case 'city3': regID = '11H10000'; regIDT = '11H10701'; nx = 89; ny = 90; break;
+                case 'city4': regID = '11D10000'; regIDT = '11B20201'; nx = 55; ny = 124; break;
+                case 'city5': regID = '11F20000'; regIDT = '11F20501'; nx = 58; ny = 74; break;
+                case 'city6': regID = '11C20000'; regIDT = '11C20401'; nx = 67; ny = 100; break;
+                case 'city7': regID = '11H20000'; regIDT = '11H20101'; nx = 102; ny = 84; break;
+                case 'city8': regID = '11C20000'; regIDT = '11C20404'; nx = 66; ny = 103; break;
+                case 'city9': regID = '11B00000'; regIDT = '11B20601'; nx = 60; ny = 121; break;
+                case 'city10': regID = '11D10000'; regIDT = '11D10301'; nx = 73; ny = 134; break;
+                case 'city11': regID = '11C10000'; regIDT = '11C10301'; nx = 69; ny = 107; break;
+                case 'city12': regID = '11C10000'; regIDT = '11C20101'; nx = 51; ny = 96; break;
+                case 'city13': regID = '11F10000'; regIDT = '11F10201'; nx = 63; ny = 89; break;
+                case 'city14': regID = '11F20000'; regIDT = '11F20501'; nx = 50; ny = 67; break;
+                case 'city15': regID = '11H10000'; regIDT = '11H10701'; nx = 91; ny = 106; break;
+                case 'city16': regID = '11H20000'; regIDT = '11H20301'; nx = 89; ny = 77; break;
+                case 'city17': regID = '11G00000'; regIDT = '11G00201'; nx = 52; ny = 38; break;
+                default: regID = '11B00000'; regIDT = '11B10101'; nx = 60; ny = 127; break;
+            }
+            // 기존 날씨 정보를 비웁니다.
+            fetchWeatherData();
+            fetchMidTemperatureData();
+            WeatherData();
+        }
+    </script>
+
+    <!-- 3~7일 날씨값 스크립트 -->
+    <script>
+
+        $(document).ready(function() {
+            fetchWeatherData();  // 페이지 로드 시 오늘과 내일 날씨 호출
+            fetchMidTemperatureData();  // 페이지 로드 시 3~7일 기온 호출
+            WeatherData();  // 페이지 로드 시 3~7일 기온 및 날씨 상태 호출
+        });
+
+        // 오늘과 내일의 날씨 데이터를 가져오는 함수
+        const fetchWeatherData = () => {
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            const base_date = today.getHours() < 6 ?
+                `${yesterday.getFullYear()}${String(yesterday.getMonth() + 1).padStart(2, '0')}${String(yesterday.getDate()).padStart(2, '0')}` :
+                `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+
+            const ServiceKey = 'wje5hA%2Bnn3R5RgOMpkRjQoneVn2py4RGqQmFJCCZS2IjYEetSvm7HP%2FngICVZN7%2FB0Mj2ig7Xp2oep7%2B4kcrSQ%3D%3D';
+            const pageNo = 1, numOfRows = 750, dataType = 'JSON';
+
+            $.ajax({
+                url: `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=750&dataType=${dataType}&base_date=${base_date}&base_time=0500&nx=${nx}&ny=${ny}`,
+                type: 'GET',
+                success: function(data) {
+                    let todayWeather = {}, tomorrowWeather = {};
+                    let todayDateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+                    let tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+                    let tomorrowDateStr = `${tomorrow.getFullYear()}${String(tomorrow.getMonth() + 1).padStart(2, '0')}${String(tomorrow.getDate()).padStart(2, '0')}`;
+
+                    data.response.body.items.item.forEach(item => {
+                        // 오늘 날짜 데이터 처리
+                        if (item.fcstDate === todayDateStr) {
+                            if (item.category === 'TMP') todayWeather.TMP = item.fcstValue;
+                            if (item.category === 'TMX' && item.fcstTime === '1500') todayWeather.TMX = item.fcstValue; // 1500 시간의 TMX만
+                            if (item.category === 'TMN' && item.fcstTime === '0600') {
+                                // TMN 값이 있을 경우 그대로 사용
+                                todayWeather.TMN = item.fcstValue;
+                            } else if (item.category === 'TMP') {
+                                // TMP 값을 배열에 저장하고, 나중에 최소값을 사용
+                                if (!todayWeather.TMPs) todayWeather.TMPs = []; // TMPs 배열이 없으면 초기화
+                                todayWeather.TMPs.push(parseFloat(item.fcstValue));
+                            }
+
+                            // 이후 모든 데이터를 처리한 후 최저 TMP 값을 TMN으로 설정
+                            if (!todayWeather.TMN && todayWeather.TMPs && todayWeather.TMPs.length > 0) {
+                                todayWeather.TMN = Math.min(...todayWeather.TMPs); // TMP 값 중 최저값을 TMN으로 사용
+                            }
+
+                            if (item.category === 'SKY') setSkyIcon(item.fcstValue, 'today');
+                            if (item.category === 'PTY') setPtyIcon(item.fcstValue, 'today');
+                        }
+
+                        // 내일 날짜 데이터 처리
+                        if (item.fcstDate === tomorrowDateStr) {
+                            if (item.category === 'TMP') tomorrowWeather.TMP = item.fcstValue;
+                            if (item.category === 'TMX' && item.fcstTime === '1500') tomorrowWeather.TMX = item.fcstValue; // 1500 시간의 TMX만
+                            if (item.category === 'TMN' && item.fcstTime === '0600') tomorrowWeather.TMN = item.fcstValue; // 내일 TMN만
+
+                            if (item.category === 'SKY') setSkyIcon(item.fcstValue, 'tomorrow');
+                            if (item.category === 'PTY') setPtyIcon(item.fcstValue, 'tomorrow');
+                        }
+                    });
+
+                    // 결과를 HTML에 반영
+                    $('#todayTMP').text(todayWeather.TMP || '정보 없음');
+                    $('#todayTMX').text(todayWeather.TMX || '정보 없음');
+                    $('#todayTMN').text(todayWeather.TMN || '정보 없음');
+
+                    $('#tomorrowTMP').text(tomorrowWeather.TMP || '정보 없음');
+                    $('#tomorrowTMX').text(tomorrowWeather.TMX || '정보 없음');
+                    $('#tomorrowTMN').text(tomorrowWeather.TMN || '정보 없음');
+                },
+                error: function() {
+                    console.error('날씨 데이터를 가져오는 데 실패했습니다.');
+                }
+            });
+        };
+
+        // 3~7일의 기온 데이터를 가져오는 함수
+        const fetchMidTemperatureData = () => {
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+            const tmFc = today.getHours() < 6 ?
+                `${yesterday.getFullYear()}${String(yesterday.getMonth() + 1).padStart(2, '0')}${String(yesterday.getDate()).padStart(2, '0')}1800` :
+                `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}0600`;
+
+            const ServiceKey = 'wje5hA%2Bnn3R5RgOMpkRjQoneVn2py4RGqQmFJCCZS2IjYEetSvm7HP%2FngICVZN7%2FB0Mj2ig7Xp2oep7%2B4kcrSQ%3D%3D';
+            const pageNo = 1, numOfRows = 10;
+
+            $.ajax({
+                url: `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=XML&regId=${regIDT}&tmFc=${tmFc}`,
+                type: 'GET',
+                success: function(data) {
+                    $(data).find('item').each(function() {
+                        for (let i = 3; i <= 7; i++) {
+                            const taMin = $(this).find(`taMin${i}`).text();
+                            const taMax = $(this).find(`taMax${i}`).text();
+                            $(`#day${i}Min`).text(taMin || '정보 없음');
+                            $(`#day${i}Max`).text(taMax || '정보 없음');
+                        }
+                    });
+                },
+                error: function() {
+                    console.error('3~7일 기온 데이터를 가져오는 데 실패했습니다.');
+                }
+            });
+        };
+
+        // 하늘 상태에 따른 이미지 설정 함수
+        function setSkyIcon(skyCode, day) {
+            let skyDiv = document.getElementById(`skyIcon${day.charAt(0).toUpperCase() + day.slice(1)}`);
+            switch (skyCode) {
+                case '1': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY1.webp")'; break; // 맑음
+                case '3': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY3.webp")'; break; // 구름많음
+                case '4': skyDiv.style.backgroundImage =  'url("/weatherimg/SKY4.webp")'; break; // 흐림
+                default: skyDiv.style.backgroundImage = 'url("/weatherimg/esteregg.webp")'; break;  // 이미지 없음
+            }
+            skyDiv.style.backgroundSize = "cover";
+            skyDiv.style.backgroundSize = "100% 100%";
+            skyDiv.style.boxSizing = "border-box";
+            skyDiv.style.overflow = "hidden";
+            skyDiv.style.zIndex = "1";
+        }
+
+        // 강수 상태에 따른 이미지 설정 함수
+        function setPtyIcon(ptyCode, day) {
+            let ptyImg = document.getElementById(`ptyIcon${day.charAt(0).toUpperCase() + day.slice(1)}`);
+
+            switch (ptyCode) {
+                case '0': ptyImg.src = '/weatherimg/PTY0.png'; break; // 강수 없음
+                case '1': ptyImg.src = '/weatherimg/PTY1.png'; break; // 비
+                case '2': ptyImg.src = '/weatherimg/PTY2.png'; break; // 비/눈
+                case '3': ptyImg.src = '/weatherimg/PTY3.png'; break; // 눈
+                case '4': ptyImg.src = '/weatherimg/PTY4.png'; break; // 소나기
+                default: ptyImg.src = 'url("/weatherimg/esteregg.webp")'; break;  // 이미지 없음
+            }
+        }
+
+
+        const WeatherData = () => {
+
+            const today = new Date(), yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+
+            let tmFc = today.getHours() > 6 ?
+                `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}0600` :
+                `${yesterday.getFullYear()}${String(yesterday.getMonth() + 1).padStart(2, '0')}${String(yesterday.getDate()).padStart(2, '0')}1800`;
+
+            const ServiceKey = 'wje5hA%2Bnn3R5RgOMpkRjQoneVn2py4RGqQmFJCCZS2IjYEetSvm7HP%2FngICVZN7%2FB0Mj2ig7Xp2oep7%2B4kcrSQ%3D%3D';
+            const pageNo = 1, numOfRows = 10, dataType = 'XML', temperatureData = [
+                { dayIndex: 3, amId: 'day3Am', pmId: 'day3Pm' },
+                { dayIndex: 4, amId: 'day4Am', pmId: 'day4Pm' },
+                { dayIndex: 5, amId: 'day5Am', pmId: 'day5Pm' },
+                { dayIndex: 6, amId: 'day6Am', pmId: 'day6Pm' },
+                { dayIndex: 7, amId: 'day7Am', pmId: 'day7Pm' }
+            ];
+
+            $.ajax({
+                url: `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&regId=${regID}&tmFc=${tmFc}`,
+                type: 'GET',
+                success: function(data) {
+                    $(data).find('items item').each(function() {
+                        temperatureData.forEach(item => {
+                            const wfam = $(this).find(`wf${item.dayIndex}Am`).text();
+                            const wfpm = $(this).find(`wf${item.dayIndex}Pm`).text();
+
+                            // HTML에 값 삽입
+                            $(`#${item.amId}`).text(wfam || 'No Data');
+                            $(`#${item.pmId}`).text(wfpm || 'No Data');
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('기온 데이터를 가져오는 데 실패했습니다.', error, status, xhr);
+                }
+            });
+        };
+    </script>
+</div>
 
 
 </body>
