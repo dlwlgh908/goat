@@ -35,6 +35,13 @@ public class PlaceService {
         return placeRepository.mainPlaceRankRestaurant(placeDTO);
     };
 
+    public List<PlaceDTO> list(PlaceDTO placeDTO){
+
+        Place place = modelMapper.map(placeDTO, Place.class);
+        return placeRepository.listPlace(placeDTO);
+
+    }
+
     public Long saveplace(PlaceDTO dto){
 
 

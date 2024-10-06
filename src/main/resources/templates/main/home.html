@@ -5,44 +5,140 @@
         xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <style>
+        .table {
+            font-size: 70%;
+        }
+
+        .thead {
+            font-size: 70%;
+            text-align: center;
+        }
+
+        .rec1 {
+            display: inline-block;
+            text-align: end;
+
+        }
+
+    </style>
 
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 <div class="container">
-    <div class="row mt-5 mb-5">
-        <div class="col shadow">
+    <div class="row mt-5 mb-5 imageSlide">
+        <div class="card h-100">
+            <div class="card-body shadow ">
+
+            </div>
+        <div class="col"></div>
+
+    </div>
+        <div class="col">
             <div class="row">
                 <div class="col mt-3 mb-3 ms-3 me-3">
                     <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">좋은블러기</h5>
-                            <th:block th:each="blog,userStat  : ${mainRankBlogDTO}">
+                        <div class="card-body shadow">
+                            <h5 class="card-title ">Top 5 블로그</h5>
+                            <div class="row thead  mt-3">
+                                <div class="col-md-2">순위</div>
+                                <div class="col-md-6">제목</div>
+                                <div class="col-md-2 rec">추천수</div>
+                                <div class="col-md-2 rec">조회수</div>
+                            </div>
+                            <th:block class="mt-0 row table  mt-2 mr-0" th:each="blog,userStat  : ${mainRankBlogDTO}  ">
+                                <div class="row table  mt-2">
+                                    <div class="col-md-2" th:text="${userStat.count}"></div>
+                                    <div class="justify-content-start col-md-6">
+                                        <a class="justify-content-start" th:href="|@{/blog/detale(num=${blog.num})}|"
+                                           th:text="${#strings.length(blog.title)>10?#strings.substring(blog.title,0,10)+'...':blog.title}">
+                                            [[${blog.title}]]
+                                        </a>
+                                    </div>
+                                    <div class="col-md-2 rec1">
+                                        [[${blog.recommendCount}]]
+                                    </div>
+                                    <div class="col-md-2 rec1">
+                                        [[${blog.readCount}]]
+                                    </div>
+                                </div>
+
 
                             </th:block>
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col mt-3 mb-3 ms-3 me-3">
+                    <div class="card h-100">
+                        <div class="card-body shadow">
+                            <h5 class="card-title ">Top 5 플레이스</h5>
+                            <div class="row thead  mt-3">
+                                <div class="col-md-2">순위</div>
+                                <div class="col-md-4">플레이스</div>
+                                <div class="col-md-4 rec">도시</div>
+                                <div class="col-md-2 rec">등록수</div>
+                            </div>
+                            <th:block class="mt-0" th:each="place,userStat  : ${mainRankDTO}  ">
+                                <div class="row table  mt-2">
+                                    <div class="col-md-2" th:text="${userStat.count}"></div>
+                                    <div class="justify-content-start col-md-5">
+                                        <a class="justify-content-start"
+                                           th:text="${#strings.length(place.place_name)>10?#strings.substring(place.place_name,0,10)+'...':place.place_name}">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 justify-content-center rec1">
+                                        [[${#strings.length(place.cname)>5?#strings.substring(place.cname,0,5)+'...':place.cname}]]
+                                    </div>
+                                    <div class="col-md-2 rec1">
+                                        [[${place.total}]]
+                                    </div>
+                                </div>
+
+
+                            </th:block>
                         </div>
                     </div>
                 </div>
                 <div class="col mt-3 mb-3 ms-3 me-3">
                     <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">좋은 명소</h5>
-                            <p class="card-text">This is a short card.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col mt-3 mb-3 ms-3 me-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">굿식당</h5>
-                            <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content.</p>
+                        <div class="card-body shadow">
+                            <h5 class="card-title ">Top 5 식당</h5>
+                            <div class="row thead  mt-3">
+                                <div class="col-md-2">순위</div>
+                                <div class="col-md-4">플레이스</div>
+                                <div class="col-md-4 rec">도시</div>
+                                <div class="col-md-2 rec">등록수</div>
+                            </div>
+                            <th:block class="mt-0" th:each="restaurant,userStat  : ${mainRankRestaurantDTO}  ">
+                                <div class="row table  mt-2">
+                                    <div class="col-md-2" th:text="${userStat.count}"></div>
+                                    <div class="justify-content-start col-md-5">
+                                        <a class="justify-content-start"
+                                           th:text="${#strings.length(restaurant.place_name)>10?#strings.substring(restaurant.place_name,0,10)+'...':restaurant.place_name}">
+
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 justify-content-center rec1">
+                                        [[${#strings.length(restaurant.cname)>5?#strings.substring(restaurant.cname,0,5)+'...':restaurant.cname}]]
+                                    </div>
+                                    <div class="col-md-2 rec1">
+                                        [[${restaurant.total}]]
+                                    </div>
+                                </div>
+
+
+                            </th:block>
                         </div>
                     </div>
                 </div>
@@ -50,142 +146,9 @@
         </div>
     </div>
 </div>
-<th:block th:if="${#lists.isEmpty(mainRankDTO)}">
-    <h1>Place DB가 없습니다.</h1>
-</th:block>
-<table class="table table-hover">
-    <thead>
-    <tr>
-        <th scope="col">순위</th>
-        <th scope="col">장소</th>
-        <th scope="col">도시</th>
-        <th scope="col">추천수</th>
-
-
-    </tr>
-    </thead>
-
-    <th:block th:each="blog,userStat  : ${mainRankBlogDTO}">
-        <tr>
-            <td>
-                <div th:text="${userStat.count}">
-                </div>
-            </td>
-            <td>
-                <a th:href="|@{/blog/detale(num=${blog.num})}|">
-                    [[${blog.title}]]
-                </a>
-
-            </td>
-            <td>
-                <th:block th:each="ab  : ${blog.placeDTOList}">
-                    <div th:text="${ab.cityDTO.cname}">
-
-                    </div>
-
-                </th:block>
-
-
-            </td>
-            <td>
-                <div>
-                    [[${blog.recommendCount}]]
-                </div>
-
-            </td>
-
-        </tr>
-    </th:block>
-
-    </tbody>
-</table>
-
-<table class="table table-hover">
-    <thead>
-    <tr>
-        <th scope="col">순위</th>
-        <th scope="col">장소</th>
-        <th scope="col">도시</th>
-        <th scope="col">등록수</th>
-
-
-    </tr>
-    </thead>
-
-    <th:block th:each="place,userStat  : ${mainRankDTO}">
-        <tr>
-            <td>
-                <div th:text="${userStat.count}">
-                </div>
-            </td>
-            <td>
-                <div>
-                    [[${place.place_name}]]
-                </div>
-
-            </td>
-            <td>
-                <div>
-                    [[${place.cname}]]
-                </div>
-
-            </td>
-            <td>
-                <div>
-                    [[${place.total}]]
-                </div>
-
-            </td>
-
-        </tr>
-    </th:block>
-
-    </th:block>
-</table>
-
-<table class="table table-hover">
-    <thead>
-    <tr>
-        <th scope="col">순위</th>
-        <th scope="col">장소</th>
-        <th scope="col">도시</th>
-        <th scope="col">등록수</th>
-
-
-    </tr>
-    </thead>
-
-    <th:block th:each="restaurant,userStat  : ${mainRankRestaurantDTO}">
-        <tr>
-            <td>
-                <div th:text="${userStat.count}">
-                </div>
-            </td>
-            <td>
-                <div>
-                    [[${restaurant.place_name}]]
-                </div>
-
-            </td>
-            <td>
-                <div>
-                    [[${restaurant.cname}]]
-                </div>
-
-            </td>
-            <td>
-                <div>
-                    [[${restaurant.total}]]
-                </div>
-
-            </td>
-
-        </tr>
-    </th:block>
-
-    </tbody>
-</table>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
 
 <script th:inline="javascript">
