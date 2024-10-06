@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dc0e764f9cafeb8b6ce32ae719767467&libraries=services"></script>
 
     <title>Title</title>
@@ -47,17 +45,17 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="placeTap">
                         <li>
-                            <button onclick="location.href='/placeBoard'" class="dropdown-item" id="placeDetail">상세 맛집</button>
+                            <button onclick="location.href='/place/list'" class="dropdown-item" id="placeDetail">플레이스 블로그</button>
                         </li>
                         <li>
-                            <button onclick="location.href='/placeDetailBoard'" class="dropdown-item" id="placeVote">추천 맛집</button>
+                            <button onclick="location.href='/placeDetailBoard'" class="dropdown-item" id="placeVote">추천 플레이스</button>
                         </li>
                     </ul>
                 </li>
 
                 <li class="nav-item dropdown mx-5">
                     <button class="nav-link dropdown-toggle" id="eventTap" data-bs-toggle="dropdown" aria-expanded="false">
-                        맛집
+                        공지 및 이벤트
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="eventTap">
                         <li>
@@ -81,7 +79,7 @@
 
 <div layout:fragment="content" class="container mt-4">
 
-    <form action="/blog/register" method="post" th:object="${blogDTO}" >
+    <form action="/blog/register" method="post" th:object="${blogDTO}">
         <input type="hidden" name="readCount" value=0>
         <input type="hidden" name="recommendCount" value=0>
         <div class="row">
@@ -147,25 +145,25 @@
 
                 <div class="row">
                     <div  class="d-flex" role="search" action="/board/list" method="get">
-                        <select class="form-select form-select-lg mb-2 mx-2 w-100" aria-label="Large select example" onchange="selectMap(this.value)" name="cnum">
+                        <select class="form-select form-select-lg mb-2 mx-2 w-100" aria-label="Large select example" onchange="selectMap(this.value);">
                             <option selected>지역을 선택하셈</option>
-                            <option value="1">서울특별시</option>
-                            <option value="2">부산광역시</option>
-                            <option value="3">대구광역시</option>
-                            <option value="4">인천광역시</option>
-                            <option value="5">광주광역시</option>
-                            <option value="6">대전광역시</option>
-                            <option value="7">울산광역시</option>
-                            <option value="8">세종특별자치시</option>
-                            <option value="9">경기도 (수원)</option>
-                            <option value="10">강원특별자치도</option>
-                            <option value="11">충청북도 (청주)</option>
-                            <option value="12">충청남도 (홍성)</option>
-                            <option value="13">전북특별자치도 (전주)</option>
-                            <option value="14">전라남도 (목포)</option>
-                            <option value="15">경상북도 (안동)</option>
-                            <option value="16">경상남도 (창원)</option>
-                            <option value="17">제주특별자치도</option>
+                            <option value="city1">서울특별시</option>
+                            <option value="city2">부산광역시</option>
+                            <option value="city3">대구광역시</option>
+                            <option value="city4">인천광역시</option>
+                            <option value="city5">광주광역시</option>
+                            <option value="city6">대전광역시</option>
+                            <option value="city7">울산광역시</option>
+                            <option value="city8">세종특별자치시</option>
+                            <option value="city9">경기도 (수원)</option>
+                            <option value="city10">강원특별자치도</option>
+                            <option value="city11">충청북도 (청주)</option>
+                            <option value="city12">충청남도 (홍성)</option>
+                            <option value="city13">전북특별자치도 (전주)</option>
+                            <option value="city14">전라남도 (목포)</option>
+                            <option value="city15">경상북도 (안동)</option>
+                            <option value="city16">경상남도 (창원)</option>
+                            <option value="city17">제주특별자치도</option>
                         </select>
                     </div>
                 </div>
@@ -178,34 +176,11 @@
 
         <!-- 버튼 (폼 안, div 밖) -->
         <div class="text-center mt-4">
-            <button type="button"  class="btn btn-primary postButton">저장</button>
+            <button type="submit" onclick="submitToDB()" class="btn btn-primary">저장</button>
             <a href="/blog/list" class="btn btn-secondary">목록</a>
         </div>
     </form>
 
-    <script>
-        let gogonum = [];
-        $(document).ready(function () {
-
-
-            $(".postButton").on("click",function (e){
-
-                e.preventDefault()
-
-                console.log(gogonum)
-                for(let i = 0 ; i< gogonum.length; i++){
-                    let str = `<input name="nnum" value="${gogonum[i]}">`
-                    $("form").append(str)
-                }
-                $("form").submit();
-
-
-
-            })
-
-
-        })
-    </script>
 </div>
 
 <!-- Kakao 지도 초기화 -->
@@ -217,20 +192,6 @@
     var selectedMarkerOne = null;
     var selectedMarkerTwo = null;
     var selectedMarkerThree = null;
-
-
-    //포스트
-
-
-
-
-
-
-
-
-
-
-
 
     // 첫 번째 장소 검색
     function searchPlacesOne() {
@@ -403,8 +364,6 @@
                 address_name: cityNameCut(selectedPlace.address_name)
             };
             console.log('1번째 장소:', selectToDB.place1);
-            ajaxx(selectToDB.place1)
-
 
 
         }
@@ -435,7 +394,6 @@
                 address_name: cityNameCut(selectedPlace.address_name)
             };
             console.log('2번째 장소:', selectToDB.place2);
-            ajaxx(selectToDB.place2)
         }
 
         document.getElementById('keywordTwoResult').value = selectedPlace.place_name;
@@ -465,7 +423,6 @@
         }
 
         console.log('3번째 장소:', selectToDB.place3);
-        ajaxx(selectToDB.place3)
 
         document.getElementById('keywordThreeResult').value = selectedPlace.place_name;
         var myModal = bootstrap.Modal.getInstance(document.getElementById('placeModalThree'));
@@ -514,54 +471,31 @@
         place3: null
     };
 
-    function submuitToDB() {
+    function submitToDB() {
         // 선택된 장소 정보가 하나라도 있는지 확인
         if (selectToDB.place1 || selectToDB.place2 || selectToDB.place3) {
-            console.log(selectToDB.place1)
             alert('장소 확인.');
 
-            if(selectToDB.place1){
-                alert('장소 확인1.');
-                // ajaxx(selectToDB.place1)
-
-            }
-            if(selectToDB.place2){
-                alert('장소 확인2.');
-                // ajaxx(selectToDB.place2)
-
-            }
-            if(selectToDB.place3){
-                alert('장소 확인3.');
-                // ajaxx(selectToDB.place3)
-
-            }
-
             // AJAX 요청을 통해 서버로 데이터 전송
+            $.ajax({
+                url: '/savePlaces', // 서버의 엔드포인트 URL
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(selectToDB),
+                success: function(PlacesData) {
+                    console.log('장소 정보 저장 성공:', PlacesData);
+                    // 저장 성공 후 추가 동작이 필요하면 여기서 처리
+                    alert('장소 정보가 저장되었습니다.');
+                },
+                error: function(error) {
+                    console.error('장소 정보 저장 실패:', error);
+                    alert('장소 정보 저장에 실패했습니다.');
+                }
+            });
 
 
         }
-
         return;
-    }
-    function ajaxx(aa) {
-        $.ajax({
-            url: '/blog/savePlaces', // 서버의 엔드포인트 URL
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',     //보내는 타입
-            data: JSON.stringify(aa),
-            // dataType : 'text',
-            success: function(PlacesData) {
-                console.log('장소 정보 저장 성공:', PlacesData);
-                // 저장 성공 후 추가 동작이 필요하면 여기서 처리
-                alert('장소 정보가 저장되었습니다.');
-
-                gogonum.push(PlacesData)
-            },
-            error: function(error) {
-                console.error('장소 정보 저장 실패:', error);
-                alert('장소 정보 저장에 실패했습니다.');
-            }
-        });
     }
 
     const cityMapping = {
