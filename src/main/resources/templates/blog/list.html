@@ -10,10 +10,43 @@
 <body>
 
 <div layout:fragment="content" class="mt-2 border rounded bg-light shadow-sm">
+
+
+
+    <style>
+
+        .table {
+            border-collapse: collapse;
+        }
+
+        .thcolor {
+            border-top: 3px solid #d0e7ff;
+            border-bottom: 3px solid #d0e7ff;
+        }
+
+        .thonecolor {
+            border-bottom: 3px solid #d0e7ff;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: 3px solid #d0e7ff;
+        }
+
+        .table tbody tr {
+            line-height: 2.7;  /* 기본값보다 크게 설정 */
+        }
+
+
+    </style>
+
+
+
     <div class="row g-0">
-        <div class="col shadow">
+        <div class="col shadow mt-2">
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
+
+
                     <form class="d-flex formObj" role="search" action="/blog/list" method="get"
                           th:object="${pageRequestDTO}">
                         <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
@@ -32,35 +65,70 @@
                 </div>
             </nav>
 
+            <!-- 게시글이 없을 경우 -->
             <th:block th:if="${#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
                 <h1>너님 글이 없음</h1>
             </th:block>
 
+            <!-- 게시글이 있을 경우 -->
             <div th:if="${!#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
-                <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
-                    <div class="row row-cols-1 row-cols-md-1 mx-1">
-                        <div class="col">
-                            <div class="card mb-3">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item d-flex">
-                                        <div class="ms-4">
-                                            <div class="mb-2">
-                                                <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend fs-4 text-decoration-none text-reset">
-                                                    [[${list.title}]]
-                                                </a>
-                                            </div>
-                                            <div>
-                                                <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend text-decoration-none text-reset">
-                                                    [[${list.content}]]
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                <table class="table table-bordered text-center">
+                    <!-- 테이블 헤더 -->
+                    <thead class="thead-light thcolor">
+                    <tr style="border: none">
+                        <th style="border: none" scope="col">글번호</th>
+                        <th style="border: none" scope="col">제목</th>
+                        <th style="border: none" scope="col">추천수</th>
+                        <th style="border: none" scope="col">조회수</th>
+                    </tr>
+                    </thead>
+
+                    <tr class="thonecolor" style="height: 20px; border: none; border-bottom: 3px solid #d0e7ff;">
+                        <td style="border: none"></td>
+                        <td style="border: none"></td>
+                        <td style="border: none;"></td>
+                    </tr>
+
+                    <div>
+                        <!-- 테이블 본문 -->
+                        <tbody>
+
+                        <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
+                            <tr style="border: none">
+                                <!-- 글번호 -->
+                                <td style="border: none">
+                                    <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend text-decoration-none text-reset">
+                                        [[${list.num}]]
+                                    </a>
+                                </td>
+
+                                <!-- 글 제목 -->
+                                <td style="border: none">
+                                    <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend text-decoration-none text-reset">
+                                        [[${list.Title}]]
+                                    </a>
+                                    <br>
+                                </td>
+
+                                <!-- 추천수 -->
+                                <td style="border: none">
+                                    <span class="fs-6 text-muted">[[${list.recommendCount}]]</span>
+                                </td>
+
+                                <!-- 조회수 -->
+                                <td style="border: none">
+                                    <span class="fs-6 text-muted">[[${list.readCount}]]</span>
+                                </td>
+                            </tr>
+                        </th:block>
+
+                        <td class="thlinecolor p-0 m-0">
+                        </td>
+
+                        </tbody>
                     </div>
-                </th:block>
+
+                </table>
             </div>
 
 

@@ -1,29 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      layout:decorate="~{layout/layout.html}">
 <head>
     <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>공지사항 게시판</title>
+    <style>
+        .weather-card {
+            width: 100%;
+            border-radius: 12px;
+            height: 150px;
+        }
+        .weather-icon {
+            width: 50px;
+            display: block;
+            margin: 0 auto;
+        }
+        .weather-card h6 {
+            font-size: 0.85rem;
+            margin: 0;
+            padding: 0;
+        }
+        .weather-card p {
+            font-size: 0.75rem;
+            margin: 0;
+            padding: 0;
+        }
+        .pagination-wrapper {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
-
-<div layout:fragment="content">
-    <div class="row mt-5">
-        <div class="col shadow">
-
+<div layout:fragment="content" class="container-fluid mt-5">
+    <div class="row">
+        <!-- 좌측 게시판 섹션 -->
+        <div class="col-md-8 shadow">
+            <!-- 검색과 등록 버튼 -->
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
                     <form class="d-flex formObj" role="search" action="/notice/list" method="get"
                           th:object="${pageRequestDTO}">
-
-                        <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
-
+                        <select name="type" th:field="*{type}" class="form-select">
                             <option value="t" selected>제목</option>
                             <option value="c">내용</option>
                             <option value="tc">제목 + 내용</option>
@@ -32,164 +56,177 @@
                                aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
-
-                    <a href="/notice/register" type="button" class="btn btn-dark">등록</a>
+                    <a href="/notice/register" class="btn btn-dark">등록</a>
                 </div>
-
             </nav>
 
+            <!-- 게시글 목록 -->
             <th:block th:if="${#lists.isEmpty(noticeEventDTOPageResponseDTO.dtoList)}">
-                <h1>너님 글이 없음</h1>
+                <h3 class="text-center mt-5">게시글이 없습니다.</h3>
             </th:block>
 
             <th:block th:unless="${#lists.isEmpty(noticeEventDTOPageResponseDTO.dtoList)}">
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">글번호</th>
-                        <th scope="col">제목</th>
-                        <th scope="col">내용</th>
-
+                        <th class="col-2">글번호</th>
+                        <th class="col-4">제목</th>
+                        <th class="col-6">내용</th>
                     </tr>
                     </thead>
                     <tbody>
                     <th:block th:each="list: ${noticeEventDTOPageResponseDTO.dtoList}">
                         <tr>
-                            <td>
-                                <div>
-                                    [[${list.num}]]
-                                </div>
-
-                            </td>
+                            <td>[[${list.num}]]</td>
                             <td>
                                 <a th:href="@{/notice/detale(num=${list.num})}"
-                                th:data-num="${list.num}" class="countappend"
-                                >
-                                    [[${list.title}]]
-                                </a>
-
+                                   th:data-num="${list.num}" class="countappend">[[${list.title}]]</a>
                             </td>
-                            <td>
-                                <div>
-                                    [[${list.content}]]
-                                </div>
-
-                            </td>
-
+                            <td>[[${list.content}]]</td>
                         </tr>
                     </th:block>
-
                     </tbody>
                 </table>
-
-
             </th:block>
 
+            <!-- 페이징 -->
             <div class="row text-center">
-                <!--페이징-->
                 <div class="col">
-                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                    <div class="pagination-wrapper">
                         <ul class="pagination justify-content-center">
-                            <li th:if="${noticeEventDTOPageResponseDTO.prev}" class="paginate_button previous "
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-                                <a class="page-link"
-                                   th:data-num="${noticeEventDTOPageResponseDTO.start -1}">Previous</a>
+                            <li th:if="${noticeEventDTOPageResponseDTO.prev}" class="paginate_button previous">
+                                <a class="page-link" th:data-num="${noticeEventDTOPageResponseDTO.start - 1}">Previous</a>
                             </li>
-
-                            <!--thymleaf에는 순서를 표기하는 #numbers.sequence가 있다.-->
-                            <th:block
-                                    th:each="i: ${#numbers.sequence(noticeEventDTOPageResponseDTO.start,noticeEventDTOPageResponseDTO.end)}">
-                                <li th:class="${noticeEventDTOPageResponseDTO.page == i} ? 'paginate_button active':''"
-                                    aria-controls="dataTables-example" tabindex="0">
+                            <th:block th:each="i: ${#numbers.sequence(noticeEventDTOPageResponseDTO.start, noticeEventDTOPageResponseDTO.end)}">
+                                <li th:class="${noticeEventDTOPageResponseDTO.page == i} ? 'paginate_button active':''">
                                     <a class="page-link" th:data-num="${i}">[[${i}]]</a>
                                 </li>
                             </th:block>
-
-                            <li th:if="${noticeEventDTOPageResponseDTO.next}" class="paginate_button next"
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-                                <a class="page-link" th:data-num="${noticeEventDTOPageResponseDTO.end +1}">Next</a>
+                            <li th:if="${noticeEventDTOPageResponseDTO.next}" class="paginate_button next">
+                                <a class="page-link" th:data-num="${noticeEventDTOPageResponseDTO.end + 1}">Next</a>
                             </li>
                         </ul>
                     </div>
-                </div> <!--페이징 처리-->
-
-
-            </div> <!--col -->
-
-
+                </div>
+            </div>
         </div>
 
+        <!-- 우측 섹션: 지도와 날씨 정보 -->
+        <div class="col-md-4">
+            <div id="map" class="mb-3" style="height: 300px; position: relative; z-index: 1;"></div>
 
-        <script th:inline="javascript">
+            <!-- 날씨 정보 표시 부분 -->
+            <div class="restaurantBoardWeather card mt-3">
+                <div class="row justify-content-between">
+                    <div class="col">
+                        <div id="skyIconToday" class="card weather-card text-center">
+                            <div class="card-body p-1">
+                                <img id="ptyIconToday" src="" class="weather-icon" />
+                                <h6 class="card-title">오늘의 날씨</h6>
+                                <p>현재기온: <span id="todayTMP"></span>°C</p>
+                                <p>최고기온: <span id="todayTMX"></span>°C</p>
+                                <p>최저기온: <span id="todayTMN"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div id="skyIconTomorrow" class="card weather-card text-center">
+                            <div class="card-body p-1">
+                                <img id="ptyIconTomorrow" src="" class="weather-icon" />
+                                <h6 class="card-title">내일의 날씨</h6>
+                                <p>최고기온: <span id="tomorrowTMX"></span>°C</p>
+                                <p>최저기온: <span id="tomorrowTMN"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-
-            $(document).ready(function () {
-                document.querySelector(".pagination").addEventListener("click", function (e) {
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    let target = e.target;
-
-
-                    if (target.tagName !== 'A') {
-                        return;
-                    }
-
-                    let num = target.getAttribute("data-num");
-                    // console.log(num);
-
-                    let formObj = document.querySelector(".formObj");
-
-                    formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
-
-
-                    formObj.submit();
-
-                })
-
-
-                $(".countappend").on("click", function (e) {
-
-
-                    e.preventDefault()
-                    //조회수를 증가시킨다. // 일반적인 컨트롤러에서는 증가시키던걸 빼고
-                    // 병렬 그러니까 따로 증가시킨다.
-
-                    //증가시키는 컨트롤러로 접속한다.
-
-                    let num = $(this).data("num")
-                    console.log($(this).data("num"))
-
-                    $.ajax({
-                        url: "/notice/countappend?num=" + num,
-                        type: "get",
-                        dataType: "text",
-                        success: function (data) {
-                            console.log("성공")
-                            console.log(data)
-                            if (data == "success") {
-                                location.href = "/notice/detale?num=" + num
-                            }
-
-                        },
-                        error: function (data) {
-                            console.log("fail")
-                            console.log(data.responseText)
-                        }
-
-                    })
-                })
-
-
-            });
-
-
-        </script>
-
+            <!-- 추가 날씨 카드 3~7일 -->
+            <div class="d-flex justify-content-between gap-1 mt-3">
+                <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0">3일 후</h6>
+                        <div class="row m-2 p-0">
+                            <div class="col p-0">
+                                <img id="day3Am" src="" class="weather-icon">
+                                <p>최고<br><span id="day3Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0">
+                                <img id="day3Pm" src="" class="weather-icon">
+                                <p>최저<br><span id="day3Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0">4일 후</h6>
+                        <div class="row m-2 p-0">
+                            <div class="col p-0">
+                                <img id="day4Am" src="" class="weather-icon">
+                                <p>최고<br><span id="day4Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0">
+                                <img id="day4Pm" src="" class="weather-icon">
+                                <p>최저<br><span id="day4Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0">5일 후</h6>
+                        <div class="row m-2 p-0">
+                            <div class="col p-0">
+                                <img id="day5Am" src="" class="weather-icon">
+                                <p>최고<br><span id="day5Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0">
+                                <img id="day5Pm" src="" class="weather-icon">
+                                <p>최저<br><span id="day5Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
+    <!-- 스크립트 부분 -->
+    <script>
+        $(document).ready(function () {
+            document.querySelector(".pagination").addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let target = e.target;
+                if (target.tagName !== 'A') return;
+                let num = target.getAttribute("data-num");
+                let formObj = document.querySelector(".formObj");
+                formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
+                formObj.submit();
+            });
 
+            $(".countappend").on("click", function (e) {
+                e.preventDefault();
+                let num = $(this).data("num");
+                $.ajax({
+                    url: "/notice/countappend?num=" + num,
+                    type: "get",
+                    dataType: "text",
+                    success: function (data) {
+                        if (data == "success") location.href = "/notice/detale?num=" + num;
+                    }
+                });
+            });
+        });
+
+        var mapContainer = document.getElementById('map');
+        var mapOption = { center: new kakao.maps.LatLng(37.566826, 126.9786567), level: 3 };
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+    </script>
+
+</div>
 </body>
 </html>

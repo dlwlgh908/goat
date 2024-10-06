@@ -58,6 +58,14 @@ public class MainController {
     }
 
 
+    @GetMapping("/place/list")
+    public String placeList(Model model, PlaceDTO placeDTO){
+        List<PlaceDTO> placeListDTO = placeService.list(placeDTO);
+        log.info(placeListDTO);
+        model.addAttribute("placeListDTO", placeListDTO);
+        model.addAttribute("type", new String());
+        return "place/list";
+    }
 
 
 }
