@@ -51,7 +51,7 @@ public class ModifyProfileController {
         accountService.updateAccount(accountDTO);
         redirectAttributes.addFlashAttribute("message", "회원 정보가 수정되었습니다.");
 
-        return "redirect:/mypage";
+        return "redirect:/account/mypage";
     }
 
     @PostMapping ("/change-password")
@@ -75,7 +75,7 @@ public class ModifyProfileController {
                 return "redirect:/account/edit"; // 비밀번호 변경 실패 시 수정 페이지로 돌아감
             }
 
-            return "redirect:/mypage"; //비밀번호 변경 후 마이페이지로 리다이렉트
+            return "redirect:/account/mypage"; //비밀번호 변경 후 마이페이지로 리다이렉트
         }
 
 }
