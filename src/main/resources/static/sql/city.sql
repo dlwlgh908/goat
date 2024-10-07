@@ -1,0 +1,17 @@
+INSERT INTO goat.city (cno, cname) VALUES (10, '강원특별자치도 (춘천시)');
+INSERT INTO goat.city (cno, cname) VALUES (9, '경기도 (수원시)');
+INSERT INTO goat.city (cno, cname) VALUES (16, '경상남도 (창원시)');
+INSERT INTO goat.city (cno, cname) VALUES (15, '경상북도 (안동시)');
+INSERT INTO goat.city (cno, cname) VALUES (5, '광주광역시');
+INSERT INTO goat.city (cno, cname) VALUES (3, '대구광역시');
+INSERT INTO goat.city (cno, cname) VALUES (6, '대전광역시');
+INSERT INTO goat.city (cno, cname) VALUES (2, '부산광역시');
+INSERT INTO goat.city (cno, cname) VALUES (1, '서울특별시');
+INSERT INTO goat.city (cno, cname) VALUES (8, '세종특별자치시');
+INSERT INTO goat.city (cno, cname) VALUES (7, '울산광역시');
+INSERT INTO goat.city (cno, cname) VALUES (4, '인천광역시');
+INSERT INTO goat.city (cno, cname) VALUES (14, '전라남도 (목포시)');
+INSERT INTO goat.city (cno, cname) VALUES (13, '전라북도 (전주시)');
+INSERT INTO goat.city (cno, cname) VALUES (17, '제주특별자치도');
+INSERT INTO goat.city (cno, cname) VALUES (12, '충청남도 (홍성군)');
+INSERT INTO goat.city (cno, cname) VALUES (11, '충청북도 (청주시)');

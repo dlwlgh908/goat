@@ -67,6 +67,7 @@
                         </th:block>
                     </div>
                 </div>
+
             </div>
 
             <div class="col-md-5 border rounded bg-light shadow-sm">
@@ -281,32 +282,7 @@
                 });
             </script>
 
-            <div class="row text-center">
-                <!--페이징-->
-                <div class="col">
-                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
-                        <ul class="pagination justify-content-center">
-                            <li th:if="${rPageResponseDTO.prev}" class="paginate_button previous "
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-                                <a class="page-link" th:data-num="${rPageResponseDTO.start -1}">Previous</a>
-                            </li>
 
-                            <!--thymleaf에는 순서를 표기하는 #numbers.sequence가 있다.-->
-                            <th:block
-                                    th:each="i: ${#numbers.sequence(rPageResponseDTO.start,rPageResponseDTO.end)}">
-                                <li th:class="${rPageResponseDTO.page == i} ? 'paginate_button active':''"
-                                    aria-controls="dataTables-example" tabindex="0">
-                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
-                                </li>
-                            </th:block>
-
-                            <li th:if="${rPageResponseDTO.next}" class="paginate_button next"
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-                                <a class="page-link" th:data-num="${rPageResponseDTO.end +1}">Next</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div> <!--페이징 처리-->
 
 
             </div> <!--col -->

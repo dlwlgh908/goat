@@ -1,0 +1,2 @@
+INSERT INTO goat.account (ano, phone, email, name, password, password1, role) VALUES (1, '01056291665', 'dlwlgh908@naver.com', '이지호', '$2a$10$OPn7MwSVO8SQh8/xUVnZruHxa1G0gVnhpgoPYqAGp3jgRdBOwbID6', '123', 'ADMIN');
+INSERT INTO goat.account (ano, phone, email, name, password, password1, role) VALUES (2, '123', 'dlwlgh908@gmail.com', '이지호', '$2a$10$Y7L/BM4neNxZ/w0jpaWOH.Pdns3FhdGE1VX843jeppOOpGGMIjF7q', '123', 'ADMIN');
