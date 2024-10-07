@@ -27,8 +27,29 @@
             <div class="text-center mt-4">
                 <a href="/account/modifyprofile" class="btn btn-primary"> 정보 수정 </a>
                 <a href="/account/edit" class="btn btn-secondary"> 비밀번호 변경</a>
-                <a href="/account/delete" class="btn btn-danger"> 회원 탈퇴</a>
+                <button type="button" class="deldel btn btn-danger" th:value="${accountDTO.email}">회원 탈퇴</button>
             </div>
+            <form class="formObjj" method="post" action="/account/delete">
+
+            </form>
+            <script>
+                $(".deldel").on("click", function () {
+                    if(confirm('정말로 이 회원을 탈퇴시키겠습니까?')){
+                        console.log("홍길동")
+                        console.log($(this).val())
+
+                        let str = `<input type="hidden" name="email" value="${$(this).val()}"/>`
+                        $(".formObjj").append(str)
+                        $(".formObjj").submit()
+
+                    }else {
+                        console.log("취소")
+                        return false;
+                    }
+
+                })
+
+            </script>
         </div>
     </div>
 </div>
