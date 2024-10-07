@@ -71,7 +71,7 @@ public class SecurityConfig {
                 //현재 모든 경로에 대해서 csrf 미사용
 
                 .formLogin( formLogin -> formLogin.loginPage("/account/login")
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/main/home")
                                 .usernameParameter("email")
                         /*  .failureUrl("/user/login")*/
 
@@ -80,7 +80,7 @@ public class SecurityConfig {
 
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/account/logout"))
-                        .logoutSuccessUrl("/blog/list")
+                        .logoutSuccessUrl("/main/home")
                         .invalidateHttpSession(true))
 
                 // 로그인이 되지 않은 사용자 가 로그인을 요하는 페이지 접속시 (rest) 핸들링

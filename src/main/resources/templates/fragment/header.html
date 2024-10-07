@@ -58,8 +58,20 @@
 
             <!-- 회원가입 및 로그인 버튼을 토글 버튼 왼쪽에 배치 -->
             <div class="d-flex ms-auto align-items-center justify-content-end flex-nowrap">
-                <button class="btn nav nav-link order-2">회원가입</button>
-                <button class="btn nav nav-link order-3">로그인</button>
+                <button onclick="location.href='/account/register'" class="btn nav nav-link order-2">회원가입</button>
+
+                <th:block sec:authorize="isAnonymous()">
+                    <button onclick="location.href='/account/login'" class="btn nav nav-link order-3">로그인</button>
+                </th:block>
+
+                <th:block sec:authorize="isAuthenticated()">
+                    <div th:text="${#authentication.principal.username}"></div>
+
+                    <button onclick="location.href='/account/mypage'" class="btn nav nav-link order-3" style="background-color: #6c757d; color: white; margin-right: 10px;">
+                        마이페이지
+                    </button>
+                    <button onclick="location.href='/account/logout'" class="btn nav nav-link order-3">로그아웃</button>
+                </th:block>
 
                 <!-- 토글 버튼은 우측 끝에 고정 -->
                 <button class="navbar-toggler order-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
