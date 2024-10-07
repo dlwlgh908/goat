@@ -37,13 +37,14 @@ public class SecurityConfig {
 //                                .requestMatchers("/replies/modify/**").authenticated()
 //                                .requestMatchers("/replies/remove/**").authenticated()
 
-                                .requestMatchers("/account/login","/account/signup","/css/**", "/js/**", "/img/**").permitAll()
-                                .requestMatchers("/blog/list").authenticated()
+                                .requestMatchers("/account/login","/account/signup","/css/**", "/js/**", "/img/**", "/layout/**").permitAll()
+                                .requestMatchers("/account/register").permitAll()
+                                .requestMatchers("/account/mypage").authenticated()
+                                .requestMatchers("/account/modifyprofile").authenticated()
+                                .requestMatchers("/account/find-email").permitAll()
                                 .requestMatchers("/account/edit").authenticated()
-                                .requestMatchers("/account/delete").authenticated()
+                                .requestMatchers("/blog/list").authenticated()
                                 .requestMatchers(new AntPathRequestMatcher("/account/list")).hasRole(Role.ADMIN.name())
-
-                                .requestMatchers("/blog/list").hasAnyRole("ADMIN")
 
                                 .anyRequest().permitAll()
 
