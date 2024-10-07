@@ -15,7 +15,7 @@
 <div layout:fragment="content" class="container mt-5">
     <div class="row">
         <!-- 좌측 섹션: 공지사항 내용 -->
-        <div class="col-md-7">
+        <div class="col">
             <div class="shadow p-4 bg-light rounded">
                 <!-- 제목 -->
                 <div class="mb-4">
@@ -28,202 +28,202 @@
                 </div>
 
                 <!-- 버튼 -->
-                <div class="d-flex justify-content-between">
+                <div class="d-flex text-center">
                     <a th:href="@{/notice/delete(num=${noticeEventDTO.num})}" class="btn btn-outline-danger">삭제</a>
                     <a th:href="@{/notice/modify(num=${noticeEventDTO.num})}" class="btn btn-outline-primary">수정</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-5 mt-2 border rounded bg-light shadow-sm">
+<!--        <div class="col-md-5 mt-2 border rounded bg-light shadow-sm">-->
 
-            <div class="row">
-                <form class="d-flex" role="search" action="/board/list" method="get" style="float: right">
-                    <select class="form-select form-select-lg mb-3" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">
-                        <option selected>지역을 선택하셈</option>
-                        <option value="city1">서울특별시</option>
-                        <option value="city2">부산광역시</option>
-                        <option value="city3">대구광역시</option>
-                        <option value="city4">인천광역시</option>
-                        <option value="city5">광주광역시</option>
-                        <option value="city6">대전광역시</option>
-                        <option value="city7">울산광역시</option>
-                        <option value="city8">세종특별자치시</option>
-                        <option value="city9">경기도 (수원)</option>
-                        <option value="city10">강원특별자치도</option>
-                        <option value="city11">충청북도 (청주)</option>
-                        <option value="city12">충청남도 (홍성)</option>
-                        <option value="city13">전북특별자치도 (전주)</option>
-                        <option value="city14">전라남도 (목포)</option>
-                        <option value="city15">경상북도 (안동)</option>
-                        <option value="city16">경상남도 (창원)</option>
-                        <option value="city17">제주특별자치도</option>
-                    </select>
+<!--            <div class="row">-->
+<!--                <form class="d-flex" role="search" action="/board/list" method="get" style="float: right">-->
+<!--                    <select class="form-select form-select-lg mb-3" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">-->
+<!--                        <option selected>지역을 선택하셈</option>-->
+<!--                        <option value="city1">서울특별시</option>-->
+<!--                        <option value="city2">부산광역시</option>-->
+<!--                        <option value="city3">대구광역시</option>-->
+<!--                        <option value="city4">인천광역시</option>-->
+<!--                        <option value="city5">광주광역시</option>-->
+<!--                        <option value="city6">대전광역시</option>-->
+<!--                        <option value="city7">울산광역시</option>-->
+<!--                        <option value="city8">세종특별자치시</option>-->
+<!--                        <option value="city9">경기도 (수원)</option>-->
+<!--                        <option value="city10">강원특별자치도</option>-->
+<!--                        <option value="city11">충청북도 (청주)</option>-->
+<!--                        <option value="city12">충청남도 (홍성)</option>-->
+<!--                        <option value="city13">전북특별자치도 (전주)</option>-->
+<!--                        <option value="city14">전라남도 (목포)</option>-->
+<!--                        <option value="city15">경상북도 (안동)</option>-->
+<!--                        <option value="city16">경상남도 (창원)</option>-->
+<!--                        <option value="city17">제주특별자치도</option>-->
+<!--                    </select>-->
 
-                </form>
-            </div>
+<!--                </form>-->
+<!--            </div>-->
 
-            <!-- 검색창 및 버튼 그룹 -->
-            <form onsubmit="searchPlaces(); return false;" class="d-flex justify-content-start ms-1">
-                <input type="text" id="keyword" placeholder="검색할 장소를 입력하세요" class="form-control form-control-sm me-2" style="width: 200px;">
-                <button class="btn btn-primary btn-sm">검색</button>
-            </form>
+<!--            &lt;!&ndash; 검색창 및 버튼 그룹 &ndash;&gt;-->
+<!--            <form onsubmit="searchPlaces(); return false;" class="d-flex justify-content-start ms-1">-->
+<!--                <input type="text" id="keyword" placeholder="검색할 장소를 입력하세요" class="form-control form-control-sm me-2" style="width: 200px;">-->
+<!--                <button class="btn btn-primary btn-sm">검색</button>-->
+<!--            </form>-->
 
-            <div id="map" class="h-50 mt-3" style="position: relative;z-index:1">
-                <div id="menu_wrap" style="display: none; z-index: 5;">
-                    <ul id="placesList"></ul>
-                    <div id="pagination"></div>
-                </div>
+<!--            <div id="map" class="h-50 mt-3" style="position: relative;z-index:1">-->
+<!--                <div id="menu_wrap" style="display: none; z-index: 5;">-->
+<!--                    <ul id="placesList"></ul>-->
+<!--                    <div id="pagination"></div>-->
+<!--                </div>-->
 
-                <style>
-                    .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
-                    #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 0px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;'돋움',sans-serif;font-size:10px}
-                    .bg_white {background:#fff;}
-                    #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
-                    #menu_wrap .option{text-align: center; margin:0 1px}
-                    #menu_wrap .option p {margin:10px 0;}
-                    #menu_wrap .option button {margin-left:0px;}
-                    #placesList {margin:0; padding: 0}
-                    #placesList li {list-style: none; margin:0}
-                    #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px; }
-                    #placesList .item span {display: block;margin-top:4px;}
-                    #placesList .item h5 {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:16px; margin-left: 18px}
-                    #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:12px; margin-left: 18px}
-                    #placesList .item .info{padding:10px 0 10px 0px;}
-                    #placesList .info .gray {color:#8a8a8a;}
-                    #placesList .info .jibun {padding-left:0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
-                    #placesList .info .tel {color:#009900;}
-                    #placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:1px 0 0 0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}
-                    #placesList .item .marker_1 {background-position: 0 -10px;}
-                    #placesList .item .marker_2 {background-position: 0 -56px;}
-                    #placesList .item .marker_3 {background-position: 0 -102px}
-                    #placesList .item .marker_4 {background-position: 0 -148px;}
-                    #placesList .item .marker_5 {background-position: 0 -194px;}
-                    #placesList .item .marker_6 {background-position: 0 -240px;}
-                    #placesList .item .marker_7 {background-position: 0 -286px;}
-                    #placesList .item .marker_8 {background-position: 0 -332px;}
-                    #placesList .item .marker_9 {background-position: 0 -378px;}
-                    #placesList .item .marker_10 {background-position: 0 -423px;}
-                    #placesList .item .marker_11 {background-position: 0 -470px;}
-                    #placesList .item .marker_12 {background-position: 0 -516px;}
-                    #placesList .item .marker_13 {background-position: 0 -562px;}
-                    #placesList .item .marker_14 {background-position: 0 -608px;}
-                    #placesList .item .marker_15 {background-position: 0 -654px;}
-                    #pagination {margin:10px auto;text-align: center;}
-                    #pagination a {display:inline-block;margin-right:10px;}
-                    #pagination .on {font-weight: bold; cursor: default;color:#777;}
-                </style>
+<!--                <style>-->
+<!--                    .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}-->
+<!--                    #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 0px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;'돋움',sans-serif;font-size:10px}-->
+<!--                    .bg_white {background:#fff;}-->
+<!--                    #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}-->
+<!--                    #menu_wrap .option{text-align: center; margin:0 1px}-->
+<!--                    #menu_wrap .option p {margin:10px 0;}-->
+<!--                    #menu_wrap .option button {margin-left:0px;}-->
+<!--                    #placesList {margin:0; padding: 0}-->
+<!--                    #placesList li {list-style: none; margin:0}-->
+<!--                    #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px; }-->
+<!--                    #placesList .item span {display: block;margin-top:4px;}-->
+<!--                    #placesList .item h5 {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:16px; margin-left: 18px}-->
+<!--                    #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:12px; margin-left: 18px}-->
+<!--                    #placesList .item .info{padding:10px 0 10px 0px;}-->
+<!--                    #placesList .info .gray {color:#8a8a8a;}-->
+<!--                    #placesList .info .jibun {padding-left:0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}-->
+<!--                    #placesList .info .tel {color:#009900;}-->
+<!--                    #placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:1px 0 0 0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}-->
+<!--                    #placesList .item .marker_1 {background-position: 0 -10px;}-->
+<!--                    #placesList .item .marker_2 {background-position: 0 -56px;}-->
+<!--                    #placesList .item .marker_3 {background-position: 0 -102px}-->
+<!--                    #placesList .item .marker_4 {background-position: 0 -148px;}-->
+<!--                    #placesList .item .marker_5 {background-position: 0 -194px;}-->
+<!--                    #placesList .item .marker_6 {background-position: 0 -240px;}-->
+<!--                    #placesList .item .marker_7 {background-position: 0 -286px;}-->
+<!--                    #placesList .item .marker_8 {background-position: 0 -332px;}-->
+<!--                    #placesList .item .marker_9 {background-position: 0 -378px;}-->
+<!--                    #placesList .item .marker_10 {background-position: 0 -423px;}-->
+<!--                    #placesList .item .marker_11 {background-position: 0 -470px;}-->
+<!--                    #placesList .item .marker_12 {background-position: 0 -516px;}-->
+<!--                    #placesList .item .marker_13 {background-position: 0 -562px;}-->
+<!--                    #placesList .item .marker_14 {background-position: 0 -608px;}-->
+<!--                    #placesList .item .marker_15 {background-position: 0 -654px;}-->
+<!--                    #pagination {margin:10px auto;text-align: center;}-->
+<!--                    #pagination a {display:inline-block;margin-right:10px;}-->
+<!--                    #pagination .on {font-weight: bold; cursor: default;color:#777;}-->
+<!--                </style>-->
 
-            </div>
+<!--            </div>-->
 
-            <!-- 날씨 정보 표시 부분 -->
-            <div class="restaurantBoardWeather card mt-3">
-                <div class=" justify-content-between row">
-                    <!-- 오늘의 날씨 카드 -->
-                    <div class="col">
-                        <div id="skyIconToday" class="card weather-card text-center" style="border-radius: 12px; width: 100%; height: 150px;">
-                            <div class="card-body p-1">
-                                <img id="ptyIconToday" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;">
-                                <h6 class="card-title" style="font-size: 0.85rem;">오늘의 날씨</h6>
-                                <p style="font-size: 0.75rem;">현재기온: <span id="todayTMP"></span>°C</p>
-                                <p style="font-size: 0.75rem;">최고기온: <span id="todayTMX"></span>°C</p>
-                                <p style="font-size: 0.75rem;">최저기온: <span id="todayTMN"></span>°C</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <!-- 내일의 날씨 카드 -->
-                        <div id="skyIconTomorrow" class="card weather-card text-center" style="border-radius: 12px; width: 100%; height: 150px;">
-                            <div class="card-body p-1">
-                                <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;">
-                                <h6 class="card-title" style="font-size: 0.85rem;">내일의 날씨</h6>
-                                <p style="font-size: 0.75rem;">최고기온: <span id="tomorrowTMX"></span>°C</p>
-                                <p style="font-size: 0.75rem;">최저기온: <span id="tomorrowTMN"></span>°C</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--            &lt;!&ndash; 날씨 정보 표시 부분 &ndash;&gt;-->
+<!--            <div class="restaurantBoardWeather card mt-3">-->
+<!--                <div class=" justify-content-between row">-->
+<!--                    &lt;!&ndash; 오늘의 날씨 카드 &ndash;&gt;-->
+<!--                    <div class="col">-->
+<!--                        <div id="skyIconToday" class="card weather-card text-center" style="border-radius: 12px; width: 100%; height: 150px;">-->
+<!--                            <div class="card-body p-1">-->
+<!--                                <img id="ptyIconToday" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;">-->
+<!--                                <h6 class="card-title" style="font-size: 0.85rem;">오늘의 날씨</h6>-->
+<!--                                <p style="font-size: 0.75rem;">현재기온: <span id="todayTMP"></span>°C</p>-->
+<!--                                <p style="font-size: 0.75rem;">최고기온: <span id="todayTMX"></span>°C</p>-->
+<!--                                <p style="font-size: 0.75rem;">최저기온: <span id="todayTMN"></span>°C</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="col">-->
+<!--                        &lt;!&ndash; 내일의 날씨 카드 &ndash;&gt;-->
+<!--                        <div id="skyIconTomorrow" class="card weather-card text-center" style="border-radius: 12px; width: 100%; height: 150px;">-->
+<!--                            <div class="card-body p-1">-->
+<!--                                <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;">-->
+<!--                                <h6 class="card-title" style="font-size: 0.85rem;">내일의 날씨</h6>-->
+<!--                                <p style="font-size: 0.75rem;">최고기온: <span id="tomorrowTMX"></span>°C</p>-->
+<!--                                <p style="font-size: 0.75rem;">최저기온: <span id="tomorrowTMN"></span>°C</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <!-- 추가 날씨 카드 5장 -->
-            <div class="d-flex justify-content-between gap-1 mt-3">
-                <!-- 3~7일 날씨 카드 -->
-                <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
-                    <div class="card-body p-0 m-0">
-                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">3일 후</h6>
-                        <div class="row m-2 p-0 m-0">
-                            <div class="col p-0 m-0">
-                                <img id="day3Am" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최고<br><span id="day3Max"></span>°C</p>
-                            </div>
-                            <div class="col p-0 m-0">
-                                <img id="day3Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최저<br><span id="day3Min"></span>°C</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
-                    <div class="card-body p-0 m-0">
-                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">4일 후</h6>
-                        <div class="row m-2 p-0 m-0">
-                            <div class="col p-0 m-0">
-                                <img id="day4Am" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최고<br><span id="day4Max"></span>°C</p>
-                            </div>
-                            <div class="col p-0 m-0">
-                                <img id="day4Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최저<br><span id="day4Min"></span>°C</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
-                    <div class="card-body p-0 m-0">
-                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">5일 후</h6>
-                        <div class="row m-2 p-0 m-0">
-                            <div class="col p-0 m-0">
-                                <img id="day5Am" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최고<br><span id="day5Max"></span>°C</p>
-                            </div>
-                            <div class="col p-0 m-0">
-                                <img id="day5Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최저<br><span id="day5Min"></span>°C</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
-                    <div class="card-body p-0 m-0">
-                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">6일 후</h6>
-                        <div class="row m-2 p-0 m-0">
-                            <div class="col p-0 m-0">
-                                <img id="day6Am" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최고<br><span id="day6Max"></span>°C</p>
-                            </div>
-                            <div class="col p-0 m-0">
-                                <img id="day6Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최저<br><span id="day6Min"></span>°C</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
-                    <div class="card-body p-0 m-0">
-                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">7일 후</h6>
-                        <div class="row m-2 p-0 m-0">
-                            <div class="col p-0 m-0">
-                                <img id="day7Am" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최고<br><span id="day7Max"></span>°C</p>
-                            </div>
-                            <div class="col p-0 m-0">
-                                <img id="day7Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                <p style="font-size: 0.75rem;">최저<br><span id="day7Min"></span>°C</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!--            &lt;!&ndash; 추가 날씨 카드 5장 &ndash;&gt;-->
+<!--            <div class="d-flex justify-content-between gap-1 mt-3">-->
+<!--                &lt;!&ndash; 3~7일 날씨 카드 &ndash;&gt;-->
+<!--                <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">-->
+<!--                    <div class="card-body p-0 m-0">-->
+<!--                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">3일 후</h6>-->
+<!--                        <div class="row m-2 p-0 m-0">-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day3Am" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최고<br><span id="day3Max"></span>°C</p>-->
+<!--                            </div>-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day3Pm" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최저<br><span id="day3Min"></span>°C</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">-->
+<!--                    <div class="card-body p-0 m-0">-->
+<!--                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">4일 후</h6>-->
+<!--                        <div class="row m-2 p-0 m-0">-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day4Am" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최고<br><span id="day4Max"></span>°C</p>-->
+<!--                            </div>-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day4Pm" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최저<br><span id="day4Min"></span>°C</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">-->
+<!--                    <div class="card-body p-0 m-0">-->
+<!--                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">5일 후</h6>-->
+<!--                        <div class="row m-2 p-0 m-0">-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day5Am" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최고<br><span id="day5Max"></span>°C</p>-->
+<!--                            </div>-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day5Pm" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최저<br><span id="day5Min"></span>°C</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">-->
+<!--                    <div class="card-body p-0 m-0">-->
+<!--                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">6일 후</h6>-->
+<!--                        <div class="row m-2 p-0 m-0">-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day6Am" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최고<br><span id="day6Max"></span>°C</p>-->
+<!--                            </div>-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day6Pm" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최저<br><span id="day6Min"></span>°C</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">-->
+<!--                    <div class="card-body p-0 m-0">-->
+<!--                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">7일 후</h6>-->
+<!--                        <div class="row m-2 p-0 m-0">-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day7Am" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최고<br><span id="day7Max"></span>°C</p>-->
+<!--                            </div>-->
+<!--                            <div class="col p-0 m-0">-->
+<!--                                <img id="day7Pm" src="" class="weather-icon p-0 m-0 w-75">-->
+<!--                                <p style="font-size: 0.75rem;">최저<br><span id="day7Min"></span>°C</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
 
     <script>
