@@ -119,7 +119,7 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = blogRepository.findById(blogDTO.getNum()).orElseThrow(EntityNotFoundException::new);
         blog.setContent(blogDTO.getContent());
         blog.setTitle(blogDTO.getTitle());
-        blog.setSchedule(blogDTO.getSchedule());
+//        blog.setSchedule(blogDTO.getSchedule());
     }
 
 

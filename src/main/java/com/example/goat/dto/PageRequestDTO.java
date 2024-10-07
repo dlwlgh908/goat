@@ -20,7 +20,7 @@ public class PageRequestDTO {
     @Builder.Default // 들어오면 들어온 값 안들어오면 이 값
     private int page = 1;
     @Builder.Default //들어오면 들어온값 안들어오면 이 값 ㅁ라그대로 디폴트
-    private int size = 10;
+    private int size = 12;
 
 
     private String type; // 검색 종류에서 select box : t, c, w, y(타이틀 컨텐츠 작성자 도시)

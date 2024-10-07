@@ -63,7 +63,6 @@ public class MainController {
         List<PlaceDTO> placeListDTO = placeService.list(placeDTO);
         log.info(placeListDTO);
         model.addAttribute("placeListDTO", placeListDTO);
-        model.addAttribute("type", new String());
         return "place/list";
     }
 
