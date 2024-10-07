@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers("/account/modifyprofile").authenticated()
                                 .requestMatchers("/account/find-email").permitAll()
                                 .requestMatchers("/account/edit").authenticated()
-                                .requestMatchers("/blog/list").authenticated()
+
                                 .requestMatchers(new AntPathRequestMatcher("/account/list")).hasRole(Role.ADMIN.name())
 
                                 .anyRequest().permitAll()
