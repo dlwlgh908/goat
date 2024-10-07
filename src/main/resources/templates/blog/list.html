@@ -13,37 +13,10 @@
 
 
 
-    <style>
-
-        .table {
-            border-collapse: collapse;
-        }
-
-        .thcolor {
-            border-top: 3px solid #d0e7ff;
-            border-bottom: 3px solid #d0e7ff;
-        }
-
-        .thonecolor {
-            border-bottom: 3px solid #d0e7ff;
-        }
-
-        .table tbody tr:last-child {
-            border-bottom: 3px solid #d0e7ff;
-        }
-
-        .table tbody tr {
-            line-height: 2.7;  /* 기본값보다 크게 설정 */
-        }
-
-
-    </style>
-
-
-
-    <div class="row g-0">
-        <div class="col shadow mt-2">
+    <div class="row g-0" style="height:685px">
+        <div class="col shadow">
             <nav class="navbar bg-body-tertiary">
+
                 <div class="container-fluid">
 
 
@@ -72,21 +45,22 @@
 
             <!-- 게시글이 있을 경우 -->
             <div th:if="${!#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">
-                <table class="table table-bordered text-center">
+                <table class="table table-hover text-center table">
                     <!-- 테이블 헤더 -->
-                    <thead class="thead-light thcolor">
-                    <tr style="border: none">
-                        <th style="border: none" scope="col">글번호</th>
-                        <th style="border: none" scope="col">제목</th>
-                        <th style="border: none" scope="col">추천수</th>
-                        <th style="border: none" scope="col">조회수</th>
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">글번호</th>
+                        <th scope="col">제목</th>
+                        <th scope="col">추천수</th>
+                        <th scope="col">조회수</th>
                     </tr>
                     </thead>
 
-                    <tr class="thonecolor" style="height: 20px; border: none; border-bottom: 3px solid #d0e7ff;">
-                        <td style="border: none"></td>
-                        <td style="border: none"></td>
-                        <td style="border: none;"></td>
+                    <tr class="thonecolor" style="height: 20px;">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
 
                     <div>
@@ -94,16 +68,16 @@
                         <tbody>
 
                         <th:block th:each="list: ${blogDTOPageResponseDTO.dtoList}">
-                            <tr style="border: none">
+                            <tr>
                                 <!-- 글번호 -->
-                                <td style="border: none">
+                                <td>
                                     <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend text-decoration-none text-reset">
                                         [[${list.num}]]
                                     </a>
                                 </td>
 
                                 <!-- 글 제목 -->
-                                <td class="text-start" style="border: none">
+                                <td class="text-start">
                                     <a th:href="@{/blog/detale(num=${list.num})}" th:data-num="${list.num}" class="countappend text-decoration-none text-reset text-start">
                                         [[${list.Title}]]
                                     </a>
@@ -111,12 +85,12 @@
                                 </td>
 
                                 <!-- 추천수 -->
-                                <td style="border: none">
+                                <td>
                                     <span class="fs-6 text-muted">[[${list.recommendCount}]]</span>
                                 </td>
 
                                 <!-- 조회수 -->
-                                <td style="border: none">
+                                <td>
                                     <span class="fs-6 text-muted">[[${list.readCount}]]</span>
                                 </td>
                             </tr>
@@ -154,11 +128,11 @@
             </div>
         </div>
 
-        <div class="col-md-5 mt-2 border rounded bg-light shadow-sm">
+        <div class="col-md-5 border rounded bg-light shadow-sm">
 
             <div class="row">
                 <form class="d-flex" role="search" action="/board/list" method="get" style="float: right">
-                    <select class="form-select form-select-lg mb-3" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">
+                    <select class="form-select mb-2" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">
                         <option selected>지역을 선택하셈</option>
                         <option value="city1">서울특별시</option>
                         <option value="city2">부산광역시</option>
@@ -242,7 +216,7 @@
 
                     <div class="col">
 
-                        <div id="skyIconToday" class="card weather-card text-center " style="border-radius: 12px; width: 100%; height: 150px; z-index: 10">
+                        <div id="skyIconToday" class="card weather-card text-center " style="border-radius: 12px; width: 100%; height: 130px;">
                             <div class="card-body p-1">
                                 <img id="ptyIconToday" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
                                 <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">오늘의 날씨</h6>
@@ -254,7 +228,7 @@
                     </div>
                     <div class="col">
                         <!-- 내일의 날씨 카드 -->
-                        <div id="skyIconTomorrow" class="card weather-card text-center col" style="border-radius: 12px; width: 100%; height: 150px;">
+                        <div id="skyIconTomorrow" class="card weather-card text-center col" style="border-radius: 12px; width: 100%; height: 130px;">
                             <div class="card-body p-1">
                                 <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
                                 <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">내일의 날씨</h6>
@@ -267,9 +241,9 @@
             </div>
 
             <!-- 추가 날씨 카드 5장 -->
-            <div class="d-flex justify-content-between gap-1 mt-3">
+            <div class="d-flex justify-content-between gap-1 mt-2">
                 <!-- 3~7일 날씨 카드 -->
-                <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 95px;">
                     <div class="card-body p-0 m-0">
                         <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">3일 후</h6>
                         <div class="row m-2 p-0 m-0">
@@ -284,7 +258,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 95px;">
                     <div class="card-body p-0 m-0">
                         <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">4일 후</h6>
                         <div class="row m-2 p-0 m-0">
@@ -299,7 +273,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 95px;">
                     <div class="card-body p-0 m-0">
                         <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">5일 후</h6>
                         <div class="row m-2 p-0 m-0">
@@ -314,7 +288,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 95px;">
                     <div class="card-body p-0 m-0">
                         <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">6일 후</h6>
                         <div class="row m-2 p-0 m-0">
@@ -329,7 +303,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 95px;">
                     <div class="card-body p-0 m-0">
                         <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">7일 후</h6>
                         <div class="row m-2 p-0 m-0">
