@@ -37,13 +37,14 @@ public class SecurityConfig {
 //                                .requestMatchers("/replies/modify/**").authenticated()
 //                                .requestMatchers("/replies/remove/**").authenticated()
 
-                                .requestMatchers("/account/login","/account/signup","/css/**", "/js/**", "/img/**").permitAll()
-                                .requestMatchers("/blog/list").authenticated()
+                                .requestMatchers("/account/login","/account/signup","/css/**", "/js/**", "/img/**", "/layout/**","/fragment/**").permitAll()
+                                .requestMatchers("/account/register").permitAll()
+                                .requestMatchers("/account/mypage").authenticated()
+                                .requestMatchers("/account/modifyprofile").authenticated()
+                                .requestMatchers("/account/find-email").permitAll()
                                 .requestMatchers("/account/edit").authenticated()
-                                .requestMatchers("/account/delete").authenticated()
-                                .requestMatchers(new AntPathRequestMatcher("/account/list")).hasRole(Role.ADMIN.name())
 
-                                .requestMatchers("/blog/list").hasAnyRole("ADMIN")
+                                .requestMatchers(new AntPathRequestMatcher("/account/list")).hasRole(Role.ADMIN.name())
 
                                 .anyRequest().permitAll()
 
@@ -71,7 +72,7 @@ public class SecurityConfig {
                 //현재 모든 경로에 대해서 csrf 미사용
 
                 .formLogin( formLogin -> formLogin.loginPage("/account/login")
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/main/home")
                                 .usernameParameter("email")
                         /*  .failureUrl("/user/login")*/
 
@@ -80,7 +81,7 @@ public class SecurityConfig {
 
                 .logout((logout) -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/account/logout"))
-                        .logoutSuccessUrl("/blog/list")
+                        .logoutSuccessUrl("/main/home")
                         .invalidateHttpSession(true))
 
                 // 로그인이 되지 않은 사용자 가 로그인을 요하는 페이지 접속시 (rest) 핸들링

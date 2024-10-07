@@ -46,9 +46,8 @@ public class Blog extends BaseEntity{
     //내용
 
 
-    // 불필요 컬럼 삭제
-//    @Column(nullable = false)
-//    private int	schedule;
+    @Column(nullable = false)
+    private int	schedule;
     //당일치기 ~ 2박 3일
     // 1== 당일치기 2== 1박 2일 3== 2박 3일
 
