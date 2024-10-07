@@ -1,0 +1,13 @@
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (1, '123', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (2, '123', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (3, 'sadasd', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (4, 'rased', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (5, 'asdwq', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (6, 'asdwqd', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (7, 'asdasd', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (8, 'asdasd', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (9, 'asdasd', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (10, 'asdsad', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (11, 'asdasd', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (12, 'asd', null, 1, 1);
+INSERT INTO goat.reply_blog (replyblog_num, content, reg, account_num, blog_num) VALUES (13, '123', null, 2, 57);

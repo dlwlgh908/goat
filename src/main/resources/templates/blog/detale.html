@@ -2,7 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+
       layout:decorate="~{layout/layout.html}">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
 
 <head>
     <meta charset="UTF-8">
@@ -21,6 +24,7 @@
                 </div>
                 <div class="d-flex justify-content-between">
                     <span>조회수: <span th:text="${blogDTO.readCount}"></span></span>
+                    <span>추천수: <span th:text="${blogDTO.recommendCount}"></span></span>
                     <span>작성자: <span th:text="${blogDTO.accountDTO.email}"></span></span>
                 </div>
                 <div class="mt-3">
@@ -29,8 +33,17 @@
                             <a th:href="@{/blog/modify(num=${blogDTO.num})}" class="btn btn-outline-primary">수정</a>
                             <a th:href="@{/blog/delete(num=${blogDTO.num})}" class="btn btn-outline-danger">삭제</a>
                         </th:block>
-                        <th:block sec:authorize="hasRole('ADMIN')">
+                        <th:block sec:authorize="hasRole('ADMIN')"
+                                  th:if="${#authentication.principal.username != blogDTO.accountDTO.email }">
                             <a th:href="@{/blog/delete(num=${blogDTO.num})}" class="btn btn-outline-danger">삭제</a>
+                        </th:block>
+                        <th:block sec:authorize="authenticated">
+                            <a th:if="${voteCheck == '1'}" class="btn btn-outline-danger"
+                               th:href="@{/blog/vote(num=${blogDTO.num})}">추천</a>
+                            <span th:if="${voteCheck == '2'}"><img class="checkP ms-2"
+                                                                   src="/check.webp"> 추천한 글 입니다.</span>
+                        </th:block>
+                        <th:block sec:authorize="isAnonymous()">
                         </th:block>
 
                     </th:block>
@@ -38,33 +51,104 @@
 
                 <div class="comments mt-5">
                     <!-- 댓글 입력 폼 -->
-                    <form action="/replyblog/register" method="post" th:object="${replyBlogDTO}" class="d-flex">
-                        <input type="text"name="content" placeholder="댓글 입력" class="form-control me-2">
-                        <input name="blog_num" th:value="${blogDTO.num}" type="hidden">
-                        <button type="submit" class="btn btn-dark btn-sm" style="white-space: nowrap;">댓글 입력</button>
-                    </form>
-                    <div class="comment-list mt-3">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <form action="/replyblog/register" method="post" th:object="${replyBlogDTO}"
+                                          class="d-flex">
+                                        <input type="text" name="content" placeholder="댓글 입력" class="form-control me-2">
+                                        <input name="blog_num" th:value="${blogDTO.num}" type="hidden">
+                                        <button type="submit" class="btn btn-dark btn-sm" style="white-space: nowrap;">
+                                            댓글 입력
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="comment-list mt-3 row">
                         <th:block th:if="${#lists.isEmpty(rPageResponseDTO.dtoList)}">
-                            <p>댓글이 없습니다.</p>
+                            <div class="col">
+                                <p>댓글이 없습니다.</p>
+                            </div>
                         </th:block>
+
                         <th:block th:unless="${#lists.isEmpty(rPageResponseDTO.dtoList)}">
-                            <ul class="list-group">
+                            <div class="col mt-3">
                                 <th:block th:each="list: ${rPageResponseDTO.dtoList}">
-                                    <li class="list-group-item d-flex justify-content-between">
-                                        <div>
-                                            <strong th:text="${list.num}"></strong>
-                                            <p th:text="${list.content}" class="mb-0"></p>
-                                        </div>
-                                        <th:block sec:authorize="authenticated">
-                                            <th:block th:if="${#authentication.principal.username == list.accountDTO.email}">
-                                                <button type="button" class="btn btn-sm btn-outline-dark">수정</button>
-                                                <button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
+                                    <div class="row ms-1 mt-2 mb-2 ">
+                                        <div th:text="${list.num}" class="col-3 "
+                                             style="border-bottom: 1px solid gray"></div>
+                                        <div th:text="${list.content}" class="mb-0 col-6"
+                                             style="border-bottom: 1px solid gray"></div>
+                                        <div class="col-3 text-center">
+                                            <th:block sec:authorize="authenticated">
+
+                                                <th:block
+                                                        th:if="${#authentication.principal.username == list.accountDTO.email}">
+
+
+                                                    <button class="btn btn-sm btn-outline-dark mb-3 replyModify" data-bs-toggle="modal" data-bs-target="#exampleModal" th:value="${list.num}">수정
+                                                        </button>
+                                                        <a class="btn btn-sm btn-outline-danger mb-3"
+                                                           th:href="@{/replyblog/delete(num=${list.num})}">삭제
+                                                            </a>
+
+                                                </th:block>
+                                                <th:block sec:authorize="hasRole('ADMIN')"
+                                                          th:if="${#authentication.principal.username != list.accountDTO.email}">
+
+                                                    <a class="btn btn-sm btn-outline-danger mb-3"
+                                                       th:href="@{/replyblog/delete(num=${list.num})}">삭제</a>
+                                                </th:block>
+
                                             </th:block>
-                                        </th:block>
-                                    </li>
+                                        </div>
+
+                                    </div>
                                 </th:block>
-                            </ul>
+                            </div>
                         </th:block>
+                    </div>
+                    <div class="row text-center">
+                        <!--페이징-->
+                        <div class="col">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                                <ul class="pagination justify-content-center">
+                                    <li th:if="${rPageResponseDTO.prev}" class="paginate_button previous "
+                                        aria-controls="dataTables-example" tabindex="0"
+                                        id="dataTables-example_previous">
+                                        <a class="page-link" th:data-num="${rPageResponseDTO.start -1}">Previous</a>
+                                    </li>
+
+                                    <!--thymleaf에는 순서를 표기하는 #numbers.sequence가 있다.-->
+                                    <th:block
+                                            th:each="i: ${#numbers.sequence(rPageResponseDTO.start,rPageResponseDTO.end)}">
+                                        <li th:class="${rPageResponseDTO.page == i} ? 'paginate_button active':''"
+                                            aria-controls="dataTables-example" tabindex="0">
+                                            <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                        </li>
+                                    </th:block>
+
+                                    <li th:if="${rPageResponseDTO.next}" class="paginate_button next"
+                                        aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
+                                        <a class="page-link" th:data-num="${rPageResponseDTO.end +1}">Next</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div> <!--페이징 처리-->
+
+
+                    </div> <!--col -->
+
+                </div>
+                <div class="row">
+                    <div class="col text-end">
+                        <a class="btn btn-primary" href="list">목록</a>
                     </div>
                 </div>
             </div>
@@ -73,7 +157,8 @@
 
                 <div class="row">
                     <form class="d-flex" role="search" action="/board/list" method="get" style="float: right">
-                        <select class="form-select form-select-lg mb-3" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">
+                        <select class="form-select form-select-lg mb-3" aria-label="Large select example"
+                                onchange="selectReg(this.value); selectMap(this.value);">
                             <option selected>지역을 선택하셈</option>
                             <option value="city1">서울특별시</option>
                             <option value="city2">부산광역시</option>
@@ -99,7 +184,8 @@
 
                 <!-- 검색창 및 버튼 그룹 -->
                 <form onsubmit="searchPlaces(); return false;" class="d-flex justify-content-start ms-1">
-                    <input type="text" id="keyword" placeholder="검색할 장소를 입력하세요" class="form-control form-control-sm me-2" style="width: 200px;">
+                    <input type="text" id="keyword" placeholder="검색할 장소를 입력하세요"
+                           class="form-control form-control-sm me-2" style="width: 200px;">
                     <button class="btn btn-primary btn-sm">검색</button>
                 </form>
 
@@ -110,42 +196,199 @@
                     </div>
 
                     <style>
-                        .map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
-                        #menu_wrap {position:absolute;top:0;left:0;bottom:0;width:250px;margin:10px 0 30px 0px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;'돋움',sans-serif;font-size:10px}
-                        .bg_white {background:#fff;}
-                        #menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
-                        #menu_wrap .option{text-align: center; margin:0 1px}
-                        #menu_wrap .option p {margin:10px 0;}
-                        #menu_wrap .option button {margin-left:0px;}
-                        #placesList {margin:0; padding: 0}
-                        #placesList li {list-style: none; margin:0}
-                        #placesList .item {position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px; }
-                        #placesList .item span {display: block;margin-top:4px;}
-                        #placesList .item h5 {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:16px; margin-left: 18px}
-                        #placesList .item .info {text-overflow: ellipsis;overflow: hidden;white-space: nowrap; font-size:12px; margin-left: 18px}
-                        #placesList .item .info{padding:10px 0 10px 0px;}
-                        #placesList .info .gray {color:#8a8a8a;}
-                        #placesList .info .jibun {padding-left:0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;}
-                        #placesList .info .tel {color:#009900;}
-                        #placesList .item .markerbg {float:left;position:absolute;width:36px; height:37px;margin:1px 0 0 0px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;}
-                        #placesList .item .marker_1 {background-position: 0 -10px;}
-                        #placesList .item .marker_2 {background-position: 0 -56px;}
-                        #placesList .item .marker_3 {background-position: 0 -102px}
-                        #placesList .item .marker_4 {background-position: 0 -148px;}
-                        #placesList .item .marker_5 {background-position: 0 -194px;}
-                        #placesList .item .marker_6 {background-position: 0 -240px;}
-                        #placesList .item .marker_7 {background-position: 0 -286px;}
-                        #placesList .item .marker_8 {background-position: 0 -332px;}
-                        #placesList .item .marker_9 {background-position: 0 -378px;}
-                        #placesList .item .marker_10 {background-position: 0 -423px;}
-                        #placesList .item .marker_11 {background-position: 0 -470px;}
-                        #placesList .item .marker_12 {background-position: 0 -516px;}
-                        #placesList .item .marker_13 {background-position: 0 -562px;}
-                        #placesList .item .marker_14 {background-position: 0 -608px;}
-                        #placesList .item .marker_15 {background-position: 0 -654px;}
-                        #pagination {margin:10px auto;text-align: center;}
-                        #pagination a {display:inline-block;margin-right:10px;}
-                        #pagination .on {font-weight: bold; cursor: default;color:#777;}
+                        .checkP {
+                            width: 35px;
+                            height: 35px;
+
+                        }
+
+                        .map_wrap a, .map_wrap a:hover, .map_wrap a:active {
+                            color: #000;
+                            text-decoration: none;
+                        }
+
+                        #menu_wrap {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            bottom: 0;
+                            width: 250px;
+                            margin: 10px 0 30px 0px;
+                            padding: 5px;
+                            overflow-y: auto;
+                            background: rgba(255, 255, 255, 0.7);
+                            z-index: 1;
+                            font-size: 12px;
+                            border-radius: 10px;
+                        '돋움', sans-serif;
+                            font-size: 10px
+                        }
+
+                        .bg_white {
+                            background: #fff;
+                        }
+
+                        #menu_wrap hr {
+                            display: block;
+                            height: 1px;
+                            border: 0;
+                            border-top: 2px solid #5F5F5F;
+                            margin: 3px 0;
+                        }
+
+                        #menu_wrap .option {
+                            text-align: center;
+                            margin: 0 1px
+                        }
+
+                        #menu_wrap .option p {
+                            margin: 10px 0;
+                        }
+
+                        #menu_wrap .option button {
+                            margin-left: 0px;
+                        }
+
+                        #placesList {
+                            margin: 0;
+                            padding: 0
+                        }
+
+                        #placesList li {
+                            list-style: none;
+                            margin: 0
+                        }
+
+                        #placesList .item {
+                            position: relative;
+                            border-bottom: 1px solid #888;
+                            overflow: hidden;
+                            cursor: pointer;
+                            min-height: 65px;
+                        }
+
+                        #placesList .item span {
+                            display: block;
+                            margin-top: 4px;
+                        }
+
+                        #placesList .item h5 {
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            font-size: 16px;
+                            margin-left: 18px
+                        }
+
+                        #placesList .item .info {
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            font-size: 12px;
+                            margin-left: 18px
+                        }
+
+                        #placesList .item .info {
+                            padding: 10px 0 10px 0px;
+                        }
+
+                        #placesList .info .gray {
+                            color: #8a8a8a;
+                        }
+
+                        #placesList .info .jibun {
+                            padding-left: 0px;
+                            background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
+                        }
+
+                        #placesList .info .tel {
+                            color: #009900;
+                        }
+
+                        #placesList .item .markerbg {
+                            float: left;
+                            position: absolute;
+                            width: 36px;
+                            height: 37px;
+                            margin: 1px 0 0 0px;
+                            background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
+                        }
+
+                        #placesList .item .marker_1 {
+                            background-position: 0 -10px;
+                        }
+
+                        #placesList .item .marker_2 {
+                            background-position: 0 -56px;
+                        }
+
+                        #placesList .item .marker_3 {
+                            background-position: 0 -102px
+                        }
+
+                        #placesList .item .marker_4 {
+                            background-position: 0 -148px;
+                        }
+
+                        #placesList .item .marker_5 {
+                            background-position: 0 -194px;
+                        }
+
+                        #placesList .item .marker_6 {
+                            background-position: 0 -240px;
+                        }
+
+                        #placesList .item .marker_7 {
+                            background-position: 0 -286px;
+                        }
+
+                        #placesList .item .marker_8 {
+                            background-position: 0 -332px;
+                        }
+
+                        #placesList .item .marker_9 {
+                            background-position: 0 -378px;
+                        }
+
+                        #placesList .item .marker_10 {
+                            background-position: 0 -423px;
+                        }
+
+                        #placesList .item .marker_11 {
+                            background-position: 0 -470px;
+                        }
+
+                        #placesList .item .marker_12 {
+                            background-position: 0 -516px;
+                        }
+
+                        #placesList .item .marker_13 {
+                            background-position: 0 -562px;
+                        }
+
+                        #placesList .item .marker_14 {
+                            background-position: 0 -608px;
+                        }
+
+                        #placesList .item .marker_15 {
+                            background-position: 0 -654px;
+                        }
+
+                        #pagination {
+                            margin: 10px auto;
+                            text-align: center;
+                        }
+
+                        #pagination a {
+                            display: inline-block;
+                            margin-right: 10px;
+                        }
+
+                        #pagination .on {
+                            font-weight: bold;
+                            cursor: default;
+                            color: #777;
+                        }
                     </style>
 
                 </div>
@@ -157,24 +400,35 @@
 
                         <div class="col">
 
-                            <div id="skyIconToday" class="card weather-card text-center " style="border-radius: 12px; width: 100%; height: 150px; z-index: 10">
+                            <div id="skyIconToday" class="card weather-card text-center "
+                                 style="border-radius: 12px; width: 100%; height: 150px; z-index: 10">
                                 <div class="card-body p-1">
-                                    <img id="ptyIconToday" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
-                                    <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">오늘의 날씨</h6>
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">현재기온: <span id="todayTMP"></span>°C</p>
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span id="todayTMX"></span>°C</p>
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span id="todayTMN"></span>°C</p>
+                                    <img id="ptyIconToday" src="" class="img-fluid"
+                                         style="width: 40px; display: block; margin: 0 auto;"/>
+                                    <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">오늘의
+                                        날씨</h6>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">현재기온: <span
+                                            id="todayTMP"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span
+                                            id="todayTMX"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span
+                                            id="todayTMN"></span>°C</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col">
                             <!-- 내일의 날씨 카드 -->
-                            <div id="skyIconTomorrow" class="card weather-card text-center col" style="border-radius: 12px; width: 100%; height: 150px;">
+                            <div id="skyIconTomorrow" class="card weather-card text-center col"
+                                 style="border-radius: 12px; width: 100%; height: 150px;">
                                 <div class="card-body p-1">
-                                    <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
-                                    <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">내일의 날씨</h6>
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span id="tomorrowTMX"></span>°C</p>
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span id="tomorrowTMN"></span>°C</p>
+                                    <img id="ptyIconTomorrow" src="" class="img-fluid"
+                                         style="width: 40px; display: block; margin: 0 auto;"/>
+                                    <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">내일의
+                                        날씨</h6>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span
+                                            id="tomorrowTMX"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span
+                                            id="tomorrowTMN"></span>°C</p>
                                 </div>
                             </div>
                         </div>
@@ -184,83 +438,100 @@
                 <!-- 추가 날씨 카드 5장 -->
                 <div class="d-flex justify-content-between gap-1 mt-3">
                     <!-- 3~7일 날씨 카드 -->
-                    <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0"
+                         style="border-radius: 12px; height: 100px;">
                         <div class="card-body p-0 m-0">
                             <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">3일 후</h6>
                             <div class="row m-2 p-0 m-0">
                                 <div class="col p-0 m-0">
                                     <img id="day3Am" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day3Max"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span
+                                            id="day3Max"></span>°C</p>
                                 </div>
                                 <div class="col p-0 m-0">
                                     <img id="day3Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day3Min"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span
+                                            id="day3Min"></span>°C</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0"
+                         style="border-radius: 12px; height: 100px;">
                         <div class="card-body p-0 m-0">
                             <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">4일 후</h6>
                             <div class="row m-2 p-0 m-0">
                                 <div class="col p-0 m-0">
-                                    <img id="day4Am" src=""class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day4Max"></span>°C</p>
+                                    <img id="day4Am" src="" class="weather-icon p-0 m-0 w-75">
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span
+                                            id="day4Max"></span>°C</p>
                                 </div>
                                 <div class="col p-0 m-0">
                                     <img id="day4Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day4Min"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span
+                                            id="day4Min"></span>°C</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0"
+                         style="border-radius: 12px; height: 100px;">
                         <div class="card-body p-0 m-0">
                             <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">5일 후</h6>
                             <div class="row m-2 p-0 m-0">
                                 <div class="col p-0 m-0">
                                     <img id="day5Am" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day5Max"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span
+                                            id="day5Max"></span>°C</p>
                                 </div>
                                 <div class="col p-0 m-0">
                                     <img id="day5Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day5Min"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span
+                                            id="day5Min"></span>°C</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0"
+                         style="border-radius: 12px; height: 100px;">
                         <div class="card-body p-0 m-0">
                             <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">6일 후</h6>
                             <div class="row m-2 p-0 m-0">
                                 <div class="col p-0 m-0">
                                     <img id="day6Am" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day6Max"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span
+                                            id="day6Max"></span>°C</p>
                                 </div>
                                 <div class="col p-0 m-0">
                                     <img id="day6Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day6Min"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span
+                                            id="day6Min"></span>°C</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0"
+                         style="border-radius: 12px; height: 100px;">
                         <div class="card-body p-0 m-0">
                             <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">7일 후</h6>
                             <div class="row m-2 p-0 m-0">
                                 <div class="col p-0 m-0">
                                     <img id="day7Am" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day7Max"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span
+                                            id="day7Max"></span>°C</p>
                                 </div>
                                 <div class="col p-0 m-0">
                                     <img id="day7Pm" src="" class="weather-icon p-0 m-0 w-75">
-                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day7Min"></span>°C</p>
+                                    <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span
+                                            id="day7Min"></span>°C</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
+
 
 
             <script th:inline="javascript">
@@ -269,7 +540,7 @@
                 console.log(bno)
                 console.log(bno)
 
-                $( document ).ready(function() {
+                $(document).ready(function () {
                     $(".aaa").on("click", function () {
                         console.log(bno)
                         console.log($(this).val())
@@ -281,36 +552,6 @@
                 });
             </script>
 
-            <div class="row text-center">
-                <!--페이징-->
-                <div class="col">
-                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
-                        <ul class="pagination justify-content-center">
-                            <li th:if="${rPageResponseDTO.prev}" class="paginate_button previous "
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous">
-                                <a class="page-link" th:data-num="${rPageResponseDTO.start -1}">Previous</a>
-                            </li>
-
-                            <!--thymleaf에는 순서를 표기하는 #numbers.sequence가 있다.-->
-                            <th:block
-                                    th:each="i: ${#numbers.sequence(rPageResponseDTO.start,rPageResponseDTO.end)}">
-                                <li th:class="${rPageResponseDTO.page == i} ? 'paginate_button active':''"
-                                    aria-controls="dataTables-example" tabindex="0">
-                                    <a class="page-link" th:data-num="${i}">[[${i}]]</a>
-                                </li>
-                            </th:block>
-
-                            <li th:if="${rPageResponseDTO.next}" class="paginate_button next"
-                                aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next">
-                                <a class="page-link" th:data-num="${rPageResponseDTO.end +1}">Next</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div> <!--페이징 처리-->
-
-
-            </div> <!--col -->
-
 
         </div>
 
@@ -319,9 +560,9 @@
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form action="/replyblog/modify" method="post" th:object="${dto}" class="repform" >
+                    <form action="/replyblog/modify" method="post" th:object="${dto}" class="repform">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">댓글 수정</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -329,21 +570,21 @@
 
                             <div class="mb-3">
                                 <input name="blog_num" type="hidden" th:value="${blogDTO.num}">
-                                <input class="replynum" type="text" name="num" value="">
-                                <label for="content" class="form-label" >내용</label>
-                                <input id="content" class="replycontent" type="text" name="content">
+                                <input class="replynum" type="hidden" name="num" value="">
+                                <label for="content" class="form-label">내용</label>
+                                <input id="content" class="replycontent form-control" type="text" name="content">
                                 </input>
                             </div>
                             <div class="mb-3">
-                                <label for="writer" class="form-label" >작성자</label>
+                                <label for="writer" class="form-label">작성자</label>
                                 <input type="text" class="form-control" id="writer" placeholder="이곳작성자">
                             </div>
 
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            <button type="submit" class="btn btn-primary">저장</button>
                         </div>
                     </form>
                 </div>
@@ -357,17 +598,13 @@
             $(document).ready(function () {
                 let votecheck = [[${voteCheck}]]
                 console.log(votecheck)
-                if(votecheck == "1"){
+                if (votecheck == "1") {
                     $('.recommend_text').hide()
                     $('.recommend_button').show()
-                }
-                else
-                {
+                } else {
                     $('.recommend_text').show()
                     $('.recommend_button').hide()
                 }
-
-
 
 
                 let replyDTO = [[${rPageResponseDTO.dtoList}]]
@@ -435,7 +672,7 @@
             var ps = new kakao.maps.services.Places();
 
             // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
-            var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+            var infowindow = new kakao.maps.InfoWindow({zIndex: 1});
 
 
             // 키워드 검색을 요청하는 함수입니다
@@ -449,7 +686,7 @@
                 }
 
                 // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-                ps.keywordSearch( keyword, placesSearchCB);
+                ps.keywordSearch(keyword, placesSearchCB);
             }
 
             // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
@@ -486,7 +723,7 @@
                 removeAllChildNods(listEl);
                 removeMarker();
 
-                for ( var i=0; i<places.length; i++ ) {
+                for (var i = 0; i < places.length; i++) {
 
                     // 마커를 생성하고 지도에 표시합니다
                     var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
@@ -500,20 +737,20 @@
                     // 마커와 검색결과 항목에 mouseover 했을때
                     // 해당 장소에 인포윈도우에 장소명을 표시합니다
                     // mouseout 했을 때는 인포윈도우를 닫습니다
-                    (function(marker, title) {
-                        kakao.maps.event.addListener(marker, 'mouseover', function() {
+                    (function (marker, title) {
+                        kakao.maps.event.addListener(marker, 'mouseover', function () {
                             displayInfowindow(marker, title);
                         });
 
-                        kakao.maps.event.addListener(marker, 'mouseout', function() {
+                        kakao.maps.event.addListener(marker, 'mouseout', function () {
                             infowindow.close();
                         });
 
-                        itemEl.onmouseover =  function () {
+                        itemEl.onmouseover = function () {
                             displayInfowindow(marker, title);
                         };
 
-                        itemEl.onmouseout =  function () {
+                        itemEl.onmouseout = function () {
                             infowindow.close();
                         };
 
@@ -556,18 +793,18 @@
             function getListItem(index, places) {
 
                 var el = document.createElement('li'),
-                    itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                    itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
                         '<div class="info">' +
                         '   <h5>' + places.place_name + '</h5>';
 
                 if (places.road_address_name) {
                     itemStr += '    <span>' + places.road_address_name + '</span>' +
-                        '   <span class="jibun gray">' +  places.address_name  + '</span>';
+                        '   <span class="jibun gray">' + places.address_name + '</span>';
                 } else {
-                    itemStr += '    <span>' +  places.address_name  + '</span>';
+                    itemStr += '    <span>' + places.address_name + '</span>';
                 }
 
-                itemStr += '  <span class="tel">' + places.phone  + '</span>' +
+                itemStr += '  <span class="tel">' + places.phone + '</span>' +
                     '</div>';
 
                 el.innerHTML = itemStr;
@@ -580,9 +817,9 @@
             function addMarker(position, idx, title) {
                 var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
                     imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
-                    imgOptions =  {
-                        spriteSize : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
-                        spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+                    imgOptions = {
+                        spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                        spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
                         offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
                     },
                     markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
@@ -599,7 +836,7 @@
 
             function removeMarker(exceptMarker) {
                 // exceptMarker를 제외한 나머지 마커를 지도에서 제거
-                markers.forEach(function(marker) {
+                markers.forEach(function (marker) {
                     if (marker !== exceptMarker) {
                         marker.setMap(null);  // 선택되지 않은 마커들을 제거
                     }
@@ -614,19 +851,19 @@
 
                 // 기존에 추가된 페이지번호를 삭제합니다
                 while (paginationEl.hasChildNodes()) {
-                    paginationEl.removeChild (paginationEl.lastChild);
+                    paginationEl.removeChild(paginationEl.lastChild);
                 }
 
-                for (i=1; i<=pagination.last; i++) {
+                for (i = 1; i <= pagination.last; i++) {
                     var el = document.createElement('a');
                     el.href = "#";
                     el.innerHTML = i;
 
-                    if (i===pagination.current) {
+                    if (i === pagination.current) {
                         el.className = 'on';
                     } else {
-                        el.onclick = (function(i) {
-                            return function() {
+                        el.onclick = (function (i) {
+                            return function () {
                                 pagination.gotoPage(i);
                             }
                         })(i);
@@ -649,7 +886,7 @@
             // 검색결과 목록의 자식 Element를 제거하는 함수입니다
             function removeAllChildNods(el) {
                 while (el.hasChildNodes()) {
-                    el.removeChild (el.lastChild);
+                    el.removeChild(el.lastChild);
                 }
             }
 
@@ -657,24 +894,60 @@
                 let moveLatLon;
 
                 switch (selectMap) {
-                    case 'city1': moveLatLon = new kakao.maps.LatLng(37.5665, 126.9780); break;
-                    case 'city2': moveLatLon = new kakao.maps.LatLng(35.1796, 129.0756); break;
-                    case 'city3': moveLatLon = new kakao.maps.LatLng(35.8722, 128.6017); break;
-                    case 'city4': moveLatLon = new kakao.maps.LatLng(37.4563, 126.7052); break;
-                    case 'city5': moveLatLon = new kakao.maps.LatLng(35.1595, 126.8526); break;
-                    case 'city6': moveLatLon = new kakao.maps.LatLng(36.3504, 127.3845); break;
-                    case 'city7': moveLatLon = new kakao.maps.LatLng(35.5384, 129.3114); break;
-                    case 'city8': moveLatLon = new kakao.maps.LatLng(36.4800, 127.2890); break;
-                    case 'city9': moveLatLon = new kakao.maps.LatLng(37.8813, 127.7298); break;
-                    case 'city10': moveLatLon = new kakao.maps.LatLng(37.7519, 128.8761); break;
-                    case 'city11': moveLatLon = new kakao.maps.LatLng(36.6424, 127.4890); break;
-                    case 'city12': moveLatLon = new kakao.maps.LatLng(36.6013, 126.6608); break;
-                    case 'city13': moveLatLon = new kakao.maps.LatLng(35.8242, 127.1479); break;
-                    case 'city14': moveLatLon = new kakao.maps.LatLng(34.8118, 126.3922); break;
-                    case 'city15': moveLatLon = new kakao.maps.LatLng(36.5684, 128.7294); break;
-                    case 'city16': moveLatLon = new kakao.maps.LatLng(35.2276, 128.6811); break;
-                    case 'city17': moveLatLon = new kakao.maps.LatLng(33.4996, 126.5312); break;
-                    default: moveLatLon = new kakao.maps.LatLng(37.566826, 126.9786567); break;
+                    case 'city1':
+                        moveLatLon = new kakao.maps.LatLng(37.5665, 126.9780);
+                        break;
+                    case 'city2':
+                        moveLatLon = new kakao.maps.LatLng(35.1796, 129.0756);
+                        break;
+                    case 'city3':
+                        moveLatLon = new kakao.maps.LatLng(35.8722, 128.6017);
+                        break;
+                    case 'city4':
+                        moveLatLon = new kakao.maps.LatLng(37.4563, 126.7052);
+                        break;
+                    case 'city5':
+                        moveLatLon = new kakao.maps.LatLng(35.1595, 126.8526);
+                        break;
+                    case 'city6':
+                        moveLatLon = new kakao.maps.LatLng(36.3504, 127.3845);
+                        break;
+                    case 'city7':
+                        moveLatLon = new kakao.maps.LatLng(35.5384, 129.3114);
+                        break;
+                    case 'city8':
+                        moveLatLon = new kakao.maps.LatLng(36.4800, 127.2890);
+                        break;
+                    case 'city9':
+                        moveLatLon = new kakao.maps.LatLng(37.8813, 127.7298);
+                        break;
+                    case 'city10':
+                        moveLatLon = new kakao.maps.LatLng(37.7519, 128.8761);
+                        break;
+                    case 'city11':
+                        moveLatLon = new kakao.maps.LatLng(36.6424, 127.4890);
+                        break;
+                    case 'city12':
+                        moveLatLon = new kakao.maps.LatLng(36.6013, 126.6608);
+                        break;
+                    case 'city13':
+                        moveLatLon = new kakao.maps.LatLng(35.8242, 127.1479);
+                        break;
+                    case 'city14':
+                        moveLatLon = new kakao.maps.LatLng(34.8118, 126.3922);
+                        break;
+                    case 'city15':
+                        moveLatLon = new kakao.maps.LatLng(36.5684, 128.7294);
+                        break;
+                    case 'city16':
+                        moveLatLon = new kakao.maps.LatLng(35.2276, 128.6811);
+                        break;
+                    case 'city17':
+                        moveLatLon = new kakao.maps.LatLng(33.4996, 126.5312);
+                        break;
+                    default:
+                        moveLatLon = new kakao.maps.LatLng(37.566826, 126.9786567);
+                        break;
                 }
                 map.setCenter(moveLatLon); // 좌표로 지도 중심 이동
             }
@@ -753,24 +1026,114 @@
             $('.weathershortins').html('');
             $('.weatherins').html('');
             switch (selectCity) {
-                case 'city1': regID = '11B00000'; regIDT = '11B10101'; nx = 60; ny = 127; break;
-                case 'city2': regID = '11H20000'; regIDT = '11H20101'; nx = 98; ny = 76; break;
-                case 'city3': regID = '11H10000'; regIDT = '11H10701'; nx = 89; ny = 90; break;
-                case 'city4': regID = '11D10000'; regIDT = '11B20201'; nx = 55; ny = 124; break;
-                case 'city5': regID = '11F20000'; regIDT = '11F20501'; nx = 58; ny = 74; break;
-                case 'city6': regID = '11C20000'; regIDT = '11C20401'; nx = 67; ny = 100; break;
-                case 'city7': regID = '11H20000'; regIDT = '11H20101'; nx = 102; ny = 84; break;
-                case 'city8': regID = '11C20000'; regIDT = '11C20404'; nx = 66; ny = 103; break;
-                case 'city9': regID = '11B00000'; regIDT = '11B20601'; nx = 60; ny = 121; break;
-                case 'city10': regID = '11D10000'; regIDT = '11D10301'; nx = 73; ny = 134; break;
-                case 'city11': regID = '11C10000'; regIDT = '11C10301'; nx = 69; ny = 107; break;
-                case 'city12': regID = '11C10000'; regIDT = '11C20101'; nx = 51; ny = 96; break;
-                case 'city13': regID = '11F10000'; regIDT = '11F10201'; nx = 63; ny = 89; break;
-                case 'city14': regID = '11F20000'; regIDT = '11F20501'; nx = 50; ny = 67; break;
-                case 'city15': regID = '11H10000'; regIDT = '11H10701'; nx = 91; ny = 106; break;
-                case 'city16': regID = '11H20000'; regIDT = '11H20301'; nx = 89; ny = 77; break;
-                case 'city17': regID = '11G00000'; regIDT = '11G00201'; nx = 52; ny = 38; break;
-                default: regID = '11B00000'; regIDT = '11B10101'; nx = 60; ny = 127; break;
+                case 'city1':
+                    regID = '11B00000';
+                    regIDT = '11B10101';
+                    nx = 60;
+                    ny = 127;
+                    break;
+                case 'city2':
+                    regID = '11H20000';
+                    regIDT = '11H20101';
+                    nx = 98;
+                    ny = 76;
+                    break;
+                case 'city3':
+                    regID = '11H10000';
+                    regIDT = '11H10701';
+                    nx = 89;
+                    ny = 90;
+                    break;
+                case 'city4':
+                    regID = '11D10000';
+                    regIDT = '11B20201';
+                    nx = 55;
+                    ny = 124;
+                    break;
+                case 'city5':
+                    regID = '11F20000';
+                    regIDT = '11F20501';
+                    nx = 58;
+                    ny = 74;
+                    break;
+                case 'city6':
+                    regID = '11C20000';
+                    regIDT = '11C20401';
+                    nx = 67;
+                    ny = 100;
+                    break;
+                case 'city7':
+                    regID = '11H20000';
+                    regIDT = '11H20101';
+                    nx = 102;
+                    ny = 84;
+                    break;
+                case 'city8':
+                    regID = '11C20000';
+                    regIDT = '11C20404';
+                    nx = 66;
+                    ny = 103;
+                    break;
+                case 'city9':
+                    regID = '11B00000';
+                    regIDT = '11B20601';
+                    nx = 60;
+                    ny = 121;
+                    break;
+                case 'city10':
+                    regID = '11D10000';
+                    regIDT = '11D10301';
+                    nx = 73;
+                    ny = 134;
+                    break;
+                case 'city11':
+                    regID = '11C10000';
+                    regIDT = '11C10301';
+                    nx = 69;
+                    ny = 107;
+                    break;
+                case 'city12':
+                    regID = '11C10000';
+                    regIDT = '11C20101';
+                    nx = 51;
+                    ny = 96;
+                    break;
+                case 'city13':
+                    regID = '11F10000';
+                    regIDT = '11F10201';
+                    nx = 63;
+                    ny = 89;
+                    break;
+                case 'city14':
+                    regID = '11F20000';
+                    regIDT = '11F20501';
+                    nx = 50;
+                    ny = 67;
+                    break;
+                case 'city15':
+                    regID = '11H10000';
+                    regIDT = '11H10701';
+                    nx = 91;
+                    ny = 106;
+                    break;
+                case 'city16':
+                    regID = '11H20000';
+                    regIDT = '11H20301';
+                    nx = 89;
+                    ny = 77;
+                    break;
+                case 'city17':
+                    regID = '11G00000';
+                    regIDT = '11G00201';
+                    nx = 52;
+                    ny = 38;
+                    break;
+                default:
+                    regID = '11B00000';
+                    regIDT = '11B10101';
+                    nx = 60;
+                    ny = 127;
+                    break;
             }
             // 기존 날씨 정보를 비웁니다.
             fetchWeatherData();
@@ -782,7 +1145,7 @@
     <!-- 3~7일 날씨값 스크립트 -->
     <script>
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             fetchWeatherData();  // 페이지 로드 시 오늘과 내일 날씨 호출
             fetchMidTemperatureData();  // 페이지 로드 시 3~7일 기온 호출
             WeatherData();  // 페이지 로드 시 3~7일 기온 및 날씨 상태 호출
@@ -803,7 +1166,7 @@
             $.ajax({
                 url: `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=750&dataType=${dataType}&base_date=${base_date}&base_time=0500&nx=${nx}&ny=${ny}`,
                 type: 'GET',
-                success: function(data) {
+                success: function (data) {
                     let todayWeather = {}, tomorrowWeather = {};
                     let todayDateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
                     let tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
@@ -852,7 +1215,7 @@
                     $('#tomorrowTMX').text(tomorrowWeather.TMX || '정보 없음');
                     $('#tomorrowTMN').text(tomorrowWeather.TMN || '정보 없음');
                 },
-                error: function() {
+                error: function () {
                     console.error('날씨 데이터를 가져오는 데 실패했습니다.');
                 }
             });
@@ -873,8 +1236,8 @@
             $.ajax({
                 url: `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=XML&regId=${regIDT}&tmFc=${tmFc}`,
                 type: 'GET',
-                success: function(data) {
-                    $(data).find('item').each(function() {
+                success: function (data) {
+                    $(data).find('item').each(function () {
                         for (let i = 3; i <= 7; i++) {
                             const taMin = $(this).find(`taMin${i}`).text();
                             const taMax = $(this).find(`taMax${i}`).text();
@@ -883,7 +1246,7 @@
                         }
                     });
                 },
-                error: function() {
+                error: function () {
                     console.error('3~7일 기온 데이터를 가져오는 데 실패했습니다.');
                 }
             });
@@ -893,10 +1256,18 @@
         function setSkyIcon(skyCode, day) {
             let skyDiv = document.getElementById(`skyIcon${day.charAt(0).toUpperCase() + day.slice(1)}`);
             switch (skyCode) {
-                case '1': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY1.webp")'; break; // 맑음
-                case '3': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY3.webp")'; break; // 구름많음
-                case '4': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY4.webp")'; break; // 흐림
-                default: skyDiv.style.backgroundImage = 'url("/weatherimg/esteregg.webp")'; break;  // 이미지 없음
+                case '1':
+                    skyDiv.style.backgroundImage = 'url("/weatherimg/SKY1.webp")';
+                    break; // 맑음
+                case '3':
+                    skyDiv.style.backgroundImage = 'url("/weatherimg/SKY3.webp")';
+                    break; // 구름많음
+                case '4':
+                    skyDiv.style.backgroundImage = 'url("/weatherimg/SKY4.webp")';
+                    break; // 흐림
+                default:
+                    skyDiv.style.backgroundImage = 'url("/weatherimg/esteregg.webp")';
+                    break;  // 이미지 없음
             }
             skyDiv.style.backgroundSize = "cover";
             skyDiv.style.backgroundSize = "100% 100%";
@@ -910,12 +1281,24 @@
             let ptyImg = document.getElementById(`ptyIcon${day.charAt(0).toUpperCase() + day.slice(1)}`);
 
             switch (ptyCode) {
-                case '0': ptyImg.src = '/weatherimg/PTY0.png'; break; // 강수 없음
-                case '1': ptyImg.src = '/weatherimg/PTY1.png'; break; // 비
-                case '2': ptyImg.src = '/weatherimg/PTY2.png'; break; // 비/눈
-                case '3': ptyImg.src = '/weatherimg/PTY3.png'; break; // 눈
-                case '4': ptyImg.src = '/weatherimg/PTY4.png'; break; // 소나기
-                default: ptyImg.src = 'url("/weatherimg/esteregg.webp")'; break;  // 이미지 없음
+                case '0':
+                    ptyImg.src = '/weatherimg/PTY0.png';
+                    break; // 강수 없음
+                case '1':
+                    ptyImg.src = '/weatherimg/PTY1.png';
+                    break; // 비
+                case '2':
+                    ptyImg.src = '/weatherimg/PTY2.png';
+                    break; // 비/눈
+                case '3':
+                    ptyImg.src = '/weatherimg/PTY3.png';
+                    break; // 눈
+                case '4':
+                    ptyImg.src = '/weatherimg/PTY4.png';
+                    break; // 소나기
+                default:
+                    ptyImg.src = 'url("/weatherimg/esteregg.webp")';
+                    break;  // 이미지 없음
             }
         }
 
@@ -931,11 +1314,11 @@
 
             const ServiceKey = 'wje5hA%2Bnn3R5RgOMpkRjQoneVn2py4RGqQmFJCCZS2IjYEetSvm7HP%2FngICVZN7%2FB0Mj2ig7Xp2oep7%2B4kcrSQ%3D%3D';
             const pageNo = 1, numOfRows = 10, dataType = 'XML', temperatureData = [
-                { dayIndex: 3, amId: 'day3Am', pmId: 'day3Pm' },
-                { dayIndex: 4, amId: 'day4Am', pmId: 'day4Pm' },
-                { dayIndex: 5, amId: 'day5Am', pmId: 'day5Pm' },
-                { dayIndex: 6, amId: 'day6Am', pmId: 'day6Pm' },
-                { dayIndex: 7, amId: 'day7Am', pmId: 'day7Pm' }
+                {dayIndex: 3, amId: 'day3Am', pmId: 'day3Pm'},
+                {dayIndex: 4, amId: 'day4Am', pmId: 'day4Pm'},
+                {dayIndex: 5, amId: 'day5Am', pmId: 'day5Pm'},
+                {dayIndex: 6, amId: 'day6Am', pmId: 'day6Pm'},
+                {dayIndex: 7, amId: 'day7Am', pmId: 'day7Pm'}
             ];
 
 
@@ -943,14 +1326,14 @@
             $.ajax({
                 url: `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&regId=${regID}&tmFc=${tmFc}`,
                 type: 'GET',
-                success: function(data) {
-                    $(data).find('items item').each(function() {
+                success: function (data) {
+                    $(data).find('items item').each(function () {
                         temperatureData.forEach(item => {
                             const wfam = $(this).find(`wf${item.dayIndex}Am`).text();
                             const wfpm = $(this).find(`wf${item.dayIndex}Pm`).text();
 
                             // 날씨 아이콘 설정
-                            setWeatherIcon({ am: wfam, pm: wfpm }, item.dayIndex);
+                            setWeatherIcon({am: wfam, pm: wfpm}, item.dayIndex);
 
                             // HTML에 값 삽입
                             $(`#${item.amId}`).text(wfam || 'No Data');
@@ -958,7 +1341,7 @@
                         });
                     });
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('기온 데이터를 가져오는 데 실패했습니다.', error, status, xhr);
                 }
             });
@@ -1025,7 +1408,7 @@
                             const wfPm = $(this).find(`wf${i}Pm`).text();
 
                             // 날씨 아이콘 설정
-                            setWeatherIcon({ am: wfAm, pm: wfPm }, i);
+                            setWeatherIcon({am: wfAm, pm: wfPm}, i);
                         }
                     });
                 },
@@ -1036,11 +1419,13 @@
         }
 
         // 페이지 로드 시 실행
-        $(document).ready(function() {
+        $(document).ready(function () {
             WeatherDataIcon();
         });
 
     </script>
+
+
 </div>
 
 
