@@ -145,28 +145,5 @@ public class AccountController {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-//    //회원 탈퇴 페이지 보여줌
-//    @GetMapping("/delete")
-//    public String delete() {
-//       return "account/delete";
-//    }
-
-//    // 회원 탈퇴 성공 페이지 보여줌
-//    @GetMapping("/account/deleteSuccess")
-//    public String deleteSuccess() {
-//       return "account/deleteSuccess";
-//    }
   }
 

@@ -3,7 +3,9 @@ package com.example.goat.service;
 import com.example.goat.constant.Role;
 import com.example.goat.dto.AccountDTO;
 import com.example.goat.entity.Account;
-import com.example.goat.repository.AccountRepository;
+import com.example.goat.entity.Place;
+import com.example.goat.entity.Vote;
+import com.example.goat.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,7 +27,10 @@ import java.util.stream.Collectors;
 @Log4j2
 public class AccountService implements UserDetailsService {
 
-    private  final AccountRepository accountRepository;
+    private final AccountRepository accountRepository; //계정 관련 리포지토리
+    private final ReplyBlogRepository replyBlogRepository; //댓글/블로그 관련 리포지토리
+    private final VoteRepository voteRepository;
+    private final BlogRepository blogRepository;
     private ModelMapper mapper = new ModelMapper();
     private final PasswordEncoder passwordEncoder;
 
@@ -98,6 +103,7 @@ public class AccountService implements UserDetailsService {
         log.info("로그인 요청 :" + email);
         Account account = accountRepository.findByEmail(email);
 
+        log.info(account);
         if (account == null) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다" + email);
         }
@@ -176,16 +182,24 @@ public class AccountService implements UserDetailsService {
             log.info("회원 탈퇴 요청: 이메일 = {}", email); // 탈퇴 요청 로그
 
             Account account = accountRepository.findByEmail(email);
+            log.info(account);
 
             if (account == null) {
                 log.error("회원 탈퇴 실패: 존재하지 않는 사용자 이메일 = {}", email); // 사용자 존재하지 않음 로그
                 throw new IllegalArgumentException("사용자가 존재하지 않습니다 : " + email);
             }
 
-            // 실제 삭제 처리
-            accountRepository.delete(account);
+            try {
+//            replyBlogRepository.deleteByBlogNum(account.getAno());
+//            voteRepository.deleteByBlogNum(account.getAno());
+//             blogRepository.deleteById(account.getAno());
+             accountRepository.delete(account);// 계정 삭제
             log.info("회원 탈퇴 완료: 이메일 = {}", email); // 탈퇴 완료 로그
             return true; //탈퇴 성공 시 true 반환
+        } catch (Exception e) {
+                log.error("회원 탈퇴 중 오류 발생: 이메일 = {}, 오류 = {}", email, e.getMessage());
+                throw new RuntimeException("회원 탈퇴 중 오류가 발생했습니다.");
+            }
         }
 
 

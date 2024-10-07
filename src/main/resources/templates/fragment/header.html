@@ -60,8 +60,30 @@
 
             <!-- 회원가입 및 로그인 버튼을 토글 버튼 왼쪽에 배치 -->
             <div class="d-flex ms-auto align-items-center justify-content-end flex-nowrap">
-                <button class="btn nav nav-link order-2">회원가입</button>
-                <button class="btn nav nav-link order-3">로그인</button>
+                <!-- 인증되지 않은 사용자(비로그인 상태)만 회원가입 버튼을 볼 수 있음 -->
+                <th:block sec:authorize="isAnonymous()">
+                <button onclick="location.href='/account/register'" class="btn nav nav-link order-2">회원가입</button>
+                </th:block>
+
+                <!-- 인증되지 않은 사용자(비로그인 상태)만 로그인 버튼을 볼 수 있음 -->
+                <th:block sec:authorize="isAnonymous()">
+                    <button onclick="location.href='/account/login'" class="btn nav nav-link order-3">로그인</button>
+                </th:block>
+
+                <!-- 관리자 권한이 있을 때만 회원 관리 메뉴 보이기 -->
+                <th:block sec:authorize="hasRole('ADMIN')">
+                    <button onclick="location.href='/account/list'" class="btn nav nav-link order-3">회원관리</button>
+                </th:block>
+
+                <!-- 인증된 사용자(로그인된 상태)만 마이페이지와 로그아웃 버튼을 볼 수 있음 -->
+                <th:block sec:authorize="isAuthenticated()">
+                    <!-- 로그인된 사용자의 이름(또는 사용자명)을 표시 -->
+                    <div th:text="${#authentication.principal.username}"></div>
+                    <!-- 마이페이지로 이동하는 버튼 -->
+                    <button onclick="location.href='/account/mypage'" class="btn nav nav-link order-3">마이페이지</button>
+                    <!-- 로그아웃 버튼 -->
+                    <button onclick="location.href='/account/logout'" class="btn nav nav-link order-3">로그아웃</button>
+                </th:block>
 
                 <!-- 토글 버튼은 우측 끝에 고정 -->
                 <button class="navbar-toggler order-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

@@ -10,7 +10,7 @@ import java.util.List;
 @Entity // 엔티티임을 명시
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"placeList", "replyBlogList"}) //placeList와 replyBlogList tostring제외
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor // 모든 parameter를 가지고 있는 생성자
 public class Blog extends BaseEntity{
@@ -26,9 +26,15 @@ public class Blog extends BaseEntity{
 
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @JoinColumn(name="account_num")
     private Account account;
+
+    @OneToMany(mappedBy = "blog", orphanRemoval = true)
+    private List<Place> placeList;
+
+    @OneToMany(mappedBy = "blog", orphanRemoval = true)
+    private List<ReplyBlog> replyBlogList;
 
 
     //Acc랑 조인
