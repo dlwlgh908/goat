@@ -14,6 +14,16 @@
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dc0e764f9cafeb8b6ce32ae719767467&libraries=services"></script>
 
     <title>Title</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poor+Story&display=swap');
+        .poor-story-regular {
+            font-family: "Poor Story", system-ui !important;
+            font-weight: 400 !important;
+            font-style: normal !important;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -23,82 +33,75 @@
         <img src="/logo.webp" class="navbar-brand btn p-0 m-0" id="home" style="width: 100px; height: 100px; object-fit: scale-down;">
     </a>
     <div class="container-fluid d-flex align-items-center">
-
-        <!-- 네비게이션 메뉴 가운데 정렬 및 간격 넓힘 -->
         <div class="collapse navbar-collapse me-5" id="navbarSupportedContent">
             <div class="flex-grow-1 d-flex align-items-center col-8 offset-3 navoff">
                 <ul class="navbar-nav flex-row mb-2 mb-md-0">
-                    <li class="nav-item dropdown col-5 h3">
-                        <a class="nav-link btn poor-story-regular" id="blogTapToggle" href="/blog/list">
+                    <li class="nav-item dropdown col-5 h3 ms-3 me-3">
+                        <a class="nav-link btn poor-story-regular text-nowrap" id="blogTapToggle" href="/blog/list">
                             조잘조잘
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="blogTapToggle">
                             <th:block sec:authorize="isAuthenticated()">
-                                <li><button onclick="location.href='/blog/register'" class="dropdown-item poor-story-regular" id="blogVoteToggle">조잘조잘 작성</button></li>
+                                <li><a href="/blog/register" class="dropdown-item poor-story-regular">조잘조잘 작성</a></li>
                             </th:block>
-                            <li><button onclick="location.href='/blog/list'" class="dropdown-item poor-story-regular" id="blogDetailToggle">조잘조잘 리스트</button></li>
+                            <li><a href="/blog/list" class="dropdown-item poor-story-regular">조잘조잘 리스트</a></li>
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown col-5 offset-4 col-5 h3">
-                        <a class="nav-link btn poor-story-regular" id="placeTapToggle" onclick="location.href='/place/list'">
+                    <li class="nav-item dropdown col-5 h3 ms-3 me-3">
+                        <a class="nav-link btn poor-story-regular text-nowrap" id="placeTapToggle" href="/place/list">
                             플레이스
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="placeTapToggle">
-                            <li><button onclick="location.href='/place/list'" class="dropdown-item poor-story-regular" id="placeDetailToggle">플레이스</button></li>
-                            <li><button onclick="location.href='/place/list'" class="dropdown-item poor-story-regular" id="placeVoteToggle">식당</button></li>
+                            <li><a href="/place/list" class="dropdown-item poor-story-regular">플레이스</a></li>
+                            <li><a href="/place/list" class="dropdown-item poor-story-regular">식당</a></li>
                         </ul>
                     </li>
 
-                    <li class="nav-item dropdown col-6 offset-4 col-5 h3">
-                        <a class="nav-link btn poor-story-regular" id="eventTapToggle" href="#">
+                    <li class="nav-item dropdown col-5 h3 ms-3 me-3">
+                        <a class="nav-link btn poor-story-regular text-nowrap" id="eventTapToggle" href="#">
                             공지 및 이벤트
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="eventTapToggle">
-                            <li><button onclick="location.href='/notice/list'" class="dropdown-item poor-story-regular" id="eventDetailToggle">공지사항</button></li>
-                            <li><button onclick="location.href='/notice/list'" class="dropdown-item poor-story-regular" id="eventVoteToggle">이벤트</button></li>
+                            <li><a href="/notice/list" class="dropdown-item poor-story-regular">공지사항</a></li>
+                            <li><a href="/notice/list" class="dropdown-item poor-story-regular">이벤트</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
 
-        <!-- 회원가입 및 로그인 버튼을 토글 버튼 왼쪽에 배치 -->
         <div class="d-flex ms-auto align-items-center justify-content-end flex-nowrap">
-            <!-- 인증되지 않은 사용자(비로그인 상태)만 회원가입 버튼을 볼 수 있음 -->
             <th:block sec:authorize="isAnonymous()">
-                <button onclick="location.href='/account/register'" class="btn nav nav-link order-2">회원가입</button>
+                <a href="/account/register" class="btn nav nav-link order-2">회원가입</a>
+            </th:block>
+            <th:block sec:authorize="isAnonymous()">
+                <a href="/account/login" class="btn nav nav-link order-3">로그인</a>
             </th:block>
 
-            <!-- 인증되지 않은 사용자(비로그인 상태)만 로그인 버튼을 볼 수 있음 -->
-            <th:block sec:authorize="isAnonymous()">
-                <button onclick="location.href='/account/login'" class="btn nav nav-link order-3">로그인</button>
-            </th:block>
-
-            <!-- 로그인된 사용자의 이름(또는 사용자명)을 표시 -->
-            <div th:text="${#authentication.principal.username}"님 방문을 환영합니다. class="me-5"></div>
-
-            <!-- 인증된 사용자(로그인된 상태)만 계정 관리 드롭다운 메뉴가 보이도록 설정 -->
             <th:block sec:authorize="isAuthenticated()">
-                <div class="nav-item dropdown dropdown me-5 dropstart">
-                    <a class="nav-link btn poor-story-regular" id="accountTapToggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="/mypage.webp" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+
+                <span th:text="${#authentication.principal.username + '님'}" class="ms-2 me-5 username"></span>
+
+                <div class="nav-item dropdown me-5 d-flex align-items-center">
+
+                    <!-- 아이콘에만 드롭다운 토글 설정 -->
+                    <a class="nav-link p-0" id="accountIconToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="/mypage.webp" class="ps-2" style="width: 50px; height: 50px;">
                         <p>My Page</p>
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="accountTapToggle">
-                        <!-- 관리자 권한이 있을 때만 회원 관리 메뉴 보이기 -->
+
+                    <!-- 드롭다운 메뉴 -->
+                    <ul class="dropdown-menu" aria-labelledby="accountIconToggle">
                         <th:block sec:authorize="hasRole('ADMIN')">
-                            <li><button onclick="location.href='/account/list'" class="dropdown-item">회원관리</button></li>
+                            <li><a href="/account/list" class="dropdown-item">회원관리</a></li>
                         </th:block>
-                        <li><button onclick="location.href='/account/mypage'" class="dropdown-item">마이페이지</button></li>
-                        <li><button onclick="location.href='/account/logout'" class="dropdown-item">로그아웃</button></li>
+                        <li><a href="/account/mypage" class="dropdown-item">마이페이지</a></li>
+                        <li><a href="/account/logout" class="dropdown-item">로그아웃</a></li>
                     </ul>
                 </div>
             </th:block>
 
-
-
-            <!-- 토글 버튼은 우측 끝에 고정 -->
             <button class="navbar-toggler order-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
