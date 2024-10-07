@@ -89,11 +89,15 @@
                         <div class="row border-bottom p-0 m-0" style="display: flex; align-items: center; font-size: 0.8rem;">
                             <div class="col-2 text-center" th:text="${userStat.count}"></div>
                             <div class="col-4 text-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <a class="text-decoration-none ps-4" th:href="|@{/place/detale(num=${place.num})}|"
-                                   th:text="${#strings.length(place.place_name) > 15 ? #strings.substring(place.place_name, 0, 15) + '...' : place.place_name}"
-                                   style="display: block; text-align: left;">
-                                    [[${place.place_name}]]
-                                </a>
+                <span class="text-decoration-none ps-4"
+                      style="cursor:pointer; display: block; text-align: left;"
+                      th:data-place-name="${place.place_name}"
+                      th:data-category-name="${place.category_name}"
+                      th:data-cname="${place.cname}"
+                      th:data-api-id="${place.api_id}"
+                      onclick="openPlaceModal(this)">
+                    [[${place.place_name}]]
+                </span>
                             </div>
                             <div class="col-4 text-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${place.cname}"></div>
                             <div class="col-2 text-center" th:text="${place.total}"></div>
@@ -118,11 +122,15 @@
                         <div class="row border-bottom p-0 m-0" style="display: flex; align-items: center; font-size: 0.8rem;">
                             <div class="col-2 text-center" th:text="${userStat.count}"></div>
                             <div class="col-4 text-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <a class="text-decoration-none ps-4" th:href="|@{/restaurant/detale(num=${restaurant.num})}|"
-                                   th:text="${#strings.length(restaurant.place_name) > 15 ? #strings.substring(restaurant.place_name, 0, 15) + '...' : restaurant.place_name}"
-                                   style="display: block; text-align: left;">
-                                    [[${restaurant.place_name}]]
-                                </a>
+                        <span class="text-decoration-none ps-4"
+                              style="cursor:pointer; display: block; text-align: left;"
+                              th:data-place-name="${restaurant.place_name}"
+                              th:data-category-name="${restaurant.category_name}"
+                              th:data-cname="${restaurant.cname}"
+                              th:data-api-id="${restaurant.api_id}"
+                              onclick="openPlaceModal(this)">
+                            [[${restaurant.place_name}]]
+                        </span>
                             </div>
                             <div class="col-4 text-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${restaurant.cname}"></div>
                             <div class="col-2 text-center" th:text="${restaurant.total}"></div>
@@ -133,9 +141,52 @@
         </div>
 
     </div>
-</div>
+
+    <!-- 모달 구조 -->
+    <div class="modal fade" id="placeModal" tabindex="-1" aria-labelledby="placeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="placeModalLabel">장소 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent">
+                        <!-- 여기에 내용이 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <script defer>
+        function openPlaceModal(element) {
+            const placeName = element.getAttribute('data-place-name');
+            const categoryName = element.getAttribute('data-category-name');
+            const cname = element.getAttribute('data-cname');
+            const apiId = element.getAttribute('data-api-id');
+
+            document.getElementById('modalContent').innerHTML = `
+            <h5 class="modal-title">${placeName}</h5>
+            <p>Category: ${categoryName}</p>
+            <p>City: ${cname}</p>
+            <a href="https://map.kakao.com/?itemId=${apiId}" target="_blank" class="btn btn-primary">자세히 보기</a>
+        `;
+
+            let myModal = new bootstrap.Modal(document.getElementById('placeModal'));
+            myModal.show();
+        }
+    </script>
+
+
+
+</div>
 
 </body>
 </html>
