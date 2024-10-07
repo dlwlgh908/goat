@@ -9,36 +9,38 @@
     <title>개인정보 수정</title>
 </head>
 <body>
-<div class="container">
-    <div class="row mt-5">
-        <div class="col-6 offset-3">
-            <h2 class="text-center"> 개인정보 수정 </h2> </br>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-6 offset-3">
+                <h5 class="text-center"> 개인정보 수정 </h5> </br>
+                <!-- 메시지 표시 영역 추가 -->
+                <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-            <!-- 메시지 표시 영역 추가 -->
-            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+                <form th:object="${accountDTO}" action="/account/change-password" method="post">
+                    <!-- 비밀번호 변경 기능 추가 -->
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">현재 비밀번호</label>
+                        <input type="password" id="currentPassword" class="form-control" name="currentPassword" required>
+                    </div>
 
-            <form th:object="${accountDTO}" action="/account/change-password" method="post">
-                <!-- 비밀번호 변경 기능 추가 -->
-                <div class="mb-3">
-                    <label for="currentPassword" class="form-label">현재 비밀번호</label>
-                    <input type="password" id="currentPassword" class="form-control" name="currentPassword" required>
-                </div>
-                <div class="mb-3">
-                    <label for="newPassword" class="form-label">새 비밀번호</label>
-                    <input type="password" id="newPassword" class="form-control" name="newPassword" required >
-                </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">새 비밀번호</label>
+                        <input type="password" id="newPassword" class="form-control" name="newPassword" required >
+                    </div>
 
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
-                    <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required >
-                </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
+                        <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" required >
+                    </div>
 
-                <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success">변경</button>
-                    <a href="/account/mypage" class="btn btn-secondary">취소</a>
-                </div>
-            </form>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success">변경</button>
+                        <a href="/account/mypage" class="btn btn-secondary">취소</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
