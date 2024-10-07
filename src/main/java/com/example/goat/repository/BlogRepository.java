@@ -17,7 +17,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long>, BlogSearch {
     @Query("select a from Blog a where a.account.email=:email and a.num=:num")
     Blog userCheck(String email, Long num);
 
-    @Query("select new com.example.goat.dto.BlogDTO(b.title as title, c.cname as cname, b.recommendCount as recommendCount, b.num as num) from Blog b join City c on b.city.cno = c.cno order by b.recommendCount desc limit 5")
+    @Query("select new com.example.goat.dto.BlogDTO(b.title as title, c.cname as cname, b.recommendCount as recommendCount, b.num as num, b.readCount as readCount) from Blog b join City c on b.city.cno = c.cno order by b.recommendCount desc limit 5")
     public List<BlogDTO> mainBlogRank();
 
 

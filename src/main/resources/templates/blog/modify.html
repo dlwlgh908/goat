@@ -1,60 +1,783 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      layout:decorate="~{layout/layout.html}">
 <head>
     <script src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>게시글 수정</title>
 </head>
 <body>
-<div class="row mt-5">
-    <div class="col shadow">
-        <form action="/blog/modify" method="post" th:object="${blogDTO}">
-            <input type="hidden" name="num" th:value="${blogDTO.num}">
+<div layout:fragment="content" class="container-fluid mt-3">
+    <div class="row">
+        <!-- 좌측 섹션: 게시글 수정 폼 -->
+        <div class="col-md-7">
+            <form action="/blog/modify" method="post" th:object="${blogDTO}">
+                <input type="hidden" name="num" th:value="${blogDTO.num}">
 
+                <div class="mb-3">
+                    <label for="title" class="form-label">제목</label>
+                    <textarea th:field="*{title}" class="form-control" id="title" rows="2">[[${blogDTO.title}]]</textarea>
+                </div>
 
-            <div>제목
+                <div class="mb-3">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea th:field="*{content}" class="form-control" id="content" rows="5">[[${blogDTO.content}]]</textarea>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/blog/list}" class="btn btn-secondary">목록으로 돌아가기</a>
+                    <button type="submit" class="btn btn-primary">수정</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 우측 섹션: 지도와 날씨 정보 -->
+        <div class="col-md-5">
+            <div id="map" class="mb-3" style="height: 300px; position: relative; z-index: 1;"></div>
+
+            <!-- 날씨 정보 표시 부분 -->
+            <div class="restaurantBoardWeather card mt-3">
+                <div class=" justify-content-between row">
+                    <!-- 오늘의 날씨 카드 -->
+
+                    <div class="col">
+
+                        <div id="skyIconToday" class="card weather-card text-center " style="border-radius: 12px; width: 100%; height: 150px; z-index: 10">
+                            <div class="card-body p-1">
+                                <img id="ptyIconToday" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
+                                <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">오늘의 날씨</h6>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">현재기온: <span id="todayTMP"></span>°C</p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span id="todayTMX"></span>°C</p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span id="todayTMN"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <!-- 내일의 날씨 카드 -->
+                        <div id="skyIconTomorrow" class="card weather-card text-center col" style="border-radius: 12px; width: 100%; height: 150px;">
+                            <div class="card-body p-1">
+                                <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;" />
+                                <h6 class="card-title" style="font-size: 0.85rem; margin: 0; padding: 0;">내일의 날씨</h6>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고기온: <span id="tomorrowTMX"></span>°C</p>
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저기온: <span id="tomorrowTMN"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <textarea th:field="*{title}" name="title">[[${blogDTO.title}]]
-        </textarea>
 
-            <div>내용
+            <!-- 추가 날씨 카드 5장 -->
+            <div class="d-flex justify-content-between gap-1 mt-3">
+                <!-- 3~7일 날씨 카드 -->
+                <div id="wDay3" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">3일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <img id="day3Am" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day3Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <img id="day3Pm" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day3Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay4" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">4일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <img id="day4Am" src=""class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day4Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <img id="day4Pm" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day4Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay5" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">5일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <img id="day5Am" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day5Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <img id="day5Pm" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day5Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay6" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">6일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <img id="day6Am" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day6Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <img id="day6Pm" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day6Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wDay7" class="card weather-card text-center flex-fill p-0 m-0" style="border-radius: 12px; height: 100px;">
+                    <div class="card-body p-0 m-0">
+                        <h6 class="card-title p-0 m-0" style="font-size: 0.85rem;">7일 후</h6>
+                        <div class="row m-2 p-0 m-0">
+                            <div class="col p-0 m-0">
+                                <img id="day7Am" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최고<br><span id="day7Max"></span>°C</p>
+                            </div>
+                            <div class="col p-0 m-0">
+                                <img id="day7Pm" src="" class="weather-icon p-0 m-0 w-75">
+                                <p style="font-size: 0.75rem; margin: 0; padding: 0;">최저<br><span id="day7Min"></span>°C</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <textarea th:field="*{content}" name="content">[[${blogDTO.content}]]
-        </textarea>
-            <div>작성자
+        </div>
+
+
+<script>
+
+    // 마커를 담을 배열입니다
+    var markers = [];
+    var selectedMarker = null; // 선택된 마커를 저장할 변수
+
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 장소 검색 객체를 생성합니다
+    var ps = new kakao.maps.services.Places();
+
+    // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+    var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+
+    // 키워드 검색을 요청하는 함수입니다
+    function searchPlaces() {
+
+        var keyword = document.getElementById('keyword').value;
+
+        if (!keyword.replace(/^\s+|\s+$/g, '')) {
+            alert('키워드를 입력해주세요!');
+            return false;
+        }
+
+        // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+        ps.keywordSearch( keyword, placesSearchCB);
+    }
+
+    // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
+    function placesSearchCB(data, status, pagination) {
+        if (status === kakao.maps.services.Status.OK) {
+            // 검색결과가 있으면 검색결과 창을 보이게 설정
+            document.getElementById('menu_wrap').style.display = 'block';
+
+            // 검색 결과 목록과 마커를 표출합니다
+            displayPlaces(data);
+
+            // 페이지 번호를 표출합니다
+            displayPagination(pagination);
+
+        } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+            alert('검색 결과가 존재하지 않습니다.');
+            return;
+        } else if (status === kakao.maps.services.Status.ERROR) {
+            alert('검색 도중 오류가 발생했습니다.');
+            return;
+        }
+    }
+
+    // 검색 결과 목록과 마커를 표출하는 함수입니다
+    function displayPlaces(places) {
+
+        var listEl = document.getElementById('placesList'),
+            menuEl = document.getElementById('menu_wrap'),
+            fragment = document.createDocumentFragment(),
+            bounds = new kakao.maps.LatLngBounds(),
+            listStr = '';
+
+        // 검색 결과 목록에 추가된 항목들을 제거합니다
+        removeAllChildNods(listEl);
+        removeMarker();
+
+        for ( var i=0; i<places.length; i++ ) {
+
+            // 마커를 생성하고 지도에 표시합니다
+            var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
+                marker = addMarker(placePosition, i),
+                itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+
+            // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+            // LatLngBounds 객체에 좌표를 추가합니다
+            bounds.extend(placePosition);
+
+            // 마커와 검색결과 항목에 mouseover 했을때
+            // 해당 장소에 인포윈도우에 장소명을 표시합니다
+            // mouseout 했을 때는 인포윈도우를 닫습니다
+            (function(marker, title) {
+                kakao.maps.event.addListener(marker, 'mouseover', function() {
+                    displayInfowindow(marker, title);
+                });
+
+                kakao.maps.event.addListener(marker, 'mouseout', function() {
+                    infowindow.close();
+                });
+
+                itemEl.onmouseover =  function () {
+                    displayInfowindow(marker, title);
+                };
+
+                itemEl.onmouseout =  function () {
+                    infowindow.close();
+                };
+
+
+            })(marker, places[i].place_name);
+
+            fragment.appendChild(itemEl);
+
+            (function (marker, place) {
+                kakao.maps.event.addListener(marker, 'click', function () {
+                    moveToPlace(marker);   // 마커 클릭 시 해당 좌표로 이동
+                    closeSearchResults();  // 검색 결과 창을 닫음
+                    displayPlaceInfo(place); // 장소 정보를 모달에 표시
+                });
+
+                itemEl.onclick = function () { // 검색 결과 항목 클릭 시
+                    moveToPlace(marker);   // 클릭한 가게로 이동
+                    closeSearchResults();  // 검색 결과 창을 닫음
+                };
+            })(marker, places[i]);
+        }
+
+        // 검색결과 항목들을 검색결과 목록 Element에 추가합니다
+        listEl.appendChild(fragment);
+        menuEl.scrollTop = 0;
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+        map.setBounds(bounds);
+    }
+
+    // 클릭한 장소로 이동 + 확대 레벨 설정
+    function moveToPlace(marker) {
+        map.setLevel(2); // 지도 확대 레벨을 2로 설정
+        map.setCenter(marker.getPosition()); // 해당 장소로 지도 중심 이동
+        selectedMarker = marker; // 선택한 마커를 저장
+        removeMarker(selectedMarker); // 선택된 마커를 제외하고 나머지 마커를 제거
+    }
+
+    // 검색결과 항목을 Element로 반환하는 함수입니다
+    function getListItem(index, places) {
+
+        var el = document.createElement('li'),
+            itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                '<div class="info">' +
+                '   <h5>' + places.place_name + '</h5>';
+
+        if (places.road_address_name) {
+            itemStr += '    <span>' + places.road_address_name + '</span>' +
+                '   <span class="jibun gray">' +  places.address_name  + '</span>';
+        } else {
+            itemStr += '    <span>' +  places.address_name  + '</span>';
+        }
+
+        itemStr += '  <span class="tel">' + places.phone  + '</span>' +
+            '</div>';
+
+        el.innerHTML = itemStr;
+        el.className = 'item';
+
+        return el;
+    }
+
+    // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+    function addMarker(position, idx, title) {
+        var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+            imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+            imgOptions =  {
+                spriteSize : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+                spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+                offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+            },
+            markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+            marker = new kakao.maps.Marker({
+                position: position, // 마커의 위치
+                image: markerImage
+            });
+
+        marker.setMap(map); // 지도 위에 마커를 표출합니다
+        markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+        return marker;
+    }
+
+    function removeMarker(exceptMarker) {
+        // exceptMarker를 제외한 나머지 마커를 지도에서 제거
+        markers.forEach(function(marker) {
+            if (marker !== exceptMarker) {
+                marker.setMap(null);  // 선택되지 않은 마커들을 제거
+            }
+        });
+    }
+
+    // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+    function displayPagination(pagination) {
+        var paginationEl = document.getElementById('pagination'),
+            fragment = document.createDocumentFragment(),
+            i;
+
+        // 기존에 추가된 페이지번호를 삭제합니다
+        while (paginationEl.hasChildNodes()) {
+            paginationEl.removeChild (paginationEl.lastChild);
+        }
+
+        for (i=1; i<=pagination.last; i++) {
+            var el = document.createElement('a');
+            el.href = "#";
+            el.innerHTML = i;
+
+            if (i===pagination.current) {
+                el.className = 'on';
+            } else {
+                el.onclick = (function(i) {
+                    return function() {
+                        pagination.gotoPage(i);
+                    }
+                })(i);
+            }
+
+            fragment.appendChild(el);
+        }
+        paginationEl.appendChild(fragment);
+    }
+
+    // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+    // 인포윈도우에 장소명을 표시합니다
+    function displayInfowindow(marker, title) {
+        var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+
+        infowindow.setContent(content);
+        infowindow.open(map, marker);
+    }
+
+    // 검색결과 목록의 자식 Element를 제거하는 함수입니다
+    function removeAllChildNods(el) {
+        while (el.hasChildNodes()) {
+            el.removeChild (el.lastChild);
+        }
+    }
+
+    function selectMap(selectMap) {
+        let moveLatLon;
+
+        switch (selectMap) {
+            case 'city1': moveLatLon = new kakao.maps.LatLng(37.5665, 126.9780); break;
+            case 'city2': moveLatLon = new kakao.maps.LatLng(35.1796, 129.0756); break;
+            case 'city3': moveLatLon = new kakao.maps.LatLng(35.8722, 128.6017); break;
+            case 'city4': moveLatLon = new kakao.maps.LatLng(37.4563, 126.7052); break;
+            case 'city5': moveLatLon = new kakao.maps.LatLng(35.1595, 126.8526); break;
+            case 'city6': moveLatLon = new kakao.maps.LatLng(36.3504, 127.3845); break;
+            case 'city7': moveLatLon = new kakao.maps.LatLng(35.5384, 129.3114); break;
+            case 'city8': moveLatLon = new kakao.maps.LatLng(36.4800, 127.2890); break;
+            case 'city9': moveLatLon = new kakao.maps.LatLng(37.8813, 127.7298); break;
+            case 'city10': moveLatLon = new kakao.maps.LatLng(37.7519, 128.8761); break;
+            case 'city11': moveLatLon = new kakao.maps.LatLng(36.6424, 127.4890); break;
+            case 'city12': moveLatLon = new kakao.maps.LatLng(36.6013, 126.6608); break;
+            case 'city13': moveLatLon = new kakao.maps.LatLng(35.8242, 127.1479); break;
+            case 'city14': moveLatLon = new kakao.maps.LatLng(34.8118, 126.3922); break;
+            case 'city15': moveLatLon = new kakao.maps.LatLng(36.5684, 128.7294); break;
+            case 'city16': moveLatLon = new kakao.maps.LatLng(35.2276, 128.6811); break;
+            case 'city17': moveLatLon = new kakao.maps.LatLng(33.4996, 126.5312); break;
+            default: moveLatLon = new kakao.maps.LatLng(37.566826, 126.9786567); break;
+        }
+        map.setCenter(moveLatLon); // 좌표로 지도 중심 이동
+    }
+
+    // 클릭한 마커에 대한 장소 상세 정보를 모달로 표시하는 함수
+    // 모달 내용
+    function displayPlaceInfo(place) {
+        var content = `
+            <h5 class="text-center mb-0">${place.place_name}</h5><br>
+            <p class="text-sm fw-light text-center mt-0"><${place.category_name || place.category_name}</p><br>
+            <p><Strong>주소:</Strong>${place.road_address_name || place.address_name}</p>
+            <p class="text-sm fw-light">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ${place.address_name || place.address_name}</p>
+            <p><strong>전화번호:</strong> ${place.phone || place.phone}</p>
+
+
+            <p>ID (개발때만 사용):</strong> ${place.id || place.id}</p>
+            <a class="text-center" href="${place.place_url}" target="_blank">자세히 보기</a>
+        `;
+
+        // 모달 내용 설정
+        document.getElementById('modalContent').innerHTML = content;
+
+        // 모달 열기
+        var myModal = new bootstrap.Modal(document.getElementById('placeModal'));
+        myModal.show();
+    }
+
+    // 지도 바깥을 클릭하면 검색결과 창을 닫는 함수
+    kakao.maps.event.addListener(map, 'click', function () {
+        closeSearchResults();
+    });
+
+    function closeSearchResults() {
+        var menuWrap = document.getElementById('menu_wrap');
+        if (menuWrap) {
+            menuWrap.style.display = 'none';  // 검색 결과 창을 닫음
+        }
+    }
+
+</script>
+
+<!-- 모달 구조 -->
+<div class="modal fade" id="placeModal" tabindex="-1" aria-labelledby="placeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="placeModalLabel">장소 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div>
-
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- 여기에 내용이 동적으로 추가됩니다 -->
+                </div>
             </div>
-            <div>
-                <span> 여행 계획</span>
-                <input type="radio" class="btn-check" name="schedule" id="option1" autocomplete="off" value="1" checked>
-                <label class="btn" for="option1">당일치기</label>
-
-                <input type="radio" class="btn-check" name="schedule" id="option2" value="2" autocomplete="off">
-                <label class="btn" for="option2">1박 2일</label>
-
-                <input type="radio" class="btn-check" name="schedule" id="option3" value="3" autocomplete="off">
-                <label class="btn" for="option3">2박 3일</label>
-                <span>일행</span>
-                <input type="radio" class="btn-check" name="companion" id="option4" value="1" autocomplete="off" checked>
-                <label class="btn" for="option4">혼자 여행</label>
-
-                <input type="radio" class="btn-check" name="companion" id="option5" value="2"  autocomplete="off">
-                <label class="btn" for="option5">커플 여행</label>
-
-                <input type="radio" class="btn-check" name="companion" id="option6" value="3" autocomplete="off">
-                <label class="btn" for="option6">가족 여행</label>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
             </div>
-            <a th:href="@{/blog/list}">목록으로 돌아가기</a>
-            <button type="submit">수정</button>
+        </div>
     </div>
-    </form>
+</div>
+</div>
+
+
+<!-- 도시 선택시 위치값 반영-->
+<script>
+    let temperatureData = []; // 전역 변수로 선언
+
+    let regID = '11B00000', regIDT = '11B10101', nx = 60, ny = 127;
+
+    function selectReg(selectCity) {
+        if (selectCity === "") {
+            return;
+        }
+        temperatureData.length = 0;
+        $('.weathershortins').html('');
+        $('.weatherins').html('');
+        switch (selectCity) {
+            case 'city1': regID = '11B00000'; regIDT = '11B10101'; nx = 60; ny = 127; break;
+            case 'city2': regID = '11H20000'; regIDT = '11H20101'; nx = 98; ny = 76; break;
+            case 'city3': regID = '11H10000'; regIDT = '11H10701'; nx = 89; ny = 90; break;
+            case 'city4': regID = '11D10000'; regIDT = '11B20201'; nx = 55; ny = 124; break;
+            case 'city5': regID = '11F20000'; regIDT = '11F20501'; nx = 58; ny = 74; break;
+            case 'city6': regID = '11C20000'; regIDT = '11C20401'; nx = 67; ny = 100; break;
+            case 'city7': regID = '11H20000'; regIDT = '11H20101'; nx = 102; ny = 84; break;
+            case 'city8': regID = '11C20000'; regIDT = '11C20404'; nx = 66; ny = 103; break;
+            case 'city9': regID = '11B00000'; regIDT = '11B20601'; nx = 60; ny = 121; break;
+            case 'city10': regID = '11D10000'; regIDT = '11D10301'; nx = 73; ny = 134; break;
+            case 'city11': regID = '11C10000'; regIDT = '11C10301'; nx = 69; ny = 107; break;
+            case 'city12': regID = '11C10000'; regIDT = '11C20101'; nx = 51; ny = 96; break;
+            case 'city13': regID = '11F10000'; regIDT = '11F10201'; nx = 63; ny = 89; break;
+            case 'city14': regID = '11F20000'; regIDT = '11F20501'; nx = 50; ny = 67; break;
+            case 'city15': regID = '11H10000'; regIDT = '11H10701'; nx = 91; ny = 106; break;
+            case 'city16': regID = '11H20000'; regIDT = '11H20301'; nx = 89; ny = 77; break;
+            case 'city17': regID = '11G00000'; regIDT = '11G00201'; nx = 52; ny = 38; break;
+            default: regID = '11B00000'; regIDT = '11B10101'; nx = 60; ny = 127; break;
+        }
+        // 기존 날씨 정보를 비웁니다.
+        fetchWeatherData();
+        fetchMidTemperatureData();
+        WeatherData();
+    }
+</script>
+
+<!-- 3~7일 날씨값 스크립트 -->
+<script>
+
+    $(document).ready(function() {
+        fetchWeatherData();  // 페이지 로드 시 오늘과 내일 날씨 호출
+        fetchMidTemperatureData();  // 페이지 로드 시 3~7일 기온 호출
+        WeatherData();  // 페이지 로드 시 3~7일 기온 및 날씨 상태 호출
+    });
+
+    // 오늘과 내일의 날씨 데이터를 가져오는 함수
+    const fetchWeatherData = () => {
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        const base_date = today.getHours() < 6 ?
+            `${yesterday.getFullYear()}${String(yesterday.getMonth() + 1).padStart(2, '0')}${String(yesterday.getDate()).padStart(2, '0')}` :
+            `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+
+        const ServiceKey = 'wje5hA%2Bnn3R5RgOMpkRjQoneVn2py4RGqQmFJCCZS2IjYEetSvm7HP%2FngICVZN7%2FB0Mj2ig7Xp2oep7%2B4kcrSQ%3D%3D';
+        const pageNo = 1, numOfRows = 750, dataType = 'JSON';
+
+        $.ajax({
+            url: `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=750&dataType=${dataType}&base_date=${base_date}&base_time=0500&nx=${nx}&ny=${ny}`,
+            type: 'GET',
+            success: function(data) {
+                let todayWeather = {}, tomorrowWeather = {};
+                let todayDateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+                let tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+                let tomorrowDateStr = `${tomorrow.getFullYear()}${String(tomorrow.getMonth() + 1).padStart(2, '0')}${String(tomorrow.getDate()).padStart(2, '0')}`;
+
+                data.response.body.items.item.forEach(item => {
+                    // 오늘 날짜 데이터 처리
+                    if (item.fcstDate === todayDateStr) {
+                        if (item.category === 'TMP') todayWeather.TMP = item.fcstValue;
+                        if (item.category === 'TMX' && item.fcstTime === '1500') todayWeather.TMX = item.fcstValue; // 1500 시간의 TMX만
+                        if (item.category === 'TMN' && item.fcstTime === '0600') {
+                            // TMN 값이 있을 경우 그대로 사용
+                            todayWeather.TMN = item.fcstValue;
+                        } else if (item.category === 'TMP') {
+                            // TMP 값을 배열에 저장하고, 나중에 최소값을 사용
+                            if (!todayWeather.TMPs) todayWeather.TMPs = []; // TMPs 배열이 없으면 초기화
+                            todayWeather.TMPs.push(parseFloat(item.fcstValue));
+                        }
+
+                        // 이후 모든 데이터를 처리한 후 최저 TMP 값을 TMN으로 설정
+                        if (!todayWeather.TMN && todayWeather.TMPs && todayWeather.TMPs.length > 0) {
+                            todayWeather.TMN = Math.min(...todayWeather.TMPs); // TMP 값 중 최저값을 TMN으로 사용
+                        }
+
+                        if (item.category === 'SKY') setSkyIcon(item.fcstValue, 'today');
+                        if (item.category === 'PTY') setPtyIcon(item.fcstValue, 'today');
+                    }
+
+                    // 내일 날짜 데이터 처리
+                    if (item.fcstDate === tomorrowDateStr) {
+                        if (item.category === 'TMP') tomorrowWeather.TMP = item.fcstValue;
+                        if (item.category === 'TMX' && item.fcstTime === '1500') tomorrowWeather.TMX = item.fcstValue; // 1500 시간의 TMX만
+                        if (item.category === 'TMN' && item.fcstTime === '0600') tomorrowWeather.TMN = item.fcstValue; // 내일 TMN만
+
+                        if (item.category === 'SKY') setSkyIcon(item.fcstValue, 'tomorrow');
+                        if (item.category === 'PTY') setPtyIcon(item.fcstValue, 'tomorrow');
+                    }
+                });
+
+                // 결과를 HTML에 반영
+                $('#todayTMP').text(todayWeather.TMP || '정보 없음');
+                $('#todayTMX').text(todayWeather.TMX || '정보 없음');
+                $('#todayTMN').text(todayWeather.TMN || '정보 없음');
+
+                $('#tomorrowTMP').text(tomorrowWeather.TMP || '정보 없음');
+                $('#tomorrowTMX').text(tomorrowWeather.TMX || '정보 없음');
+                $('#tomorrowTMN').text(tomorrowWeather.TMN || '정보 없음');
+            },
+            error: function() {
+                console.error('날씨 데이터를 가져오는 데 실패했습니다.');
+            }
+        });
+    };
+
+    // 3~7일의 기온 데이터를 가져오는 함수
+    const fetchMidTemperatureData = () => {
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        const tmFc = today.getHours() < 6 ?
+            `${yesterday.getFullYear()}${String(yesterday.getMonth() + 1).padStart(2, '0')}${String(yesterday.getDate()).padStart(2, '0')}1800` :
+            `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}0600`;
+
+        const ServiceKey = 'wje5hA%2Bnn3R5RgOMpkRjQoneVn2py4RGqQmFJCCZS2IjYEetSvm7HP%2FngICVZN7%2FB0Mj2ig7Xp2oep7%2B4kcrSQ%3D%3D';
+        const pageNo = 1, numOfRows = 10;
+
+        $.ajax({
+            url: `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=XML&regId=${regIDT}&tmFc=${tmFc}`,
+            type: 'GET',
+            success: function(data) {
+                $(data).find('item').each(function() {
+                    for (let i = 3; i <= 7; i++) {
+                        const taMin = $(this).find(`taMin${i}`).text();
+                        const taMax = $(this).find(`taMax${i}`).text();
+                        $(`#day${i}Min`).text(taMin || '정보 없음');
+                        $(`#day${i}Max`).text(taMax || '정보 없음');
+                    }
+                });
+            },
+            error: function() {
+                console.error('3~7일 기온 데이터를 가져오는 데 실패했습니다.');
+            }
+        });
+    };
+
+    // 하늘 상태에 따른 이미지 설정 함수
+    function setSkyIcon(skyCode, day) {
+        let skyDiv = document.getElementById(`skyIcon${day.charAt(0).toUpperCase() + day.slice(1)}`);
+        switch (skyCode) {
+            case '1': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY1.webp")'; break; // 맑음
+            case '3': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY3.webp")'; break; // 구름많음
+            case '4': skyDiv.style.backgroundImage = 'url("/weatherimg/SKY4.webp")'; break; // 흐림
+            default: skyDiv.style.backgroundImage = 'url("/weatherimg/esteregg.webp")'; break;  // 이미지 없음
+        }
+        skyDiv.style.backgroundSize = "cover";
+        skyDiv.style.backgroundSize = "100% 100%";
+        skyDiv.style.boxSizing = "border-box";
+        skyDiv.style.overflow = "hidden";
+        skyDiv.style.zIndex = "1";
+    }
+
+    // 강수 상태에 따른 이미지 설정 함수
+    function setPtyIcon(ptyCode, day) {
+        let ptyImg = document.getElementById(`ptyIcon${day.charAt(0).toUpperCase() + day.slice(1)}`);
+
+        switch (ptyCode) {
+            case '0': ptyImg.src = '/weatherimg/PTY0.png'; break; // 강수 없음
+            case '1': ptyImg.src = '/weatherimg/PTY1.png'; break; // 비
+            case '2': ptyImg.src = '/weatherimg/PTY2.png'; break; // 비/눈
+            case '3': ptyImg.src = '/weatherimg/PTY3.png'; break; // 눈
+            case '4': ptyImg.src = '/weatherimg/PTY4.png'; break; // 소나기
+            default: ptyImg.src = 'url("/weatherimg/esteregg.webp")'; break;  // 이미지 없음
+        }
+    }
+
+
+    const WeatherDataIcon = () => {
+
+        const today = new Date(), yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        let tmFc = today.getHours() > 6 ?
+            `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}0600` :
+            `${yesterday.getFullYear()}${String(yesterday.getMonth() + 1).padStart(2, '0')}${String(yesterday.getDate()).padStart(2, '0')}1800`;
+
+        const ServiceKey = 'wje5hA%2Bnn3R5RgOMpkRjQoneVn2py4RGqQmFJCCZS2IjYEetSvm7HP%2FngICVZN7%2FB0Mj2ig7Xp2oep7%2B4kcrSQ%3D%3D';
+        const pageNo = 1, numOfRows = 10, dataType = 'XML', temperatureData = [
+            { dayIndex: 3, amId: 'day3Am', pmId: 'day3Pm' },
+            { dayIndex: 4, amId: 'day4Am', pmId: 'day4Pm' },
+            { dayIndex: 5, amId: 'day5Am', pmId: 'day5Pm' },
+            { dayIndex: 6, amId: 'day6Am', pmId: 'day6Pm' },
+            { dayIndex: 7, amId: 'day7Am', pmId: 'day7Pm' }
+        ];
+
+
+        // 최저기온 데이터 안남어오면 그날 기온중 제일 낮은걸로 대체용.
+        $.ajax({
+            url: `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&regId=${regID}&tmFc=${tmFc}`,
+            type: 'GET',
+            success: function(data) {
+                $(data).find('items item').each(function() {
+                    temperatureData.forEach(item => {
+                        const wfam = $(this).find(`wf${item.dayIndex}Am`).text();
+                        const wfpm = $(this).find(`wf${item.dayIndex}Pm`).text();
+
+                        // 날씨 아이콘 설정
+                        setWeatherIcon({ am: wfam, pm: wfpm }, item.dayIndex);
+
+                        // HTML에 값 삽입
+                        $(`#${item.amId}`).text(wfam || 'No Data');
+                        $(`#${item.pmId}`).text(wfpm || 'No Data');
+                    });
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('기온 데이터를 가져오는 데 실패했습니다.', error, status, xhr);
+            }
+        });
+    };
+
+    // 3~7일 날씨 상태에 따른 이미지 설정 함수
+    function setWeatherIcon(wfCode, day) {
+        let dayAmElement = document.getElementById(`day${day}Am`);
+        let dayPmElement = document.getElementById(`day${day}Pm`);
+
+        const ptyCodeToImage = {
+            '맑음': '/weatherimg/PTY0.png',
+            '구름많음': '/weatherimg/PTY3.png',
+            '흐림': '/weatherimg/PTY3.png',
+            '비': '/weatherimg/PTY1.png',
+            '눈': '/weatherimg/PTY4.png',
+            '비/눈': '/weatherimg/PTY2.png',
+            '소나기': '/weatherimg/PTY1.png',
+            '구름많고 비': '/weatherimg/PTY1.png',
+            '구름많고 비/눈': '/weatherimg/PTY2.png',
+            '구름많고 소나기': '/weatherimg/PTY1.png',
+            '흐리고 비': '/weatherimg/PTY1.png',
+            '흐리고 눈': '/weatherimg/PTY4.png',
+            '흐리고 비/눈': '/weatherimg/PTY2.png',
+            '흐리고 소나기': '/weatherimg/PTY1.png',
+        };
+
+        // 오전 및 오후 상태 이미지 경로 설정을 통합
+        const imageSrc = ptyCodeToImage[wfCode.am] || ptyCodeToImage[wfCode.pm] || '/weatherimg/esteregg.webp';
+
+        // 오전 이미지 삽입
+        if (dayAmElement) {
+            dayAmElement.src = imageSrc;
+            dayAmElement.alt = wfCode.am;
+        }
+
+        // 오후 이미지 삽입
+        if (dayPmElement) {
+            dayPmElement.src = imageSrc;
+            dayPmElement.alt = wfCode.pm;
+        }
+    }
+
+    // 날씨 데이터를 가져와서 각 날씨 카드에 반영하는 함수
+    function WeatherData() {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        let tmFc = today.getHours() >= 6 ?
+            `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}0600` :
+            `${yesterday.getFullYear()}${String(yesterday.getMonth() + 1).padStart(2, '0')}${String(yesterday.getDate()).padStart(2, '0')}1800`;
+
+        const ServiceKey = 'YOUR_API_KEY'; // Replace with your actual service key
+        const pageNo = 1, numOfRows = 10;
+
+        $.ajax({
+            url: `https://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst?serviceKey=${ServiceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=XML&regId=${regID}&tmFc=${tmFc}`,
+            type: 'GET',
+            success: function (data) {
+                $(data).find('item').each(function () {
+                    for (let i = 3; i <= 7; i++) {
+                        const wfAm = $(this).find(`wf${i}Am`).text();
+                        const wfPm = $(this).find(`wf${i}Pm`).text();
+
+                        // 날씨 아이콘 설정
+                        setWeatherIcon({ am: wfAm, pm: wfPm }, i);
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('3~7일 기온 데이터를 가져오는 데 실패했습니다.', error, status, xhr);
+            }
+        });
+    }
+
+    // 페이지 로드 시 실행
+    $(document).ready(function() {
+        WeatherDataIcon();
+    });
+
+</script>
+
 </div>
 
 </body>
