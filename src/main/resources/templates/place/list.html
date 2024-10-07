@@ -1,69 +1,51 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Place List</title>
 </head>
 <body>
 
 <div layout:fragment="content" class="mt-2 border rounded bg-light shadow-sm">
 
   <style>
-
     .table {
       border-collapse: collapse;
     }
-
     .thcolor {
       border-top: 3px solid #d0e7ff;
       border-bottom: 3px solid #d0e7ff;
     }
-
     .thonecolor {
       border-bottom: 3px solid #d0e7ff;
     }
-
     .table tbody tr:last-child {
       border-bottom: 3px solid #d0e7ff;
     }
-
-
+    .table tbody tr {
+      line-height: 2.7;
+    }
   </style>
 
-
   <div class="row g-0">
-    <div class="col shadow">
+    <div class="col shadow mt-2">
       <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
-<!--          <form class="d-flex formObj" role="search" action="/blog/list" method="get"-->
-<!--                th:object="${pageRequestDTO}">-->
-<!--            -->
-<!--            검색기능 구현 예정-->
-            <select name="type" lass="form-select" aria-label="Default select example">
+          <form class="d-flex formObj" role="search" method="get">
+            <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
               <option value="t" selected>플레이스 명</option>
-<!--              <option value="c">도시</option>-->
-<!--              <option value="w">작성자</option>-->
-<!--              <option value="y">도시</option>-->
-<!--              <option value="tc">제목 + 내용</option>-->
-<!--              <option value="ty">제목 + 도시</option>-->
             </select>
-
             <input class="form-control me-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
-<!--          <a href="/blog/register" class="btn btn-dark">등록</a>-->
         </div>
       </nav>
 
-      <!-- 게시글이 없을 경우 -->
-<!--      <th:block th:if="${#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">-->
-<!--        <h1>너님 글이 없음</h1>-->
-<!--      </th:block>-->
-
-<!--      &lt;!&ndash; 게시글이 있을 경우 &ndash;&gt;-->
-<!--      <div th:if="${!#lists.isEmpty(blogDTOPageResponseDTO.dtoList)}">-->
+      <!-- 게시글이 있을 경우 -->
+      <div>
         <table class="table table-bordered text-center">
           <!-- 테이블 헤더 -->
           <thead class="thead-light thcolor">
@@ -118,28 +100,14 @@
         </table>
       </div>
 
-
-
-
-<!--      <div class="row text-center">-->
-<!--        <div class="col">-->
-<!--          <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">-->
-<!--            <ul class="pagination justify-content-center">-->
-<!--              <li th:if="${blogDTOPageResponseDTO.prev}" class="paginate_button previous">-->
-<!--                <a class="page-link btn" th:data-num="${blogDTOPageResponseDTO.start - 1}">Previous</a>-->
-<!--              </li>-->
-<!--              <th:block th:each="i: ${#numbers.sequence(blogDTOPageResponseDTO.start,blogDTOPageResponseDTO.end)}">-->
-<!--                <li th:class="${blogDTOPageResponseDTO.page == i} ? 'paginate_button active' : ''">-->
-<!--                  <a class="page-link btn" th:data-num="${i}">[[${i}]]</a>-->
-<!--                </li>-->
-<!--              </th:block>-->
-<!--              <li th:if="${blogDTOPageResponseDTO.next}" class="paginate_button next">-->
-<!--                <a class="page-link btn" th:data-num="${blogDTOPageResponseDTO.end + 1}">Next</a>-->
-<!--              </li>-->
-<!--            </ul>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="row text-center">
+        <div class="col">
+          <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+            <ul class="pagination justify-content-center">
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="col-md-5 mt-2 border rounded bg-light shadow-sm">
@@ -147,7 +115,7 @@
       <div class="row">
         <form class="d-flex" role="search" action="/board/list" method="get" style="float: right">
           <select class="form-select form-select-lg mb-3" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">
-            <option selected>지역 선택</option>
+            <option selected>지역을 선택하셈</option>
             <option value="city1">서울특별시</option>
             <option value="city2">부산광역시</option>
             <option value="city3">대구광역시</option>
@@ -337,47 +305,70 @@
 
 
     <script th:inline="javascript">
+
+
       $(document).ready(function () {
         document.querySelector(".pagination").addEventListener("click", function (e) {
+
           e.preventDefault();
           e.stopPropagation();
+
           let target = e.target;
+
+
           if (target.tagName !== 'A') {
             return;
           }
+
           let num = target.getAttribute("data-num");
           // console.log(num);
+
           let formObj = document.querySelector(".formObj");
+
           formObj.innerHTML += `<input type="hidden" name="page" value="${num}">`;
+
+
           formObj.submit();
+
         })
+
+
         $(".countappend").on("click", function (e) {
+
+
           e.preventDefault()
           //조회수를 증가시킨다. // 일반적인 컨트롤러에서는 증가시키던걸 빼고
           // 병렬 그러니까 따로 증가시킨다.
+
           //증가시키는 컨트롤러로 접속한다.
+
           let num = $(this).data("num")
-          let url = $(this).prop('href')
           console.log($(this).data("num"))
 
           $.ajax({
-            url : "/blog/countappend?num=" + num,
-            type : "get",
-            dataType : "text",
+            url: "/notice/countappend?num=" + num,
+            type: "get",
+            dataType: "text",
             success: function (data) {
               console.log("성공")
               console.log(data)
               if (data == "success") {
-                location.href = url
+                location.href = "/notice/detale?num=" + num
               }
+
             },
-            error : function (data) {
+            error: function (data) {
               console.log("fail")
               console.log(data.responseText)
             }
+
           })
         })
+
+
       });
+
+
     </script>
 
     <script>
