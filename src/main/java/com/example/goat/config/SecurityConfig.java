@@ -37,7 +37,7 @@ public class SecurityConfig {
 //                                .requestMatchers("/replies/modify/**").authenticated()
 //                                .requestMatchers("/replies/remove/**").authenticated()
 
-                                .requestMatchers("/account/login","/account/signup","/css/**", "/js/**", "/img/**", "/layout/**").permitAll()
+                                .requestMatchers("/account/login","/account/signup","/css/**", "/js/**", "/img/**", "/layout/**","/fragment/**").permitAll()
                                 .requestMatchers("/account/register").permitAll()
                                 .requestMatchers("/account/mypage").authenticated()
                                 .requestMatchers("/account/modifyprofile").authenticated()
