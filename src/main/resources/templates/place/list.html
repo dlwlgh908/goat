@@ -35,7 +35,10 @@
       <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
           <form class="d-flex formObj" role="search" method="get">
-            <select name="type" th:field="*{type}" class="form-select" aria-label="Default select example">
+            <select name="type" class="form-select" aria-label="Default select example">
+
+            <!--                    th:field="*{type}" -->
+
               <option value="t" selected>플레이스 명</option>
             </select>
             <input class="form-control me-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
@@ -73,8 +76,8 @@
                 <td style="border: none" th:text="${stat.count}">
                 </td>
                 <!-- 플레이스 (가게명) -->
-                <td style="border: none">
-                  <a class="countappend text-decoration-none text-reset">
+                <td class="text-start" style="border: none">
+                  <a class="countappend text-decoration-none text-reset ">
                     [[${list.place_name}]]
                   </a>
                 </td>

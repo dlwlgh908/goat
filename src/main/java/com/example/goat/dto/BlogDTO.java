@@ -31,8 +31,8 @@ public class BlogDTO {
     @Length(min = 2, max = 200, message = "내용은 2 ~ 200글자 이내로 작성 부탁드립니다.")
     private String	content;
 
-    @Builder.Default
-    private int	schedule = 1;
+//    @Builder.Default
+//    private int	schedule = 1;
 
     private LocalDate reg;
 

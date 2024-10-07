@@ -49,6 +49,8 @@ public class BlogController {
     public String registerPost(@Valid BlogDTO blogDTO, BindingResult bindingResult, Model model, @AuthenticationPrincipal UserDetails user
     , Long[] nnum
                                ){
+
+        blogDTO.setEmail(user.getUsername());
         log.info(blogDTO);
         log.info(blogDTO);
         log.info(blogDTO);

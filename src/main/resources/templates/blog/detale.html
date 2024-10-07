@@ -29,6 +29,10 @@
                             <a th:href="@{/blog/modify(num=${blogDTO.num})}" class="btn btn-outline-primary">수정</a>
                             <a th:href="@{/blog/delete(num=${blogDTO.num})}" class="btn btn-outline-danger">삭제</a>
                         </th:block>
+                        <th:block sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{/blog/delete(num=${blogDTO.num})}" class="btn btn-outline-danger">삭제</a>
+                        </th:block>
+
                     </th:block>
                 </div>
 
