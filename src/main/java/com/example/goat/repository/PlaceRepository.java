@@ -16,10 +16,12 @@ import java.util.Optional;
 public interface PlaceRepository extends JpaRepository<Place, Long> {
 
 
-    @Query("select new com.example.goat.dto.PlaceDTO(p.place_name as place_name, c.cname as cname, count(*) as total) from Place p join City c on p.city.cno = c.cno where substring(p.category_name,1,3) != '음식점'  group by p.place_name order by count(*) desc limit 5")
+    public List<PlaceDTO> findByBlog_num(Long num);
+
+    @Query("select new com.example.goat.dto.PlaceDTO(p.category_name as category_name, p.API_id as api_id, p.place_name as place_name, c.cname as cname, count(*) as total) from Place p join City c on p.city.cno = c.cno where substring(p.category_name,1,3) != '음식점'  group by p.place_name order by count(*) desc limit 5")
             public List<PlaceDTO> mainPlaceRank(PlaceDTO placeDTO);
 
-    @Query("select new com.example.goat.dto.PlaceDTO(p.place_name as place_name, c.cname as cname, count(*) as total) from Place p join City c on p.city.cno = c.cno where substring(p.category_name,1,3) = '음식점'  group by p.place_name order by count(*) desc limit 5")
+    @Query("select new com.example.goat.dto.PlaceDTO(p.category_name as category_name, p.API_id as api_id, p.place_name as place_name, c.cname as cname, count(*) as total) from Place p join City c on p.city.cno = c.cno where substring(p.category_name,1,3) = '음식점'  group by p.place_name order by count(*) desc limit 5")
     public List<PlaceDTO> mainPlaceRankRestaurant(PlaceDTO placeDTO);
 
     @Query("select new com.example.goat.dto.PlaceDTO(p.place_name as place_name,p.category_name as category_name, c.cname as cname, p.API_id as api_id, count(*) as total) from Place p join City c on p.city.cno = c.cno group by p.place_name order by count(*) desc limit 10")

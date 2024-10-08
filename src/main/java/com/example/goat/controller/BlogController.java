@@ -102,6 +102,7 @@ public class BlogController {
     @GetMapping("/detale")
     public void detale(@AuthenticationPrincipal UserDetails user, Model model, Long num, RPageRequestDTO rPageRequestDTO){
 
+//        model.addAttribute("placeDTO",placeService.blogDetale(num));
 
         model.addAttribute("blogDTO", blogService.detale(num));
         RPageResponseDTO<ReplyBlogDTO> rPageResponseDTO =  replyBlogService.list(rPageRequestDTO, num);

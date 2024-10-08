@@ -73,23 +73,23 @@
           <select class="form-select mb-2" aria-label="Large select example" onchange="selectReg(this.value); selectMap(this.value);">
             <option selected>지역을 선택하셈</option>
             <option selected>지역을 선택하셈</option>
-            <option value="city1">서울특별시</option>
-            <option value="city2">부산광역시</option>
-            <option value="city3">대구광역시</option>
-            <option value="city4">인천광역시</option>
-            <option value="city5">광주광역시</option>
-            <option value="city6">대전광역시</option>
-            <option value="city7">울산광역시</option>
-            <option value="city8">세종특별자치시</option>
-            <option value="city9">경기도 (수원)</option>
-            <option value="city10">강원특별자치도</option>
-            <option value="city11">충청북도 (청주)</option>
-            <option value="city12">충청남도 (홍성)</option>
-            <option value="city13">전북특별자치도 (전주)</option>
-            <option value="city14">전라남도 (목포)</option>
-            <option value="city15">경상북도 (안동)</option>
-            <option value="city16">경상남도 (창원)</option>
-            <option value="city17">제주특별자치도</option>
+            <option value="1">서울특별시</option>
+            <option value="2">부산광역시</option>
+            <option value="3">대구광역시</option>
+            <option value="4">인천광역시</option>
+            <option value="5">광주광역시</option>
+            <option value="6">대전광역시</option>
+            <option value="7">울산광역시</option>
+            <option value="8">세종특별자치시</option>
+            <option value="9">경기도 (수원)</option>
+            <option value="10">강원특별자치도</option>
+            <option value="11">충청북도 (청주)</option>
+            <option value="12">충청남도 (홍성)</option>
+            <option value="13">전북특별자치도 (전주)</option>
+            <option value="14">전라남도 (목포)</option>
+            <option value="15">경상북도 (안동)</option>
+            <option value="16">경상남도 (창원)</option>
+            <option value="17">제주특별자치도</option>
           </select>
 
         </form>
@@ -110,29 +110,40 @@
 
       <div class="restaurantBoardWeather card mt-3">
         <div class="row justify-content-between">
+          <!-- 오늘의 날씨 카드 -->
+
           <div class="col">
-            <div id="skyIconToday" class="card weather-card text-center" style="border-radius: 12px; width: 100%; height: 130px;">
+
+            <div id="skyIconToday" class="card weather-card text-center " style="width: 100%; height: 130px;">
               <div class="card-body p-1">
-                <img id="ptyIconToday" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;">
-                <h6 class="card-title" style="font-size: 0.85rem; margin: 0;">오늘의 날씨</h6>
-                <p style="font-size: 0.75rem; margin: 0;">현재기온: <span id="todayTMP"></span>°C</p>
-                <p style="font-size: 0.75rem; margin: 0;">최고기온: <span id="todayTMX"></span>°C</p>
-                <p style="font-size: 0.75rem; margin: 0;">최저기온: <span id="todayTMN"></span>°C</p>
+                <div>
+                  <h6 class="card-title" style="font-weight: bolder;font-size: 0.85rem; margin: 0; padding: 0; text-shadow: -1px -1px white, 1px 1px white;">To Day</h6>
+                  <img id="ptyIconToday" src="" class="img-fluid" style="width: 75px; display: block; margin: 0 auto;" />
+                </div>
+                <p style="font-weight: bold;font-size: 1rem; margin: 0; padding: 0;font-color:black; text-shadow: -1px -1px white, 1px 1px white;">현재: <span id="todayTMP"></span>°C</p>
+                <div class="d-flex justify-content-between">
+                  <p style="font-size: 0.85rem; margin: 0; padding: 0; text-shadow: -1px -1px white, 1px 1px white;">최저: <span id="todayTMN"></span>°C</p>
+                  <p style="font-size: 0.85rem; margin: 0; padding: 0; text-shadow: -1px -1px white, 1px 1px white;">최고: <span id="todayTMX"></span>°C</p>
+
+                </div>
+
               </div>
             </div>
           </div>
           <div class="col">
-            <div id="skyIconTomorrow" class="card weather-card text-center" style="border-radius: 12px; width: 100%; height: 130px;">
+            <!-- 내일의 날씨 카드 -->
+            <div id="skyIconTomorrow" class="card weather-card text-center col" style="width: 100%; height: 130px;">
               <div class="card-body p-1">
-                <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 40px; display: block; margin: 0 auto;">
-                <h6 class="card-title" style="font-size: 0.85rem; margin: 0;">내일의 날씨</h6>
-                <p style="font-size: 0.75rem; margin: 0;">최고기온: <span id="tomorrowTMX"></span>°C</p>
-                <p style="font-size: 0.75rem; margin: 0;">최저기온: <span id="tomorrowTMN"></span>°C</p>
+                <h6 class="card-title" style="font-weight: bolder;font-size: 0.85rem; margin: 0; padding: 0; text-shadow: -1px -1px white, 1px 1px white;">내일의 날씨</h6>
+                <img id="ptyIconTomorrow" src="" class="img-fluid" style="width: 75px; display: block; margin: 0 auto;" />
+                <div class="d-flex justify-content-between">
+                  <p style="font-size: 0.85rem; margin: 0; padding: 0; text-shadow: -1px -1px white, 1px 1px white; margin-top: 10%">최고: <span id="tomorrowTMX"></span>°C</p>
+                  <p style="font-size: 0.85rem; margin: 0; padding: 0; text-shadow: -1px -1px white, 1px 1px white; margin-top: 10%">최저: <span id="tomorrowTMN"></span>°C</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
       <!-- 추가 날씨 카드 5장 -->
       <div class="d-flex justify-content-between gap-1 mt-3">

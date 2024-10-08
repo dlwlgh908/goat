@@ -68,4 +68,14 @@ public class PlaceService {
 
     }
 
+//    public List<PlaceDTO> blogDetale(Long num) {
+//        Place place = modelMapper.map(PlaceDTO, Place.class);
+//
+//        List<Place> result = placeRepository.findByBlogNum(num);
+//        return result;
+//
+//    }
+
+
+
 }
